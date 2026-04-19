@@ -551,9 +551,15 @@ const checkMobile = () => {
   }
 }
 
+// 获取当前部署的基础路径
+const getBasePath = () => {
+  return import.meta.env.BASE_URL || '/'
+}
+
 const loadCommands = async () => {
   try {
-    const response = await fetch('/commands.json')
+    const basePath = getBasePath()
+    const response = await fetch(`${basePath}commands.json`)
     const data = await response.json()
     commands.value = (data.data || []).map((item, index) => {
       // Generate unique ID if missing
@@ -1047,7 +1053,8 @@ onMounted(() => {
 
   // 注册 Service Worker（PWA 离线支持）
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/service-worker.js').catch(() => {})
+    const basePath = getBasePath()
+    navigator.serviceWorker.register(`${basePath}service-worker.js`).catch(() => {})
   }
 })
 
