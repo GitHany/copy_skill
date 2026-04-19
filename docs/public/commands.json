@@ -1,0 +1,869 @@
+{
+  "data": [
+    {
+      "dirPath": "/Claude Skills/oh-my-claude/",
+      "name": "1-00 安装",
+      "keyword": "plugin 安装",
+      "description": "",
+      "data": {
+        "cmd": "/plugin marketplace add https://github.com/Yeachan-Heo/oh-my-claudecode\n/plugin install oh-my-claudecode\n/omc-setup"
+      }
+    },
+    {
+      "dirPath": "/Claude Skills/everything-claude-code/",
+      "name": "1-00 安装",
+      "keyword": "安装",
+      "description": "",
+      "data": {
+        "cmd": "# 添加市场\n/plugin marketplace add affaan-m/everything-claude-code\n\n# 安装插件\n/plugin install ecc@ecc"
+      }
+    },
+    {
+      "dirPath": "/Claude Skills/superpowers/",
+      "name": "1-00 安装",
+      "keyword": "plugin 安装",
+      "description": "",
+      "data": {
+        "cmd": "/plugin marketplace add obra/superpowers-marketplace\n/plugin install superpowers@superpowers-marketplace"
+      }
+    },
+    {
+      "dirPath": "/Claude Skills/oh-my-claude/",
+      "name": "1-01 autopilot 自动执行",
+      "keyword": "oh-my-claudecode:autopilot autopilot 自动执行",
+      "description": "",
+      "data": {
+        "cmd": "/oh-my-claudecode:autopilot %{执行任务}% "
+      }
+    },
+    {
+      "dirPath": "/Claude Skills/superpowers/",
+      "name": "1-01 brainstorming 沟通需求",
+      "keyword": "1-01 brainstorming 沟通需求",
+      "description": "",
+      "data": {
+        "cmd": "/brainstorming %{需求}%"
+      }
+    },
+    {
+      "dirPath": "/Claude Skills/openspec/",
+      "name": "1-01 openspec init",
+      "keyword": "openspec init",
+      "description": "",
+      "data": {
+        "cmd": "openspec init"
+      }
+    },
+    {
+      "dirPath": "/Claude Skills/everything-claude-code/",
+      "name": "1-01 plan 需求分析",
+      "keyword": "ecc:plan plan 需求分析",
+      "description": "/ecc:plan \"实现用户注册和登录功能，支持邮箱和第三方登录\"",
+      "data": {
+        "cmd": "/ecc:plan %{需求}%"
+      }
+    },
+    {
+      "dirPath": "/Claude Skills/spec-kit/",
+      "name": "1-01 specify init 初始化项目",
+      "keyword": "specify init 初始化项目",
+      "description": "",
+      "data": {
+        "cmd": "specify init --here --ai claude"
+      }
+    },
+    {
+      "dirPath": "/Claude Skills/oh-my-claude/",
+      "name": "1-01-1 autopilot 验证修复方案",
+      "keyword": "oh-my-claudecode:autopilot autopilot 验证修复方案",
+      "description": "",
+      "data": {
+        "cmd": "/oh-my-claudecode:autopilot 对刚才实施的修复进行全面的功能影响评估，以确定是否存在任何可能影响系统正常功能使用的潜在问题。具体包括：\n1. 验证修复是否完全解决了原始问题，同时没有引入新的功能缺陷\n2. 检查修复涉及的所有相关模块和功能点，确保其正常工作\n3. 测试与修复部分有依赖关系的其他功能，确认它们不受负面影响\n4. 验证边界条件和异常场景下的系统行为是否符合预期\n5. 评估修复对系统性能、安全性和稳定性的潜在影响\n6. 确认用户体验是否受到任何不良影响，包括但不限于操作流程、响应速度和界面展示\n\n请提供详细的检查结果，包括发现的任何问题、风险评估以及必要的改进建议。"
+      }
+    },
+    {
+      "dirPath": "/Claude Skills/oh-my-claude/",
+      "name": "1-01-2 autopilot 性能优化排查bug",
+      "keyword": "oh-my-claudecode:autopilot autopilot 性能优化排查bug",
+      "description": "",
+      "data": {
+        "cmd": "/oh-my-claudecode:autopilot 我现在负责的项目需要进行优化和bug修复工作。由于目前对项目的具体情况了解有限，请通过系统性提问的方式，逐步明确以下关键信息：项目类型与核心功能模块、当前面临的主要性能瓶颈或用户体验问题、已发现的具体bug表现及复现步骤、项目使用的技术栈与架构、优化的优先级要求、以及是否有特定的性能指标或质量标准需要达成。通过获取这些信息，以便精准确定优化方向和bug修复范围。"
+      }
+    },
+    {
+      "dirPath": "/Claude Skills/spec-kit/",
+      "name": "1-02 constitution 项目规则",
+      "keyword": "speckit-constitution constitution 项目规则",
+      "description": "",
+      "data": {
+        "cmd": "/speckit-constitution %{项目规则}%"
+      }
+    },
+    {
+      "dirPath": "/Claude Skills/oh-my-claude/",
+      "name": "1-02 deep-interview 沟通交流",
+      "keyword": "oh-my-claudecode:deep-interview deep-interview 沟通交流",
+      "description": "",
+      "data": {
+        "cmd": "/oh-my-claudecode:deep-interview %{想法}%"
+      }
+    },
+    {
+      "dirPath": "/Claude Skills/superpowers/",
+      "name": "1-02 git-worktrees 新建分支",
+      "keyword": "superpowers:using-git-worktrees git-worktrees 新建分支",
+      "description": "",
+      "data": {
+        "cmd": "/superpowers:using-git-worktrees "
+      }
+    },
+    {
+      "dirPath": "/Claude Skills/openspec/",
+      "name": "1-02 opsx propose 添加任务",
+      "keyword": "opsx:propose opsx propose 添加任务",
+      "description": "",
+      "data": {
+        "cmd": "/opsx:propose %{任务}%"
+      }
+    },
+    {
+      "dirPath": "/Claude Skills/openspec/",
+      "name": "1-03 opsx apply 执行任务",
+      "keyword": "opsx:apply opsx apply 执行任务",
+      "description": "",
+      "data": {
+        "cmd": "/opsx:apply  use context7"
+      }
+    },
+    {
+      "dirPath": "/Claude Skills/oh-my-claude/",
+      "name": "1-03 ralph 循环",
+      "keyword": "oh-my-claudecode:ralph ralph 循环",
+      "description": "",
+      "data": {
+        "cmd": "/oh-my-claudecode:ralph %{任务}%"
+      }
+    },
+    {
+      "dirPath": "/Claude Skills/spec-kit/",
+      "name": "1-03 specify 需求",
+      "keyword": "speckit-specify specify 需求",
+      "description": "文档位置 .specify/specs/user-auth.spec.md",
+      "data": {
+        "cmd": "/speckit-specify %{需求 Spec}%"
+      }
+    },
+    {
+      "dirPath": "/Claude Skills/everything-claude-code/",
+      "name": "1-03 tdd 开发",
+      "keyword": "tdd tdd 开发",
+      "description": "",
+      "data": {
+        "cmd": "/tdd  use context7"
+      }
+    },
+    {
+      "dirPath": "/Claude Skills/superpowers/",
+      "name": "1-03 writing-plans 编写计划",
+      "keyword": "superpowers:writing-plans writing-plans 编写计划",
+      "description": "",
+      "data": {
+        "cmd": "/superpowers:writing-plans "
+      }
+    },
+    {
+      "dirPath": "/Claude Skills/spec-kit/",
+      "name": "1-03-1 specify 需求完善",
+      "keyword": "speckit-specify specify 需求完善",
+      "description": "文档位置 .specify/specs/user-auth.spec.md",
+      "data": {
+        "cmd": "/speckit-specify 请对当前方案进行全面评估，识别其中存在的不足、潜在风险和可优化点。具体包括但不限于：方案的完整性、逻辑严密性、技术可行性、资源需求合理性、实施步骤清晰度、潜在风险及应对措施、与业务目标的契合度等方面。提出具体的完善建议和改进方向，并说明理由。然后，来提问我的方式，确认最终改动"
+      }
+    },
+    {
+      "dirPath": "/Claude Skills/spec-kit/",
+      "name": "1-03-2 clarify 澄清需求",
+      "keyword": "speckit-clarify clarify 澄清需求",
+      "description": "文档位置 .specify/specs/user-auth.spec.md",
+      "data": {
+        "cmd": "/speckit-clarify 结构化地澄清规格中的模糊部分"
+      }
+    },
+    {
+      "dirPath": "/Claude Skills/everything-claude-code/",
+      "name": "1-04 code-review 代码审查",
+      "keyword": "code-review code-review 代码审查",
+      "description": "",
+      "data": {
+        "cmd": "/code-review"
+      }
+    },
+    {
+      "dirPath": "/Claude Skills/openspec/",
+      "name": "1-04 opsx archive 归档任务",
+      "keyword": "opsx:archive opsx archive 归档任务",
+      "description": "",
+      "data": {
+        "cmd": "/opsx:archive "
+      }
+    },
+    {
+      "dirPath": "/Claude Skills/spec-kit/",
+      "name": "1-04 plan 方案",
+      "keyword": "speckit-plan plan 方案",
+      "description": "",
+      "data": {
+        "cmd": "/speckit-plan"
+      }
+    },
+    {
+      "dirPath": "/Claude Skills/oh-my-claude/",
+      "name": "1-04 ralplan 规划-循环",
+      "keyword": "oh-my-claudecode:ralplan ralplan 规划-循环",
+      "description": "",
+      "data": {
+        "cmd": "/oh-my-claudecode:ralplan %{任务}% 。use context7"
+      }
+    },
+    {
+      "dirPath": "/Claude Skills/superpowers/",
+      "name": "1-04 subagent-driven-development 执行计划",
+      "keyword": "superpowers:subagent-driven-development subagent-driven-development 执行计划",
+      "description": "",
+      "data": {
+        "cmd": "/superpowers:subagent-driven-development"
+      }
+    },
+    {
+      "dirPath": "/Claude Skills/everything-claude-code/",
+      "name": "1-05 build-fix 修复错误",
+      "keyword": "ecc:build-fix build-fix 修复错误",
+      "description": "",
+      "data": {
+        "cmd": "/ecc:build-fix"
+      }
+    },
+    {
+      "dirPath": "/Claude Skills/openspec/",
+      "name": "1-05 opsx explore 扩展",
+      "keyword": "opsx:explore opsx explore 扩展",
+      "description": "",
+      "data": {
+        "cmd": "/opsx:explore %{任务}%"
+      }
+    },
+    {
+      "dirPath": "/Claude Skills/spec-kit/",
+      "name": "1-05 tasks 分解任务",
+      "keyword": "speckit-tasks tasks 分解任务",
+      "description": "",
+      "data": {
+        "cmd": "/speckit-tasks"
+      }
+    },
+    {
+      "dirPath": "/Claude Skills/oh-my-claude/",
+      "name": "1-05 team 团队协作",
+      "keyword": "oh-my-claudecode:team team 团队协作",
+      "description": "",
+      "data": {
+        "cmd": "/oh-my-claudecode:team 3:executor %{任务}% 。use context7"
+      }
+    },
+    {
+      "dirPath": "/Claude Skills/superpowers/",
+      "name": "1-05 test-driven-development 测试",
+      "keyword": "superpowers:test-driven-development test-driven-development 测试",
+      "description": "",
+      "data": {
+        "cmd": "/superpowers:test-driven-development "
+      }
+    },
+    {
+      "dirPath": "/Claude Skills/openspec/",
+      "name": "1-05-1 opsx explore 扩展功能",
+      "keyword": "opsx:explore opsx explore 扩展功能",
+      "description": "",
+      "data": {
+        "cmd": "/opsx:explore 针对当前已实现的功能模块，系统地分析并提出可继续扩展的功能方向。请结合产品现有架构、用户使用场景及市场需求，从功能完善度、用户体验优化、性能提升、安全性增强、兼容性扩展等多个维度进行全面评估，列出具体的潜在扩展功能清单，并对每个建议的扩展功能说明其实现价值、技术可行性及优先级排序。"
+      }
+    },
+    {
+      "dirPath": "/Claude Skills/spec-kit/",
+      "name": "1-06 implement 实施任务",
+      "keyword": "speckit-implement implement 实施任务",
+      "description": "",
+      "data": {
+        "cmd": "/speckit-implement  use context7"
+      }
+    },
+    {
+      "dirPath": "/Claude Skills/superpowers/",
+      "name": "1-06 requesting-code-review 代码审查",
+      "keyword": "superpowers:requesting-code-review requesting-code-review 代码审查",
+      "description": "",
+      "data": {
+        "cmd": "/superpowers:requesting-code-review "
+      }
+    },
+    {
+      "dirPath": "/Claude Skills/everything-claude-code/",
+      "name": "1-06 security-scan 安全扫描",
+      "keyword": "security-scan security-scan 安全扫描",
+      "description": "",
+      "data": {
+        "cmd": "/security-scan"
+      }
+    },
+    {
+      "dirPath": "/Claude Skills/spec-kit/",
+      "name": "1-06-1 analyze 分析任务",
+      "keyword": "speckit-analyze analyze 分析任务",
+      "description": "",
+      "data": {
+        "cmd": "/speckit-analyze "
+      }
+    },
+    {
+      "dirPath": "/Claude Skills/spec-kit/",
+      "name": "1-07 autopilot 验证修复方案",
+      "keyword": "oh-my-claudecode:autopilot autopilot 验证修复方案",
+      "description": "",
+      "data": {
+        "cmd": "/oh-my-claudecode:autopilot 对刚才实施的修复进行全面的功能影响评估，以确定是否存在任何可能影响系统正常功能使用的潜在问题。具体包括：\n1. 验证修复是否完全解决了原始问题，同时没有引入新的功能缺陷\n2. 检查修复涉及的所有相关模块和功能点，确保其正常工作\n3. 测试与修复部分有依赖关系的其他功能，确认它们不受负面影响\n4. 验证边界条件和异常场景下的系统行为是否符合预期\n5. 评估修复对系统性能、安全性和稳定性的潜在影响\n6. 确认用户体验是否受到任何不良影响，包括但不限于操作流程、响应速度和界面展示\n请提供详细的检查结果，包括发现的任何问题、风险评估以及必要的改进建议。"
+      }
+    },
+    {
+      "dirPath": "/Claude Skills/everything-claude-code/",
+      "name": "1-07 e2e 端到端测试",
+      "keyword": "ecc:e2e e2e 端到端测试",
+      "description": "",
+      "data": {
+        "cmd": "/ecc:e2e "
+      }
+    },
+    {
+      "dirPath": "/Claude Skills/superpowers/",
+      "name": "1-07 finishing-a-development-branch 验证测试",
+      "keyword": "superpowers:finishing-a-development-branch finishing-a-development-branch 验证测试",
+      "description": "",
+      "data": {
+        "cmd": "/superpowers:finishing-a-development-branch "
+      }
+    },
+    {
+      "dirPath": "/Claude Skills/everything-claude-code/",
+      "name": "1-08 test-coverage 测试覆盖率检查",
+      "keyword": "test-coverage test-coverage 测试覆盖率检查",
+      "description": "",
+      "data": {
+        "cmd": "/test-coverage"
+      }
+    },
+    {
+      "dirPath": "/Claude Skills/everything-claude-code/",
+      "name": "1-09 verify 验证循环",
+      "keyword": "verify verify 验证循环",
+      "description": "",
+      "data": {
+        "cmd": "/verify"
+      }
+    },
+    {
+      "dirPath": "/Claude Skills/everything-claude-code/",
+      "name": "1-10 update-docs 更新文档",
+      "keyword": "update-docs update-docs 更新文档",
+      "description": "",
+      "data": {
+        "cmd": "/update-docs"
+      }
+    },
+    {
+      "dirPath": "/Linux 命令/",
+      "name": "cd",
+      "keyword": "cd",
+      "description": "",
+      "data": {
+        "cmd": "cd"
+      }
+    },
+    {
+      "dirPath": "/Linux 命令/",
+      "name": "cp",
+      "keyword": "cp",
+      "description": "",
+      "data": {
+        "cmd": "cp"
+      }
+    },
+    {
+      "dirPath": "/Linux 命令/文件操作/",
+      "name": "cp 复制文件夹",
+      "keyword": "cp 复制文件夹",
+      "description": "",
+      "data": {
+        "cmd": "cp -r %{源文件夹}% %{目标目录}%/"
+      }
+    },
+    {
+      "dirPath": "/Linux 命令/磁盘管理/",
+      "name": "df -h 磁盘空间使用情况",
+      "keyword": "df -h 磁盘空间使用情况",
+      "description": "",
+      "data": {
+        "cmd": "df -h"
+      }
+    },
+    {
+      "dirPath": "/Linux 命令/磁盘管理/",
+      "name": "du -sh 目录大小",
+      "keyword": "du -sh 目录大小",
+      "description": "显示目录的总大小",
+      "data": {
+        "cmd": "du -sh"
+      }
+    },
+    {
+      "dirPath": "/Linux 命令/文件操作/",
+      "name": "find 查找文件",
+      "keyword": "find 查找文件",
+      "description": "",
+      "data": {
+        "cmd": "find %{哪个目录}% -name \"%{文件名(支持正则表达式)}%\"%{aaa}%"
+      }
+    },
+    {
+      "dirPath": "/Git 命令/",
+      "name": "git merge",
+      "keyword": "git merge",
+      "description": "",
+      "data": {
+        "cmd": "git merge --abort"
+      }
+    },
+    {
+      "dirPath": "/Git 命令/",
+      "name": "git pull",
+      "keyword": "git pull",
+      "description": "",
+      "data": {
+        "cmd": "git pull"
+      }
+    },
+    {
+      "dirPath": "/Git 命令/",
+      "name": "git reset",
+      "keyword": "git reset",
+      "description": "",
+      "data": {
+        "cmd": "git reset --merge"
+      }
+    },
+    {
+      "dirPath": "/Git 命令/",
+      "name": "git 回退提交",
+      "keyword": "git 回退提交",
+      "description": "",
+      "data": {
+        "cmd": "git reset --hard %{修订号}%                                                        git push --force origin %{远程分支}%"
+      }
+    },
+    {
+      "dirPath": "/Git 命令/",
+      "name": "git 显示当前提交的完整SHA",
+      "keyword": "git 显示当前提交的完整SHA",
+      "description": "",
+      "data": {
+        "cmd": "git rev-parse HEAD"
+      }
+    },
+    {
+      "dirPath": "/Linux 命令/文件操作/",
+      "name": "grep 搜索文件内容",
+      "keyword": "grep 搜索文件内容",
+      "description": "",
+      "data": {
+        "cmd": "grep \"%{查找的内容}%\" %{在哪一个文件查找}%"
+      }
+    },
+    {
+      "dirPath": "/Linux 命令/文件操作/",
+      "name": "head 查看文件开头",
+      "keyword": "head 查看文件开头",
+      "description": "",
+      "data": {
+        "cmd": "head -n %{多少行}% %{在哪一个文件}%"
+      }
+    },
+    {
+      "dirPath": "/Linux 命令/系统信息/",
+      "name": "hostname 本机ip",
+      "keyword": "hostname 本机ip",
+      "description": "",
+      "data": {
+        "cmd": "hostname -I"
+      }
+    },
+    {
+      "dirPath": "/Linux 命令/系统信息/",
+      "name": "htop",
+      "keyword": "htop",
+      "description": "",
+      "data": {
+        "cmd": "htop"
+      }
+    },
+    {
+      "dirPath": "/Linux 命令/系统信息/",
+      "name": "ifconfig 查看网络接口信息",
+      "keyword": "ifconfig 查看网络接口信息",
+      "description": "",
+      "data": {
+        "cmd": "ifconfig"
+      }
+    },
+    {
+      "dirPath": "/Linux 命令/",
+      "name": "ls -la",
+      "keyword": "ls -la",
+      "description": "",
+      "data": {
+        "cmd": "ls -la"
+      }
+    },
+    {
+      "dirPath": "/Linux 命令/文件操作/",
+      "name": "ls -la 查看文件详细信息",
+      "keyword": "ls -la 查看文件详细信息",
+      "description": "显示所有文件（包括隐藏文件）的详细信息",
+      "data": {
+        "cmd": "ls -la"
+      }
+    },
+    {
+      "dirPath": "/Linux 命令/",
+      "name": "mkdir",
+      "keyword": "mkdir",
+      "description": "",
+      "data": {
+        "cmd": "mkdir"
+      }
+    },
+    {
+      "dirPath": "/Linux 命令/文件操作/",
+      "name": "mkdir 创建文件夹",
+      "keyword": "mkdir 创建文件夹",
+      "description": "",
+      "data": {
+        "cmd": "mkdir %{文件夹名称}%"
+      }
+    },
+    {
+      "dirPath": "/Linux 命令/文件操作/",
+      "name": "mkdir 创建文件夹-10",
+      "keyword": "mkdir 创建文件夹-1",
+      "description": "",
+      "data": {
+        "cmd": "mkdir "
+      }
+    },
+    {
+      "dirPath": "/Linux 命令/文件操作/",
+      "name": "mkdir 创建目录",
+      "keyword": "mkdir 创建目录",
+      "description": "",
+      "data": {
+        "cmd": "mkdir %{aaa}%"
+      }
+    },
+    {
+      "dirPath": "/Linux 命令/文件操作/",
+      "name": "mv 移动文件夹",
+      "keyword": "mv 移动文件夹",
+      "description": "",
+      "data": {
+        "cmd": "mv %{源文件}% %{新文件夹}%/"
+      }
+    },
+    {
+      "dirPath": "/Linux 命令/系统信息/",
+      "name": "pip install 第三方库",
+      "keyword": "pip install 第三方库",
+      "description": "",
+      "data": {
+        "cmd": "pip install %{第三方库}%"
+      }
+    },
+    {
+      "dirPath": "/Linux 命令/",
+      "name": "pwd",
+      "keyword": "pwd",
+      "description": "",
+      "data": {
+        "cmd": "pwd"
+      }
+    },
+    {
+      "dirPath": "/Linux 命令/文件操作/",
+      "name": "rsync 复制文件夹",
+      "keyword": "rsync 复制文件夹",
+      "description": "",
+      "data": {
+        "cmd": "rsync -ah --progress \"%{源文件目录}%\" \"%{新文件夹目录}%/\""
+      }
+    },
+    {
+      "dirPath": "/Linux 命令/Screen 会话/",
+      "name": "screen -ls 查看所有后台窗口",
+      "keyword": "screen -ls 查看所有后台窗口",
+      "description": "",
+      "data": {
+        "cmd": "screen -ls"
+      }
+    },
+    {
+      "dirPath": "/Linux 命令/Screen 会话/",
+      "name": "screen -R 创建会话",
+      "keyword": "screen -R 创建会话",
+      "description": "",
+      "data": {
+        "cmd": "screen -R %{会话名}%"
+      }
+    },
+    {
+      "dirPath": "/Linux 命令/Screen 会话/",
+      "name": "screen -r 回到窗口",
+      "keyword": "screen -r 回到窗口",
+      "description": "",
+      "data": {
+        "cmd": "screen -r %{名字}%"
+      }
+    },
+    {
+      "dirPath": "/Linux 命令/Screen 会话/",
+      "name": "screen exit 窗口里执行",
+      "keyword": "screen exit 窗口里执行",
+      "description": "",
+      "data": {
+        "cmd": "exit"
+      }
+    },
+    {
+      "dirPath": "/Linux 命令/文件操作/",
+      "name": "tail 查看文件末尾",
+      "keyword": "tail 查看文件末尾",
+      "description": "",
+      "data": {
+        "cmd": "tail -f %{哪一个文件}%"
+      }
+    },
+    {
+      "dirPath": "/Linux 命令/文件操作/",
+      "name": "tar -cf 打包分块",
+      "keyword": "tar -cf 打包分块",
+      "description": "",
+      "data": {
+        "cmd": "stdbuf -oL tar -cf - %{目录}% | pv -s $(du -sb %{目录}% | awk '{print $1}') | split -b %{多少G分块}%G - %{压缩包}%.tar."
+      }
+    },
+    {
+      "dirPath": "/Linux 命令/文件操作/",
+      "name": "tar -cf 用 cat 合并压缩包",
+      "keyword": "tar -cf 用 cat 合并压缩包",
+      "description": "",
+      "data": {
+        "cmd": "cat %{压缩包}%.tar.* | tar -xf -"
+      }
+    },
+    {
+      "dirPath": "/Linux 命令/文件操作/",
+      "name": "tar 打包目录",
+      "keyword": "tar 打包目录",
+      "description": "",
+      "data": {
+        "cmd": "tar -czvf %{压缩包名称(.tar.gz)}%.tar.gz %{目录位置}% "
+      }
+    },
+    {
+      "dirPath": "/Linux 命令/文件操作/",
+      "name": "tar 解压目录",
+      "keyword": "tar 解压目录",
+      "description": "",
+      "data": {
+        "cmd": "tar -xzvf %{压缩包名称(.tar.gz)}%.tar.gz"
+      }
+    },
+    {
+      "dirPath": "/Linux 命令/文件操作/",
+      "name": "touch 创建空文件",
+      "keyword": "touch 创建空文件",
+      "description": "",
+      "data": {
+        "cmd": "touch %{空文件名称}%"
+      }
+    },
+    {
+      "dirPath": "/Linux 命令/",
+      "name": "uname -a",
+      "keyword": "uname -a",
+      "description": "",
+      "data": {
+        "cmd": "uname -a"
+      }
+    },
+    {
+      "dirPath": "/Linux 命令/文件操作/",
+      "name": "zip 压缩文件",
+      "keyword": "zip 压缩文件",
+      "description": "",
+      "data": {
+        "cmd": "zip %{压缩包名称}%.zip %{文件名称}%"
+      }
+    },
+    {
+      "dirPath": "/Linux 命令/文件操作/",
+      "name": "zip 解压文件",
+      "keyword": "zip 解压文件",
+      "description": "",
+      "data": {
+        "cmd": "unzip %{压缩包名称}%.zip"
+      }
+    },
+    {
+      "dirPath": "/提示词/",
+      "name": "docker 操作",
+      "keyword": "docker 操作",
+      "data": {
+        "name": "docker 操作"
+      }
+    },
+    {
+      "dirPath": "/提示词/",
+      "name": "git 操作",
+      "keyword": "git 操作",
+      "data": {
+        "name": "git 操作"
+      }
+    },
+    {
+      "dirPath": "/GSD 工作流/",
+      "name": "GSD 1-01 步骤",
+      "keyword": "GSD 1-01 步骤",
+      "data": {
+        "name": "GSD 1-01 步骤"
+      }
+    },
+    {
+      "dirPath": "/GSD 工作流/",
+      "name": "GSD gsd-discuss-phase 实施决策",
+      "keyword": "GSD gsd-discuss-phase 实施决策",
+      "data": {
+        "name": "GSD gsd-discuss-phase 实施决策"
+      }
+    },
+    {
+      "dirPath": "/GSD 工作流/",
+      "name": "GSD status 状态",
+      "keyword": "GSD status 状态",
+      "data": {
+        "name": "GSD status 状态"
+      }
+    },
+    {
+      "dirPath": "/GSD 工作流/",
+      "name": "GSD step",
+      "keyword": "GSD step",
+      "data": {
+        "name": "GSD step"
+      }
+    },
+    {
+      "dirPath": "/GSD 工作流/",
+      "name": "GSD UI",
+      "keyword": "GSD UI",
+      "data": {
+        "name": "GSD UI"
+      }
+    },
+    {
+      "dirPath": "/GSD 工作流/",
+      "name": "GSD workteams 工作流管理",
+      "keyword": "GSD workteams 工作流管理",
+      "data": {
+        "name": "GSD workteams 工作流管理"
+      }
+    },
+    {
+      "dirPath": "/GSD 工作流/",
+      "name": "GSD worktree",
+      "keyword": "GSD worktree",
+      "data": {
+        "name": "GSD worktree"
+      }
+    },
+    {
+      "dirPath": "/GSD 工作流/",
+      "name": "GSD 会话",
+      "keyword": "GSD 会话",
+      "data": {
+        "name": "GSD 会话"
+      }
+    },
+    {
+      "dirPath": "/GSD 工作流/",
+      "name": "GSD 阶段管理",
+      "keyword": "GSD 阶段管理",
+      "data": {
+        "name": "GSD 阶段管理"
+      }
+    },
+    {
+      "dirPath": "/提示词/",
+      "name": "linux常用命令",
+      "keyword": "linux常用命令",
+      "data": {
+        "name": "linux常用命令"
+      }
+    },
+    {
+      "dirPath": "/提示词/",
+      "name": "npm 操作",
+      "keyword": "npm 操作",
+      "data": {
+        "name": "npm 操作"
+      }
+    },
+    {
+      "dirPath": "/提示词/linux常用命令/",
+      "name": "screen",
+      "keyword": "screen",
+      "data": {
+        "name": "screen"
+      }
+    },
+    {
+      "dirPath": "/提示词/linux常用命令/",
+      "name": "常用命令",
+      "keyword": "常用命令",
+      "data": {
+        "name": "常用命令"
+      }
+    },
+    {
+      "dirPath": "/提示词/linux常用命令/",
+      "name": "文件操作",
+      "keyword": "文件操作",
+      "data": {
+        "name": "文件操作"
+      }
+    },
+    {
+      "dirPath": "/提示词/linux常用命令/",
+      "name": "磁盘管理",
+      "keyword": "磁盘管理",
+      "data": {
+        "name": "磁盘管理"
+      }
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "name": "copy-skill",
+  "version": "1.1.0",
+  "description": "命令参考文档工具 - 左侧导航 + 右侧详情面板 + 一键复制",
+  "type": "module",
+  "scripts": {
+    "dev": "vitepress dev docs",
+    "build": "vitepress build docs",
+    "preview": "vitepress preview docs",
+    "deploy": "npm run build && gh-pages -d docs/.vitepress/dist",
+    "import": "node scripts/import-json.js",
+    "import:example": "node scripts/import-json.js --example",
+    "layout": "node scripts/update-layout.js",
+    "layout:example": "node scripts/update-layout.js --example"
+  },
+  "devDependencies": {
+    "vitepress": "^1.3.4",
+    "vue": "^3.4.21"
+  },
+  "keywords": [
+    "vitepress",
+    "documentation",
+    "commands",
+    "reference"
+  ],
+  "author": "",
+  "license": "MIT"
+}

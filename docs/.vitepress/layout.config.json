@@ -1,0 +1,21 @@
+{
+  "siteTitle": "Copy Skill",
+  "logo": "/logo.svg",
+  "accentColor": "#f59e0b",
+  "sidebar": {
+    "collapsedByDefault": false,
+    "autoExpandCurrent": true
+  },
+  "commands": {
+    "maxRecent": 20,
+    "showLineNumbers": false,
+    "copyFeedback": "toast"
+  },
+  "features": {
+    "favorites": true,
+    "recentUsed": true,
+    "keyboardNav": true,
+    "hoverPreview": true,
+    "commandPalette": true
+  }
+}
