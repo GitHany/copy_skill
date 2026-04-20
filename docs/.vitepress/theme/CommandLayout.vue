@@ -12,6 +12,38 @@
     <!-- 移动端遮罩层 -->
     <div class="mobile-overlay" v-show="mobileSidebarOpen" @click="mobileSidebarOpen = false"></div>
 
+    <!-- 移动端底部导航栏 -->
+    <nav class="mobile-bottom-nav" v-if="isMobile">
+      <button class="nav-btn" @click="overviewCollapsed = !overviewCollapsed" :class="{ active: !overviewCollapsed }">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+          <polyline points="9 22 9 12 15 12 15 22"/>
+        </svg>
+        <span>概览</span>
+      </button>
+      <button class="nav-btn" @click="showFavoritesOnly = !showFavoritesOnly" :class="{ active: showFavoritesOnly }">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2">
+          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+        </svg>
+        <span>收藏</span>
+      </button>
+      <button class="nav-btn" @click="searchInput?.focus()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/>
+          <path d="M21 21l-4.35-4.35"/>
+        </svg>
+        <span>搜索</span>
+      </button>
+      <button class="nav-btn" @click="mobileSidebarOpen = true">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="3" y1="12" x2="21" y2="12"/>
+          <line x1="3" y1="6" x2="21" y2="6"/>
+          <line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+        <span>菜单</span>
+      </button>
+    </nav>
+
     <!-- 侧边栏 -->
     <aside class="sidebar">
       <!-- Logo 区域 -->
@@ -43,13 +75,52 @@
             <path d="M21 21l-4.35-4.35"/>
           </svg>
           <input
+            ref="searchInput"
             v-model="searchQuery"
             type="text"
             placeholder="搜索命令或关键词..."
             class="search-input"
+            @focus="showSearchHistory = true"
+            @blur="setTimeout(() => showSearchHistory = false, 200)"
+            @keydown.enter="handleSearchEnter"
           />
-          <kbd class="search-kbd" v-if="!searchQuery">⌘K</kbd>
+          <button
+            v-if="searchQuery"
+            class="search-clear"
+            @click="searchQuery = ''"
+            title="清除搜索"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 6L6 18M6 6l12 12"/>
+            </svg>
+          </button>
+          <kbd class="search-kbd" v-else>⌘K</kbd>
+
+          <!-- 搜索历史下拉 -->
+          <Transition name="dropdown">
+            <div v-if="showSearchHistory && searchHistory.length > 0 && !searchQuery" class="search-history">
+              <div class="search-history-header">
+                <span>搜索历史</span>
+                <button class="search-history-clear" @click="clearSearchHistory">清除</button>
+              </div>
+              <div class="search-history-list">
+                <button
+                  v-for="(item, index) in searchHistory"
+                  :key="index"
+                  class="search-history-item"
+                  @click="searchQuery = item; showSearchHistory = false"
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <polyline points="12 6 12 12 16 14"/>
+                  </svg>
+                  <span>{{ item }}</span>
+                </button>
+              </div>
+            </div>
+          </Transition>
         </div>
+
         <div class="tree-toolbar">
           <button class="toolbar-btn" @click="expandAll" title="展开全部">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -75,6 +146,48 @@
           >
             <svg width="14" height="14" viewBox="0 0 24 24" :fill="showFavoritesOnly ? 'currentColor' : 'none'" stroke="currentColor" stroke-width="2">
               <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+            </svg>
+          </button>
+          <button class="toolbar-btn" @click="toggleTheme" :title="'主题: ' + themeMode">
+            <svg v-if="themeMode === 'dark'" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>
+            </svg>
+            <svg v-else-if="themeMode === 'light'" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="5"/>
+              <line x1="12" y1="1" x2="12" y2="3"/>
+              <line x1="12" y1="21" x2="12" y2="23"/>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+              <line x1="1" y1="12" x2="3" y2="12"/>
+              <line x1="21" y1="12" x2="23" y2="12"/>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+            </svg>
+            <svg v-else width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+              <line x1="8" y1="21" x2="16" y2="21"/>
+              <line x1="12" y1="17" x2="12" y2="21"/>
+            </svg>
+          </button>
+          <button class="toolbar-btn" @click="exportData" title="导出配置">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+              <polyline points="7 10 12 15 17 10"/>
+              <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+          </button>
+          <input 
+            type="file" 
+            accept=".json" 
+            ref="importFileInput" 
+            @change="handleImport" 
+            style="display:none"
+          />
+          <button class="toolbar-btn" @click="importFileInput?.click()" title="导入配置">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+              <polyline points="17 8 12 3 7 8"/>
+              <line x1="12" y1="3" x2="12" y2="15"/>
             </svg>
           </button>
         </div>
@@ -160,13 +273,10 @@
                 @mouseleave="hidePreview"
               >
                 <span class="command-indicator"></span>
-                <span class="command-name">{{ cmd.name }}</span>
-                <span class="command-action">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
-                    <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
-                  </svg>
-                </span>
+                <div class="command-info">
+                  <span class="command-name">{{ cmd.name }}</span>
+                  <span v-if="cmd.description" class="command-desc">{{ cmd.description }}</span>
+                </div>
               </div>
 
               <!-- 递归渲染子文件夹 -->
@@ -201,6 +311,10 @@
                   >
                     <span class="command-indicator"></span>
                     <span class="command-name">{{ cmd.name }}</span>
+                    <!-- 命令描述 Tooltip -->
+                    <div v-if="cmd.description" class="command-tooltip">
+                      <div class="tooltip-content">{{ cmd.description }}</div>
+                    </div>
                   </div>
                 </div>
               </template>
@@ -227,6 +341,97 @@
 
     <!-- 主内容区 -->
     <main class="content">
+      <!-- 快捷键帮助面板 -->
+      <Transition name="fade">
+        <div v-if="showShortcutsHelp" class="shortcuts-help">
+          <div class="shortcuts-header">
+            <h3>⌨️ 键盘快捷键</h3>
+            <button class="shortcuts-close" @click="showShortcutsHelp = false">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 6L6 18M6 6l12 12"/>
+              </svg>
+            </button>
+          </div>
+          <div class="shortcuts-grid">
+            <div class="shortcut-section">
+              <h4>🧭 导航</h4>
+              <div class="shortcut-item"><kbd>↑</kbd><kbd>↓</kbd> 上下导航</div>
+              <div class="shortcut-item"><kbd>Enter</kbd> 选择命令</div>
+              <div class="shortcut-item"><kbd>Esc</kbd> 清除选择</div>
+            </div>
+            <div class="shortcut-section">
+              <h4>⚡ 操作</h4>
+              <div class="shortcut-item"><kbd>C</kbd> 复制命令</div>
+              <div class="shortcut-item"><kbd>⌘K</kbd> 打开命令面板</div>
+              <div class="shortcut-item"><kbd>?</kbd> 显示帮助</div>
+            </div>
+            <div class="shortcut-section">
+              <h4>🎛️ 界面</h4>
+              <div class="shortcut-item"><kbd>B</kbd> 切换侧边栏</div>
+              <div class="shortcut-item"><kbd>\</kbd> 折叠模块概览</div>
+              <div class="shortcut-item"><kbd>F</kbd> 切换收藏过滤</div>
+            </div>
+            <div class="shortcut-section">
+              <h4>📂 文件夹</h4>
+              <div class="shortcut-item"><kbd>E</kbd> 展开全部</div>
+              <div class="shortcut-item"><kbd>A</kbd> 折叠全部</div>
+            </div>
+          </div>
+        </div>
+      </Transition>
+
+      <!-- 顶部模块概览 -->
+      <div class="module-overview-header" v-if="modules.length > 1">
+        <div class="overview-title-area" @click="toggleOverview">
+          <div class="overview-left">
+            <h3 class="overview-main-title">📚 模块概览</h3>
+            <span class="overview-subtitle">{{ totalCommands }} 个命令 · {{ filteredModules.length }} 个模块</span>
+          </div>
+          <button class="overview-toggle" :class="{ collapsed: overviewCollapsed }" title="折叠/展开模块概览">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 15l-6-6-6 6"/>
+            </svg>
+          </button>
+        </div>
+
+        <!-- 分类标签导航（模块 > 6 个时显示） -->
+        <div class="category-tabs" v-show="!overviewCollapsed" v-if="modules.length > 7">
+          <div class="tabs-scroll">
+            <button
+              v-for="cat in categoryTabs"
+              :key="cat.id"
+              class="category-tab"
+              :class="{ active: selectedCategory === cat.id }"
+              @click="selectCategory(cat.id)"
+            >
+              {{ cat.label }}
+            </button>
+          </div>
+        </div>
+
+        <!-- 模块卡片网格 -->
+        <div class="overview-cards" v-show="!overviewCollapsed">
+          <div
+            v-for="mod in filteredModules"
+            :key="mod.id"
+            class="overview-card"
+            :class="{ active: selectedModule === mod.id }"
+            @click="selectModule(mod.id)"
+          >
+            <div class="overview-card-icon">{{ mod.icon }}</div>
+            <div class="overview-card-info">
+              <h4 class="overview-card-title">{{ mod.name }}</h4>
+              <p class="overview-card-count">{{ mod.count }} 个命令</p>
+            </div>
+            <!-- 模块描述 Tooltip -->
+            <div class="card-tooltip">
+              <div class="tooltip-title">{{ mod.name }}</div>
+              <div class="tooltip-desc">包含 {{ mod.count }} 个命令</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div v-if="selectedCommand" class="command-detail">
         <!-- 头部 -->
         <div class="detail-header">
@@ -493,7 +698,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 
 const commands = ref([])
 const tree = ref([])
@@ -507,6 +712,107 @@ const sidebarCollapsed = ref(false)
 const mobileSidebarOpen = ref(false)
 const isMobile = ref(false)
 
+// 搜索历史
+// 主题管理
+const themeMode = ref('dark') // 'dark' | 'light' | 'auto'
+
+const loadTheme = () => {
+  try {
+    const saved = localStorage.getItem('themeMode')
+    if (saved) {
+      themeMode.value = saved
+    }
+    applyTheme()
+  } catch (e) {
+    console.error('Failed to load theme:', e)
+  }
+}
+
+const saveTheme = () => {
+  try {
+    localStorage.setItem('themeMode', themeMode.value)
+  } catch (e) {
+    console.error('Failed to save theme:', e)
+  }
+}
+
+const applyTheme = () => {
+  try {
+    const root = document.documentElement
+    let theme = themeMode.value
+    if (theme === 'auto') {
+      theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+    }
+    root.setAttribute('data-theme', theme)
+    console.log('主题已切换为:', theme)
+  } catch (e) {
+    console.error('主题切换失败:', e)
+  }
+}
+
+const toggleTheme = () => {
+  const modes = ['dark', 'light', 'auto']
+  const currentIndex = modes.indexOf(themeMode.value)
+  themeMode.value = modes[(currentIndex + 1) % modes.length]
+  applyTheme()
+  saveTheme()
+}
+
+const searchHistory = ref([])
+const showSearchHistory = ref(false)
+
+const loadSearchHistory = () => {
+  try {
+    const saved = localStorage.getItem('searchHistory')
+    if (saved) {
+      searchHistory.value = JSON.parse(saved)
+    }
+  } catch (e) {
+    console.error('Failed to load search history:', e)
+  }
+}
+
+const saveSearchHistory = () => {
+  try {
+    localStorage.setItem('searchHistory', JSON.stringify(searchHistory.value))
+  } catch (e) {
+    console.error('Failed to save search history:', e)
+  }
+}
+
+const addToSearchHistory = (query) => {
+  if (!query || query.trim().length === 0) return
+  const trimmed = query.trim()
+  // 移除已存在的相同项
+  searchHistory.value = searchHistory.value.filter(h => h !== trimmed)
+  // 添加到开头
+  searchHistory.value.unshift(trimmed)
+  // 只保留最近 10 条
+  searchHistory.value = searchHistory.value.slice(0, 10)
+  saveSearchHistory()
+}
+
+const clearSearchHistory = () => {
+  searchHistory.value = []
+  saveSearchHistory()
+}
+
+// 搜索防抖
+let searchDebounceTimer = null
+
+// 搜索时添加历史
+watch(searchQuery, (newQuery) => {
+  if (newQuery.length > 0) {
+    showSearchHistory.value = false
+    
+    // 清除之前的定时器
+    if (searchDebounceTimer) {
+      clearTimeout(searchDebounceTimer)
+    }
+    // 300ms 后执行搜索（已由 computed 自动处理）
+  }
+})
+
 // 占位符输入
 const showPlaceholderModal = ref(false)
 const placeholderValues = ref({})
@@ -518,10 +824,140 @@ const paletteSelectedIndex = ref(0)
 const paletteInput = ref(null)
 const recentCommands = ref([])
 
+// 快捷键帮助面板
+const showShortcutsHelp = ref(false)
+
 // 收藏夹
 const favorites = ref([])
 const showFavorites = ref(true)
 const showFavoritesOnly = ref(false)
+
+// 模块标签
+const modules = ref([])
+const selectedModule = ref('all')
+const totalCommands = computed(() => commands.value.filter(cmd => cmd.data && cmd.data.cmd).length)
+
+// 模块概览折叠状态
+const overviewCollapsed = ref(false)
+
+const toggleOverview = () => {
+  overviewCollapsed.value = !overviewCollapsed.value
+}
+
+// 分类标签系统
+const selectedCategory = ref('all')
+const categoryTabs = ref([])
+const filteredModules = computed(() => {
+  const moduleList = modules.value.filter(m => m.id !== 'all')
+  
+  if (selectedCategory.value === 'all') {
+    return moduleList
+  }
+  
+  const category = categoryTabs.value.find(c => c.id === selectedCategory.value)
+  if (!category) return moduleList
+  
+  return moduleList.filter(mod => {
+    const firstChar = mod.name.charAt(0).toUpperCase()
+    return category.ranges.some(range => {
+      if (range.length === 1) {
+        return firstChar === range[0]
+      }
+      return firstChar >= range[0] && firstChar <= range[1]
+    })
+  })
+})
+
+const generateCategoryTabs = () => {
+  const moduleList = modules.value.filter(m => m.id !== 'all')
+  
+  // 按首字母分组
+  const groups = {
+    'A-E': { ranges: [['A'], ['B'], ['C'], ['D'], ['E']], modules: [] },
+    'F-J': { ranges: [['F'], ['G'], ['H'], ['I'], ['J']], modules: [] },
+    'K-O': { ranges: [['K'], ['L'], ['M'], ['N'], ['O']], modules: [] },
+    'P-T': { ranges: [['P'], ['Q'], ['R'], ['S'], ['T']], modules: [] },
+    'U-Z': { ranges: [['U'], ['V'], ['W'], ['X'], ['Y'], ['Z']], modules: [] }
+  }
+  
+  // 统计每个分类的模块数
+  moduleList.forEach(mod => {
+    const firstChar = mod.name.charAt(0).toUpperCase()
+    for (const [key, group] of Object.entries(groups)) {
+      const inGroup = group.ranges.some(range => {
+        if (range.length === 1) return firstChar === range[0]
+        return firstChar >= range[0] && firstChar <= range[1]
+      })
+      if (inGroup) {
+        group.modules.push(mod)
+        break
+      }
+    }
+  })
+  
+  // 只显示有模块的分类
+  categoryTabs.value = [
+    { id: 'all', label: `全部 (${moduleList.length})` },
+    ...Object.entries(groups)
+      .filter(([_, group]) => group.modules.length > 0)
+      .map(([key, group]) => ({
+        id: key,
+        label: `${key} (${group.modules.length})`,
+        ranges: group.ranges
+      }))
+  ]
+}
+
+const selectCategory = (categoryId) => {
+  selectedCategory.value = categoryId
+  // 如果当前选中的模块不在新分类中，则重置为全部
+  if (categoryId !== 'all') {
+    const category = categoryTabs.value.find(c => c.id === categoryId)
+    if (category) {
+      const inCategory = filteredModules.value.some(m => m.id === selectedModule.value)
+      if (!inCategory) {
+        selectedModule.value = 'all'
+      }
+    }
+  }
+}
+
+const MODULE_ICONS = {
+  'Claude Skills': '🤖',
+  'Linux 命令': '🐧',
+  'Git 命令': '🔀',
+  '提示词': '💡',
+  'GSD 工作流': '🔄',
+  'default': '📁'
+}
+
+const extractModules = () => {
+  const moduleMap = {}
+  commands.value.forEach(cmd => {
+    if (!cmd.data || !cmd.data.cmd) return
+    const path = cmd.dirPath.replace(/^\/|\/$/g, '')
+    if (!path) return
+    const parts = path.split('/')
+    const topModule = parts[0]
+    if (!moduleMap[topModule]) {
+      moduleMap[topModule] = { id: topModule, name: topModule, count: 0, icon: MODULE_ICONS[topModule] || MODULE_ICONS['default'] }
+    }
+    moduleMap[topModule].count++
+  })
+  modules.value = [
+    { id: 'all', name: '全部', count: commands.value.filter(c => c.data && c.data.cmd).length, icon: '📋' },
+    ...Object.values(moduleMap)
+  ]
+  generateCategoryTabs()
+}
+
+const selectModule = (moduleId) => {
+  selectedModule.value = moduleId
+  // 切换模块时清除搜索
+  if (searchQuery.value) {
+    searchQuery.value = ''
+  }
+}
 
 // Hover 预览
 const previewCommand = ref(null)
@@ -569,6 +1005,7 @@ const loadCommands = async () => {
       return item
     })
     buildTree()
+    extractModules()
 
     if (commands.value.length > 0) {
       expandAllFolders(tree.value)
@@ -635,13 +1072,25 @@ const buildTree = () => {
 }
 
 const displayedTree = computed(() => {
+  // 第一步：模块过滤
+  let baseTree = tree.value
+  if (selectedModule.value !== 'all') {
+    baseTree = tree.value.filter(node => {
+      // 顶层模块名匹配
+      return node.id === '/' + selectedModule.value || node.name === selectedModule.value
+    })
+  }
+
   if (!searchQuery.value) {
-    return tree.value
+    return baseTree
   }
 
   // 支持模糊搜索：关键词可以用空格分隔多个词
   const queries = searchQuery.value.toLowerCase().split(/\s+/).filter(q => q)
-  if (queries.length === 0) return tree.value
+  if (queries.length === 0) return baseTree
+
+  // 收集所有需要展开的文件夹 ID
+  const foldersToExpand = new Set()
 
   const filterTree = (nodes) => {
     const result = []
@@ -656,6 +1105,19 @@ const displayedTree = computed(() => {
       const filteredChildren = filterTree(node.children || [])
 
       if (filteredCommands.length > 0 || filteredChildren.length > 0) {
+        // 有匹配结果，记录需要展开的文件夹
+        foldersToExpand.add(node.id)
+        if (filteredCommands.length > 0) {
+          // 收集命令的父文件夹路径
+          filteredCommands.forEach(cmd => {
+            const pathParts = cmd.dirPath.replace(/^\/|\/$/g, '').split('/')
+            let currentPath = ''
+            pathParts.forEach(part => {
+              currentPath += '/' + part
+              foldersToExpand.add(currentPath)
+            })
+          })
+        }
         result.push({
           ...node,
           commands: filteredCommands,
@@ -666,7 +1128,14 @@ const displayedTree = computed(() => {
     return result
   }
 
-  return filterTree(tree.value)
+  const filteredTree = filterTree(baseTree)
+
+  // 搜索时自动展开所有匹配的文件夹
+  if (foldersToExpand.size > 0) {
+    expandedFolders.value = new Set([...expandedFolders.value, ...foldersToExpand])
+  }
+
+  return filteredTree
 })
 
 const toggleFolder = (folderId) => {
@@ -739,6 +1208,11 @@ const doCopy = async (textToCopy, index) => {
     isCopied.value = true
     copiedIndex.value = index
     showToast.value = true
+
+    // 添加到搜索历史
+    if (searchQuery.value) {
+      addToSearchHistory(searchQuery.value)
+    }
 
     setTimeout(() => {
       isCopied.value = false
@@ -895,6 +1369,93 @@ const saveLayoutState = () => {
 }
 
 // 切换收藏
+const handleSearchEnter = () => {
+  if (searchQuery.value.trim()) {
+    addToSearchHistory(searchQuery.value)
+  }
+  showSearchHistory.value = false
+}
+
+// 数据导入导出
+const exportData = () => {
+  const data = {
+    version: '1.0',
+    exportDate: new Date().toISOString(),
+    favorites: favorites.value,
+    searchHistory: searchHistory.value,
+    layoutState: {
+      sidebarCollapsed: sidebarCollapsed.value,
+      overviewCollapsed: overviewCollapsed.value,
+      selectedModule: selectedModule.value,
+      selectedCategory: selectedCategory.value
+    },
+    themeMode: themeMode.value
+  }
+  
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = `copy-skill-backup-${new Date().toLocaleDateString().replace(/\//g, '-')}.json`
+  a.click()
+  URL.revokeObjectURL(url)
+}
+
+const importFileInput = ref(null)
+
+const handleImport = (event) => {
+  const file = event.target.files[0]
+  if (!file) return
+  
+  const reader = new FileReader()
+  reader.onload = (e) => {
+    try {
+      const data = JSON.parse(e.target.result)
+      
+      if (!data.version) {
+        alert('无效的备份文件')
+        return
+      }
+      
+      if (data.favorites) {
+        favorites.value = data.favorites
+        saveFavorites()
+      }
+      if (data.searchHistory) {
+        searchHistory.value = data.searchHistory
+        saveSearchHistory()
+      }
+      if (data.layoutState) {
+        if (data.layoutState.sidebarCollapsed !== undefined) {
+          sidebarCollapsed.value = data.layoutState.sidebarCollapsed
+        }
+        if (data.layoutState.overviewCollapsed !== undefined) {
+          overviewCollapsed.value = data.layoutState.overviewCollapsed
+        }
+        if (data.layoutState.selectedModule) {
+          selectedModule.value = data.layoutState.selectedModule
+        }
+        if (data.layoutState.selectedCategory) {
+          selectedCategory.value = data.layoutState.selectedCategory
+        }
+      }
+      if (data.themeMode) {
+        themeMode.value = data.themeMode
+        applyTheme()
+        saveTheme()
+      }
+      
+      saveLayoutState()
+      alert('导入成功！')
+    } catch (err) {
+      alert('导入失败：' + err.message)
+    }
+    
+    event.target.value = ''
+  }
+  reader.readAsText(file)
+}
+
 const toggleFavorite = (cmd) => {
   const idx = favorites.value.findIndex(c => c.id === cmd.id)
   if (idx >= 0) {
@@ -1001,6 +1562,72 @@ const handleKeydown = (e) => {
     return
   }
 
+  // ? 显示快捷键帮助
+  if (e.key === '?' && !e.metaKey && !e.ctrlKey && !e.altKey) {
+    const activeEl = document.activeElement
+    const isInputFocused = activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA')
+    if (!isInputFocused) {
+      e.preventDefault()
+      showShortcutsHelp.value = !showShortcutsHelp.value
+      return
+    }
+  }
+
+  // \ 折叠/展开模块概览
+  if (e.key === '\\' && !e.metaKey && !e.ctrlKey && !e.altKey) {
+    const activeEl = document.activeElement
+    const isInputFocused = activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA')
+    if (!isInputFocused) {
+      e.preventDefault()
+      toggleOverview()
+      return
+    }
+  }
+
+  // B 切换侧边栏
+  if (e.key === 'b' && !e.metaKey && !e.ctrlKey && !e.altKey) {
+    const activeEl = document.activeElement
+    const isInputFocused = activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA')
+    if (!isInputFocused) {
+      e.preventDefault()
+      sidebarCollapsed.value = !sidebarCollapsed.value
+      return
+    }
+  }
+
+  // F 切换收藏过滤
+  if (e.key === 'f' && !e.metaKey && !e.ctrlKey && !e.altKey) {
+    const activeEl = document.activeElement
+    const isInputFocused = activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA')
+    if (!isInputFocused) {
+      e.preventDefault()
+      showFavoritesOnly.value = !showFavoritesOnly.value
+      return
+    }
+  }
+
+  // E 展开全部文件夹
+  if (e.key === 'e' && !e.metaKey && !e.ctrlKey && !e.altKey) {
+    const activeEl = document.activeElement
+    const isInputFocused = activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA')
+    if (!isInputFocused) {
+      e.preventDefault()
+      expandAll()
+      return
+    }
+  }
+
+  // A 折叠全部文件夹
+  if (e.key === 'a' && !e.metaKey && !e.ctrlKey && !e.altKey) {
+    const activeEl = document.activeElement
+    const isInputFocused = activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA')
+    if (!isInputFocused) {
+      e.preventDefault()
+      collapseAll()
+      return
+    }
+  }
+
   // 方向键导航
   if (e.key === 'ArrowUp') {
     e.preventDefault()
@@ -1039,6 +1666,7 @@ const handleKeydown = (e) => {
   // Escape 清除选择
   if (e.key === 'Escape') {
     keyboardSelectedId.value = null
+    showShortcutsHelp.value = false
   }
 }
 
@@ -1047,6 +1675,8 @@ onMounted(() => {
   loadRecentCommands()
   loadFavorites()
   loadLayoutState()
+  loadSearchHistory()
+  loadTheme()
   checkMobile()
   window.addEventListener('resize', checkMobile)
   document.addEventListener('keydown', handleKeydown)
@@ -1065,8 +1695,8 @@ onUnmounted(() => {
 </script>
 
 <style>
-/* Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@400;500;600;700&display=swap');
+/* Google Fonts - 思源黑体 + JetBrains Mono */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 /* CSS Variables */
 :root {
@@ -1090,8 +1720,24 @@ onUnmounted(() => {
   --sidebar-width: 320px;
   --sidebar-collapsed-width: 56px;
 
-  --font-ui: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+/* ==================== 亮色主题 ==================== */
+[data-theme="light"] {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f5f5f5;
+  --bg-tertiary: #e5e5e5;
+  --bg-hover: #e0e0e0;
+  --bg-active: #d0d0d0;
+
+  --text-primary: #1a1a1a;
+  --text-secondary: #666666;
+  --text-muted: #999999;
+
+  --border-color: #e0e0e0;
+  --border-hover: #c0c0c0;
+}
+
+  --font-ui: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Microsoft YaHei', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'Source Code Pro', monospace;
 
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
@@ -1103,6 +1749,7 @@ onUnmounted(() => {
 <style scoped>
 .command-app {
   display: flex;
+  flex-direction: row;
   height: 100vh;
   width: 100vw;
   position: fixed;
@@ -1126,6 +1773,354 @@ onUnmounted(() => {
   z-index: 10000;
 }
 
+/* 快捷键帮助面板 */
+.shortcuts-help {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow-lg);
+}
+
+.shortcuts-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.shortcuts-header h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.shortcuts-close {
+  width: 28px;
+  height: 28px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 150ms ease-out;
+}
+
+.shortcuts-close:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+  border-color: var(--border-hover);
+}
+
+.shortcuts-close:active {
+  transform: scale(0.95);
+}
+
+.shortcuts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+}
+
+.shortcut-section h4 {
+  font-size: 13px;
+  font-weight: 600;
+  margin: 0 0 12px 0;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.shortcut-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 13px;
+  color: var(--text-primary);
+}
+
+.shortcut-item kbd {
+  padding: 3px 8px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-secondary);
+  min-width: 28px;
+  text-align: center;
+}
+
+/* 淡入淡出动画 */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 200ms ease-out, transform 200ms ease-out;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+/* 顶部模块概览区域 */
+.module-overview-header {
+  background: var(--bg-primary);
+  border-bottom: 1px solid var(--border-color);
+  padding: 20px 24px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  backdrop-filter: blur(8px);
+}
+
+.overview-title-area {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  cursor: pointer;
+  padding: 8px 12px;
+  margin: -8px -12px 16px -12px;
+  border-radius: 8px;
+  transition: background-color 150ms ease-out;
+}
+
+.overview-title-area:hover {
+  background: var(--bg-hover);
+}
+
+.overview-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+}
+
+.overview-main-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+  white-space: nowrap;
+}
+
+.overview-subtitle {
+  font-size: 13px;
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  white-space: nowrap;
+}
+
+/* 折叠按钮 */
+.overview-toggle {
+  width: 28px;
+  height: 28px;
+  min-width: 28px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 150ms ease-out;
+}
+
+.overview-toggle:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+  border-color: var(--border-hover);
+}
+
+.overview-toggle:active {
+  transform: scale(0.95);
+}
+
+.overview-toggle svg {
+  transition: transform 200ms ease-out;
+}
+
+.overview-toggle.collapsed svg {
+  transform: rotate(180deg);
+}
+
+/* 分类标签 */
+.category-tabs {
+  margin-bottom: 16px;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 12px;
+}
+
+.category-tabs .tabs-scroll {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.category-tabs .tabs-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.category-tab {
+  flex-shrink: 0;
+  padding: 8px 16px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 13px;
+  font-family: var(--font-ui);
+  color: var(--text-secondary);
+  white-space: nowrap;
+  transition: all 150ms ease-out;
+}
+
+.category-tab:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+  border-color: var(--border-hover);
+}
+
+.category-tab:active {
+  transform: scale(0.95);
+}
+
+.category-tab.active {
+  background: var(--accent-primary);
+  color: #0c0c0f;
+  border-color: var(--accent-primary);
+  font-weight: 600;
+}
+
+/* 紧凑型模块卡片网格 */
+.overview-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 10px;
+}
+
+.overview-card {
+  display: flex;
+  align-items: center;
+  padding: 12px 14px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 150ms ease-out;
+  position: relative;
+}
+
+.overview-card:hover {
+  background: var(--bg-hover);
+  border-color: var(--accent-primary);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* 模块卡片 Tooltip */
+.overview-card .card-tooltip {
+  display: none;
+  position: absolute;
+  left: 100%;
+  top: 0;
+  margin-left: 8px;
+  z-index: 1000;
+  min-width: 200px;
+  max-width: 300px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 12px;
+  box-shadow: var(--shadow-lg);
+  pointer-events: none;
+}
+
+.overview-card .tooltip-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.overview-card .tooltip-desc {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.overview-card:hover .card-tooltip {
+  display: block;
+}
+
+.overview-card:active {
+  transform: scale(0.97) translateY(-1px);
+}
+
+.overview-card.active {
+  background: var(--accent-primary);
+  color: #0c0c0f;
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 16px var(--accent-glow);
+}
+
+.overview-card-icon {
+  font-size: 20px;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+.overview-card-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.overview-card-title {
+  font-size: 13px;
+  font-weight: 600;
+  margin: 0 0 3px 0;
+  color: inherit;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.overview-card-count {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin: 0;
+  font-family: var(--font-mono);
+}
+
+.overview-card.active .overview-card-count {
+  color: rgba(12, 12, 15, 0.8);
+}
+
+.overview-card-arrow {
+  opacity: 0.6;
+  margin-left: 8px;
+  flex-shrink: 0;
+  transition: opacity 150ms ease-out, transform 150ms ease-out;
+}
+
+.overview-card:hover .overview-card-arrow {
+  opacity: 1;
+  transform: translateX(2px);
+}
+
 /* ==================== 侧边栏 ==================== */
 .sidebar {
   width: var(--sidebar-width);
@@ -1134,7 +2129,7 @@ onUnmounted(() => {
   border-right: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: width 180ms ease-out, min-width 180ms ease-out;
   position: relative;
   z-index: 1;
 }
@@ -1204,13 +2199,17 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s;
+  transition: transform 100ms ease-out, background-color 150ms ease-out, border-color 150ms ease-out, color 150ms ease-out;
 }
 
 .collapse-btn:hover {
   background: var(--bg-hover);
   color: var(--text-primary);
   border-color: var(--border-hover);
+}
+
+.collapse-btn:active {
+  transform: scale(0.94);
 }
 
 /* 搜索 */
@@ -1242,7 +2241,7 @@ onUnmounted(() => {
   font-family: var(--font-ui);
   color: var(--text-primary);
   outline: none;
-  transition: all 0.2s;
+  transition: border-color 150ms ease-out, box-shadow 150ms ease-out;
 }
 
 .search-input::placeholder {
@@ -1266,6 +2265,122 @@ onUnmounted(() => {
   color: var(--text-muted);
 }
 
+/* 搜索清除按钮 */
+.search-clear {
+position: absolute;
+right: 10px;
+width: 20px;
+height: 20px;
+background: var(--bg-tertiary);
+border: 1px solid var(--border-color);
+border-radius: 4px;
+color: var(--text-muted);
+cursor: pointer;
+display: flex;
+align-items: center;
+justify-content: center;
+transition: all 150ms ease-out;
+}
+
+.search-clear:hover {
+background: var(--bg-hover);
+color: var(--text-primary);
+border-color: var(--border-hover);
+}
+
+.search-clear:active {
+transform: scale(0.9);
+}
+
+/* 搜索历史下拉 */
+.search-history {
+position: absolute;
+top: 100%;
+left: 0;
+right: 0;
+background: var(--bg-secondary);
+border: 1px solid var(--border-color);
+border-radius: 8px;
+margin-top: 8px;
+padding: 12px;
+box-shadow: var(--shadow-lg);
+z-index: 100;
+max-height: 300px;
+overflow-y: auto;
+}
+
+.search-history-header {
+display: flex;
+justify-content: space-between;
+align-items: center;
+margin-bottom: 8px;
+padding-bottom: 8px;
+border-bottom: 1px solid var(--border-color);
+font-size: 12px;
+color: var(--text-secondary);
+}
+
+.search-history-clear {
+background: none;
+border: none;
+color: var(--accent-primary);
+cursor: pointer;
+font-size: 12px;
+padding: 2px 6px;
+border-radius: 4px;
+transition: background-color 150ms ease-out;
+}
+
+.search-history-clear:hover {
+background: var(--accent-glow);
+}
+
+.search-history-list {
+display: flex;
+flex-direction: column;
+gap: 2px;
+}
+
+.search-history-item {
+display: flex;
+align-items: center;
+gap: 8px;
+padding: 8px 10px;
+background: none;
+border: none;
+border-radius: 6px;
+cursor: pointer;
+color: var(--text-primary);
+font-size: 13px;
+text-align: left;
+transition: background-color 150ms ease-out;
+}
+
+.search-history-item:hover {
+background: var(--bg-hover);
+}
+
+.search-history-item:active {
+transform: scale(0.98);
+}
+
+.search-history-item svg {
+color: var(--text-muted);
+flex-shrink: 0;
+}
+
+/* 下拉动画 */
+.dropdown-enter-active,
+.dropdown-leave-active {
+transition: opacity 150ms ease-out, transform 150ms ease-out;
+}
+
+.dropdown-enter-from,
+.dropdown-leave-to {
+opacity: 0;
+transform: translateY(-8px);
+}
+
 /* 工具栏 */
 .tree-toolbar {
   display: flex;
@@ -1286,13 +2401,17 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s;
+  transition: transform 100ms ease-out, background-color 150ms ease-out, border-color 150ms ease-out, color 150ms ease-out;
 }
 
 .toolbar-btn:hover {
   background: var(--bg-hover);
   color: var(--text-primary);
   border-color: var(--border-hover);
+}
+
+.toolbar-btn:active {
+  transform: scale(0.94);
 }
 
 .toolbar-btn.active {
@@ -1399,7 +2518,7 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  transition: all 0.15s;
+  transition: background-color 120ms ease-out;
   user-select: none;
 }
 
@@ -1477,11 +2596,17 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   gap: 10px;
-  transition: all 0.15s;
+  transition: background-color 100ms ease-out;
   position: relative;
-  animation: fadeSlideIn 0.3s ease-out forwards;
-  animation-delay: var(--delay, 0ms);
-  opacity: 0;
+  /* 性能优化：跳过屏幕外内容的渲染 */
+  content-visibility: auto;
+  contain-intrinsic-size: 0 44px;
+}
+
+/* 搜索时有动画，普通浏览时禁用 */
+.command-item {
+  animation: none;
+  opacity: 1;
 }
 
 @keyframes fadeSlideIn {
@@ -1497,6 +2622,35 @@ onUnmounted(() => {
 
 .command-item:hover {
   background: var(--bg-hover);
+}
+
+/* 命令描述 Tooltip */
+.command-tooltip {
+  display: none;
+  position: absolute;
+  left: 100%;
+  top: 0;
+  margin-left: 8px;
+  z-index: 1000;
+  min-width: 200px;
+  max-width: 400px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 12px;
+  box-shadow: var(--shadow-lg);
+  pointer-events: none;
+  white-space: normal;
+}
+
+.command-tooltip .tooltip-content {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.command-item:hover .command-tooltip {
+  display: block !important;
 }
 
 .command-item.active {
@@ -1525,7 +2679,7 @@ onUnmounted(() => {
   min-width: 6px;
   border: 1px solid var(--text-muted);
   border-radius: 50%;
-  transition: all 0.15s;
+  transition: border-color 120ms ease-out, background-color 120ms ease-out, box-shadow 120ms ease-out;
 }
 
 .command-item:hover .command-indicator {
@@ -1550,15 +2704,44 @@ onUnmounted(() => {
   transition: color 0.15s;
 }
 
+.command-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.command-info .command-name {
+  flex: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.command-info .command-desc {
+  flex: 1;
+  font-size: 11px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .command-item:hover .command-name,
 .command-item.active .command-name {
   color: var(--text-primary);
 }
 
+.command-item:hover .command-desc,
+.command-item.active .command-desc {
+  color: var(--text-secondary);
+}
+
 .command-action {
   opacity: 0;
   color: var(--text-muted);
-  transition: all 0.15s;
+  transition: opacity 120ms ease-out;
   display: flex;
 }
 
@@ -1590,7 +2773,7 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s;
+  transition: transform 100ms ease-out, background-color 150ms ease-out, border-color 150ms ease-out, color 150ms ease-out;
 }
 
 .nav-mini-item:hover {
@@ -1599,23 +2782,28 @@ onUnmounted(() => {
   border-color: var(--accent-primary);
 }
 
+.nav-mini-item:active {
+  transform: scale(0.94);
+}
+
 /* 文件夹动画 */
 .folder-content-enter-active,
 .folder-content-leave-active {
-  transition: all 0.2s ease;
+  transition: opacity 150ms ease-out, transform 150ms ease-out;
   overflow: hidden;
 }
 
 .folder-content-enter-from,
 .folder-content-leave-to {
   opacity: 0;
-  max-height: 0;
+  transform: scaleY(0.95);
+  transform-origin: top;
 }
 
 .folder-content-enter-to,
 .folder-content-leave-from {
   opacity: 1;
-  max-height: 500px;
+  transform: scaleY(1);
 }
 
 /* ==================== 主内容区 ==================== */
@@ -1683,7 +2871,7 @@ onUnmounted(() => {
   border-radius: 10px;
   color: var(--text-muted);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: transform 100ms ease-out, background-color 150ms ease-out, border-color 150ms ease-out, color 150ms ease-out;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1693,6 +2881,10 @@ onUnmounted(() => {
   background: var(--bg-hover);
   color: var(--accent-primary);
   border-color: var(--accent-primary);
+}
+
+.favorite-btn:active {
+  transform: scale(0.94);
 }
 
 .favorite-btn.favorited {
@@ -1779,7 +2971,7 @@ onUnmounted(() => {
   border: 1px solid var(--border-color);
   border-radius: 12px;
   overflow: hidden;
-  transition: all 0.3s;
+  transition: border-color 150ms ease-out, box-shadow 150ms ease-out;
 }
 
 .command-section .command-block:hover {
@@ -1845,13 +3037,17 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   gap: 6px;
-  transition: all 0.2s;
+  transition: transform 100ms ease-out, background-color 150ms ease-out, border-color 150ms ease-out, color 150ms ease-out;
 }
 
 .copy-btn:hover {
   background: var(--bg-hover);
   color: var(--text-primary);
   border-color: var(--border-hover);
+}
+
+.copy-btn:active {
+  transform: scale(0.96);
 }
 
 .copy-btn.copied {
@@ -1908,7 +3104,7 @@ onUnmounted(() => {
 
 .copy-icon-enter-active,
 .copy-icon-leave-active {
-  transition: all 0.2s ease;
+  transition: opacity 150ms ease-out, transform 150ms ease-out;
 }
 
 .copy-icon-enter-from {
@@ -1936,13 +3132,17 @@ onUnmounted(() => {
   font-size: 13px;
   color: var(--text-secondary);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: transform 100ms ease-out, background-color 150ms ease-out, border-color 150ms ease-out, color 150ms ease-out;
 }
 
 .keyword-tag:hover {
   background: var(--bg-hover);
   color: var(--accent-primary);
   border-color: var(--accent-primary);
+}
+
+.keyword-tag:active {
+  transform: scale(0.96);
 }
 
 .keyword-tag.active {
@@ -2460,6 +3660,57 @@ onUnmounted(() => {
   backdrop-filter: blur(4px);
 }
 
+/* ==================== 移动端底部导航 ==================== */
+.mobile-bottom-nav {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: var(--bg-secondary);
+  border-top: 1px solid var(--border-color);
+  z-index: 98;
+  padding: 8px 16px;
+  padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
+}
+
+.mobile-bottom-nav .nav-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 8px;
+  transition: all 150ms ease-out;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mobile-bottom-nav .nav-btn:active {
+  transform: scale(0.95);
+  background: var(--bg-hover);
+}
+
+.mobile-bottom-nav .nav-btn.active {
+  color: var(--accent-primary);
+}
+
+.mobile-bottom-nav .nav-btn svg {
+  flex-shrink: 0;
+}
+
+.mobile-bottom-nav .nav-btn span {
+  font-size: 11px;
+  font-family: var(--font-ui);
+  white-space: nowrap;
+}
+
 /* ==================== 响应式 ==================== */
 @media (max-width: 768px) {
   .mobile-menu-btn {
@@ -2468,6 +3719,14 @@ onUnmounted(() => {
 
   .mobile-overlay {
     display: block;
+  }
+
+  .mobile-bottom-nav {
+    display: flex;
+  }
+
+  .content {
+    padding-bottom: 76px;
   }
 
   .sidebar {

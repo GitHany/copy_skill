@@ -2,867 +2,3794 @@
   "data": [
     {
       "dirPath": "/Claude Skills/oh-my-claude/",
-      "name": "1-00 安装",
-      "keyword": "plugin 安装",
-      "description": "",
+      "name": "安装 oh-my-claude",
+      "keyword": "/plugin marketplace add",
+      "description": "安装 oh-my-claude 插件",
       "data": {
-        "cmd": "/plugin marketplace add https://github.com/Yeachan-Heo/oh-my-claudecode\n/plugin install oh-my-claudecode\n/omc-setup"
-      }
-    },
-    {
-      "dirPath": "/Claude Skills/everything-claude-code/",
-      "name": "1-00 安装",
-      "keyword": "安装",
-      "description": "",
-      "data": {
-        "cmd": "# 添加市场\n/plugin marketplace add affaan-m/everything-claude-code\n\n# 安装插件\n/plugin install ecc@ecc"
-      }
-    },
-    {
-      "dirPath": "/Claude Skills/superpowers/",
-      "name": "1-00 安装",
-      "keyword": "plugin 安装",
-      "description": "",
-      "data": {
-        "cmd": "/plugin marketplace add obra/superpowers-marketplace\n/plugin install superpowers@superpowers-marketplace"
+        "cmd": "/plugin marketplace add https://github.com/Yeachan-Heo/oh-my-claudecode",
+        "extensions": [
+          {
+            "name": "安装插件",
+            "cmd": "/plugin install oh-my-claudecode",
+            "params": {},
+            "keyword": "/plugin install oh-my-claudecode"
+          },
+          {
+            "name": "初始化配置",
+            "cmd": "/omc-setup",
+            "params": {},
+            "keyword": "/omc-setup"
+          },
+          {
+            "name": "更新插件",
+            "cmd": "/plugin update oh-my-claudecode",
+            "params": {},
+            "keyword": "/plugin update"
+          },
+          {
+            "name": "查看插件列表",
+            "cmd": "/plugin list",
+            "params": {},
+            "keyword": "/plugin list"
+          },
+          {
+            "name": "卸载插件",
+            "cmd": "/plugin uninstall oh-my-claudecode",
+            "params": {},
+            "keyword": "/plugin uninstall"
+          }
+        ],
+        "params": {}
       }
     },
     {
       "dirPath": "/Claude Skills/oh-my-claude/",
-      "name": "1-01 autopilot 自动执行",
-      "keyword": "oh-my-claudecode:autopilot autopilot 自动执行",
-      "description": "",
+      "name": "autopilot 自动执行任务",
+      "keyword": "/oh-my-claudecode:autopilot",
+      "description": "AI 自动执行完整任务流程",
       "data": {
-        "cmd": "/oh-my-claudecode:autopilot %{执行任务}% "
+        "cmd": "/oh-my-claudecode:autopilot %{任务描述}%",
+        "extensions": [
+          {
+            "name": "详细日志模式",
+            "cmd": "/oh-my-claudecode:autopilot %{任务}% --verbose",
+            "params": {},
+            "keyword": "--verbose 详细日志"
+          },
+          {
+            "name": "交互确认模式",
+            "cmd": "/oh-my-claudecode:autopilot %{任务}% --interactive",
+            "params": {},
+            "keyword": "--interactive 交互确认"
+          },
+          {
+            "name": "查看历史",
+            "cmd": "/oh-my-claudecode:autopilot --history",
+            "params": {},
+            "keyword": "--history 查看历史"
+          },
+          {
+            "name": "实现完整功能",
+            "cmd": "/oh-my-claudecode:autopilot \"实现完整的用户认证模块\"",
+            "params": {},
+            "keyword": "autopilot 实现完整功能"
+          },
+          {
+            "name": "修复 Bug",
+            "cmd": "/oh-my-claudecode:autopilot \"修复登录页面性能问题\"",
+            "params": {},
+            "keyword": "autopilot 修复 Bug"
+          },
+          {
+            "name": "开发 API",
+            "cmd": "/oh-my-claudecode:autopilot \"开发 RESTful API\"",
+            "params": {},
+            "keyword": "autopilot API 开发"
+          }
+        ],
+        "params": {
+          "任务描述": {
+            "type": "string",
+            "required": true,
+            "description": "要执行的任务描述",
+            "example": "实现用户登录功能",
+            "notes": "越详细 AI 理解越准确"
+          },
+          "任务": {
+            "type": "string",
+            "required": true,
+            "description": "任务参数",
+            "example": "",
+            "notes": ""
+          }
+        }
+      }
+    },
+    {
+      "dirPath": "/Claude Skills/oh-my-claude/",
+      "name": "deep-interview 深度访谈",
+      "keyword": "/oh-my-claudecode:deep-interview",
+      "description": "系统化提问以明确需求",
+      "data": {
+        "cmd": "/oh-my-claudecode:deep-interview %{问题领域}%",
+        "extensions": [
+          {
+            "name": "技术选型咨询",
+            "cmd": "/oh-my-claudecode:deep-interview \"技术栈选型\"",
+            "params": {},
+            "keyword": "deep-interview 技术选型"
+          },
+          {
+            "name": "需求澄清",
+            "cmd": "/oh-my-claudecode:deep-interview \"功能需求澄清\"",
+            "params": {},
+            "keyword": "deep-interview 需求澄清"
+          },
+          {
+            "name": "架构设计讨论",
+            "cmd": "/oh-my-claudecode:deep-interview \"系统架构设计\"",
+            "params": {},
+            "keyword": "deep-interview 架构设计"
+          },
+          {
+            "name": "Bug 复现分析",
+            "cmd": "/oh-my-claudecode:deep-interview \"Bug 复现与根因分析\"",
+            "params": {},
+            "keyword": "deep-interview Bug 分析"
+          }
+        ],
+        "params": {
+          "问题领域": {
+            "type": "string",
+            "required": true,
+            "description": "需要讨论的问题领域",
+            "example": "项目优化方向",
+            "notes": "AI 会通过系统性提问明确需求"
+          }
+        }
+      }
+    },
+    {
+      "dirPath": "/Claude Skills/oh-my-claude/",
+      "name": "ralph 代码审查",
+      "keyword": "/ralph",
+      "description": "AI 代码审查助手",
+      "data": {
+        "cmd": "/ralph %{审查内容}%",
+        "extensions": [
+          {
+            "name": "审查代码质量",
+            "cmd": "/ralph \"审查 src/utils/helpers.ts 的代码质量\"",
+            "params": {},
+            "keyword": "ralph 代码质量"
+          },
+          {
+            "name": "安全漏洞检查",
+            "cmd": "/ralph \"检查登录模块的安全漏洞\"",
+            "params": {},
+            "keyword": "ralph 安全检查"
+          },
+          {
+            "name": "性能问题诊断",
+            "cmd": "/ralph \"诊断 API 性能瓶颈\"",
+            "params": {},
+            "keyword": "ralph 性能诊断"
+          }
+        ],
+        "params": {
+          "审查内容": {
+            "type": "string",
+            "required": true,
+            "description": "需要审查的内容",
+            "example": "用户认证模块",
+            "notes": ""
+          }
+        }
+      }
+    },
+    {
+      "dirPath": "/Claude Skills/ultrawork/",
+      "name": "ultrawork 最大并行",
+      "keyword": "/ultrawork",
+      "description": "多 agent 最大并行执行模式",
+      "data": {
+        "cmd": "/ultrawork %{任务描述}%",
+        "extensions": [
+          {
+            "name": "快速修复 Bug",
+            "cmd": "/ultrawork \"修复项目中所有的 TypeScript 类型错误\"",
+            "params": {},
+            "keyword": "ultrawork 修复 Bug"
+          },
+          {
+            "name": "批量重构",
+            "cmd": "/ultrawork \"重构 src/components 目录下所有组件\"",
+            "params": {},
+            "keyword": "ultrawork 重构"
+          },
+          {
+            "name": "并行测试",
+            "cmd": "/ultrawork \"为所有 API 端点编写集成测试\"",
+            "params": {},
+            "keyword": "ultrawork 测试"
+          },
+          {
+            "name": "安全扫描",
+            "cmd": "/ultrawork \"对整个项目进行安全扫描\"",
+            "params": {},
+            "keyword": "ultrawork 安全扫描"
+          },
+          {
+            "name": "性能优化",
+            "cmd": "/ultrawork \"优化数据库查询和缓存策略\"",
+            "params": {},
+            "keyword": "ultrawork 性能优化"
+          },
+          {
+            "name": "文档生成",
+            "cmd": "/ultrawork \"生成项目 API 文档\"",
+            "params": {},
+            "keyword": "ultrawork 文档生成"
+          }
+        ],
+        "params": {
+          "任务描述": {
+            "type": "string",
+            "required": true,
+            "description": "并行执行的任务描述",
+            "example": "重构并测试所有模块",
+            "notes": "任务会被分解并最大并行执行"
+          }
+        }
+      }
+    },
+    {
+      "dirPath": "/Claude Skills/ultrawork/",
+      "name": "ulw 快速最大并行",
+      "keyword": "/ulw",
+      "description": "ultrawork 快捷命令",
+      "data": {
+        "cmd": "/ulw %{任务}%",
+        "extensions": [
+          {
+            "name": "批量代码审查",
+            "cmd": "/ulw \"审查所有新增代码\"",
+            "params": {},
+            "keyword": "ulw 代码审查"
+          },
+          {
+            "name": "批量依赖更新",
+            "cmd": "/ulw \"更新所有过时的依赖包\"",
+            "params": {},
+            "keyword": "ulw 更新依赖"
+          },
+          {
+            "name": "批量测试",
+            "cmd": "/ulw \"运行完整的测试套件\"",
+            "params": {},
+            "keyword": "ulw 批量测试"
+          }
+        ],
+        "params": {
+          "任务": {
+            "type": "string",
+            "required": true,
+            "description": "要执行的任务",
+            "example": "重构",
+            "notes": "/ulw 是 /ultrawork 的快捷方式"
+          }
+        }
+      }
+    },
+    {
+      "dirPath": "/Claude Skills/ccg/",
+      "name": "ccg Codex Gemini 合成审查",
+      "keyword": "/ccg",
+      "description": "多模型协作的综合审查",
+      "data": {
+        "cmd": "/ccg %{审查类型}%",
+        "extensions": [
+          {
+            "name": "架构审查",
+            "cmd": "/ccg \"架构审查：分析微服务设计\"",
+            "params": {},
+            "keyword": "ccg 架构审查"
+          },
+          {
+            "name": "性能审查",
+            "cmd": "/ccg \"性能审查：分析查询优化\"",
+            "params": {},
+            "keyword": "ccg 性能审查"
+          },
+          {
+            "name": "安全审查",
+            "cmd": "/ccg \"安全审查：检查认证授权\"",
+            "params": {},
+            "keyword": "ccg 安全审查"
+          },
+          {
+            "name": "UI 一致性审查",
+            "cmd": "/ccg \"UI 审查：检查组件一致性\"",
+            "params": {},
+            "keyword": "ccg UI 审查"
+          }
+        ],
+        "params": {
+          "审查类型": {
+            "type": "string",
+            "required": true,
+            "description": "审查类型",
+            "example": "代码审查",
+            "notes": "ccg 会调用多个模型进行综合分析"
+          }
+        }
+      }
+    },
+    {
+      "dirPath": "/Claude Skills/providers/",
+      "name": "ask claude Claude 顾问",
+      "keyword": "/ask claude",
+      "description": "使用 Claude 模型解答技术问题",
+      "data": {
+        "cmd": "/ask claude %{问题}%",
+        "extensions": [
+          {
+            "name": "代码重构建议",
+            "cmd": "/ask claude \"如何重构这个复杂的函数\"",
+            "params": {},
+            "keyword": "ask claude 重构"
+          },
+          {
+            "name": "性能分析",
+            "cmd": "/ask claude \"如何优化这个数据库查询\"",
+            "params": {},
+            "keyword": "ask claude 性能"
+          },
+          {
+            "name": "安全审计",
+            "cmd": "/ask claude \"这段代码有什么安全风险\"",
+            "params": {},
+            "keyword": "ask claude 安全"
+          },
+          {
+            "name": "代码审查",
+            "cmd": "/ask claude \"帮我审查这段代码\"",
+            "params": {},
+            "keyword": "ask claude 审查"
+          }
+        ],
+        "params": {
+          "问题": {
+            "type": "string",
+            "required": true,
+            "description": "技术问题",
+            "example": "如何实现热更新",
+            "notes": ""
+          }
+        }
+      }
+    },
+    {
+      "dirPath": "/Claude Skills/providers/",
+      "name": "autoresearch 自动研究",
+      "keyword": "/autoresearch",
+      "description": "自动研究技术问题和最佳实践",
+      "data": {
+        "cmd": "/autoresearch %{研究主题}%",
+        "extensions": [
+          {
+            "name": "技术选型研究",
+            "cmd": "/autoresearch \"React vs Vue 技术选型\"",
+            "params": {},
+            "keyword": "autoresearch 技术选型"
+          },
+          {
+            "name": "架构探索",
+            "cmd": "/autoresearch \"微服务架构最佳实践\"",
+            "params": {},
+            "keyword": "autoresearch 架构"
+          },
+          {
+            "name": "算法研究",
+            "cmd": "/autoresearch \"排序算法性能对比\"",
+            "params": {},
+            "keyword": "autoresearch 算法"
+          },
+          {
+            "name": "测试策略",
+            "cmd": "/autoresearch \"前端测试策略\"",
+            "params": {},
+            "keyword": "autoresearch 测试"
+          }
+        ],
+        "params": {
+          "研究主题": {
+            "type": "string",
+            "required": true,
+            "description": "研究主题",
+            "example": "缓存策略",
+            "notes": "会自动搜索和分析相关信息"
+          }
+        }
+      }
+    },
+    {
+      "dirPath": "/Claude Skills/oh-my-claude/",
+      "name": "omc-doctor 诊断检查",
+      "keyword": "/omc-doctor",
+      "description": "检查 Claude Code 配置和状态",
+      "data": {
+        "cmd": "/omc-doctor",
+        "extensions": [
+          {
+            "name": "检查配置",
+            "cmd": "/omc-doctor --config",
+            "params": {},
+            "keyword": "omc-doctor 配置"
+          },
+          {
+            "name": "检查插件",
+            "cmd": "/omc-doctor --plugins",
+            "params": {},
+            "keyword": "omc-doctor 插件"
+          },
+          {
+            "name": "检查网络",
+            "cmd": "/omc-doctor --network",
+            "params": {},
+            "keyword": "omc-doctor 网络"
+          },
+          {
+            "name": "重置配置",
+            "cmd": "/omc-doctor --reset",
+            "params": {},
+            "keyword": "omc-doctor 重置"
+          }
+        ],
+        "params": {}
+      }
+    },
+    {
+      "dirPath": "/Claude Skills/oh-my-claude/",
+      "name": "omc-hud 平视显示",
+      "keyword": "/omc-hud",
+      "description": "显示任务执行状态的平视显示器",
+      "data": {
+        "cmd": "/omc-hud",
+        "extensions": [
+          {
+            "name": "显示详细信息",
+            "cmd": "/omc-hud --detailed",
+            "params": {},
+            "keyword": "omc-hud 详细"
+          },
+          {
+            "name": "最小化显示",
+            "cmd": "/omc-hud --minimal",
+            "params": {},
+            "keyword": "omc-hud 最小化"
+          },
+          {
+            "name": "关闭 HUD",
+            "cmd": "/omc-hud --off",
+            "params": {},
+            "keyword": "omc-hud 关闭"
+          },
+          {
+            "name": "刷新显示",
+            "cmd": "/omc-hud --refresh",
+            "params": {},
+            "keyword": "omc-hud 刷新"
+          }
+        ],
+        "params": {}
+      }
+    },
+    {
+      "dirPath": "/Claude Skills/oh-my-claude/",
+      "name": "omc-wait 等待任务",
+      "keyword": "/omc-wait",
+      "description": "等待后台任务完成",
+      "data": {
+        "cmd": "/omc-wait %{任务ID}%",
+        "extensions": [
+          {
+            "name": "等待所有任务",
+            "cmd": "/omc-wait --all",
+            "params": {},
+            "keyword": "omc-wait 全部"
+          },
+          {
+            "name": "查看状态",
+            "cmd": "/omc-wait --status",
+            "params": {},
+            "keyword": "omc-wait 状态"
+          },
+          {
+            "name": "等待恢复",
+            "cmd": "/omc-wait --resume",
+            "params": {},
+            "keyword": "omc-wait 恢复"
+          }
+        ],
+        "params": {
+          "任务ID": {
+            "type": "string",
+            "required": true,
+            "description": "任务 ID",
+            "example": "task-123",
+            "notes": ""
+          }
+        }
+      }
+    },
+    {
+      "dirPath": "/Claude Skills/oh-my-claude/",
+      "name": "team 多 Agent 协作",
+      "keyword": "/team",
+      "description": "多 Agent 团队协作模式",
+      "data": {
+        "cmd": "/team %{任务描述}%",
+        "extensions": [
+          {
+            "name": "前端开发团队",
+            "cmd": "/team \"组建前端开发团队\"",
+            "params": {},
+            "keyword": "team 前端团队"
+          },
+          {
+            "name": "全栈开发团队",
+            "cmd": "/team \"组建全栈开发团队\"",
+            "params": {},
+            "keyword": "team 全栈团队"
+          },
+          {
+            "name": "审查团队",
+            "cmd": "/team \"组建代码审查团队\"",
+            "params": {},
+            "keyword": "team 审查团队"
+          }
+        ],
+        "params": {
+          "任务描述": {
+            "type": "string",
+            "required": true,
+            "description": "团队任务描述",
+            "example": "开发用户系统",
+            "notes": "会自动分配 Agent 角色"
+          }
+        }
       }
     },
     {
       "dirPath": "/Claude Skills/superpowers/",
-      "name": "1-01 brainstorming 沟通需求",
-      "keyword": "1-01 brainstorming 沟通需求",
-      "description": "",
+      "name": "superpowers TDD 开发",
+      "keyword": "/superpowers",
+      "description": "测试驱动开发工作流",
       "data": {
-        "cmd": "/brainstorming %{需求}%"
+        "cmd": "/superpowers %{功能描述}%",
+        "extensions": [
+          {
+            "name": "TDD 红色阶段",
+            "cmd": "/superpowers \"编写失败的测试\"",
+            "params": {},
+            "keyword": "superpowers 红色"
+          },
+          {
+            "name": "TDD 绿色阶段",
+            "cmd": "/superpowers \"编写使测试通过的代码\"",
+            "params": {},
+            "keyword": "superpowers 绿色"
+          },
+          {
+            "name": "TDD 重构阶段",
+            "cmd": "/superpowers \"重构代码\"",
+            "params": {},
+            "keyword": "superpowers 重构"
+          },
+          {
+            "name": "完整 TDD 流程",
+            "cmd": "/superpowers \"实现用户登录功能（完整 TDD）\"",
+            "params": {},
+            "keyword": "superpowers 完整流程"
+          }
+        ],
+        "params": {
+          "功能描述": {
+            "type": "string",
+            "required": true,
+            "description": "要实现的功能",
+            "example": "购物车功能",
+            "notes": "会按照 TDD 流程执行"
+          }
+        }
+      }
+    },
+    {
+      "dirPath": "/Claude Skills/ecc/",
+      "name": "ecc ECC 工作流",
+      "keyword": "/ecc",
+      "description": "Everything Claude Code 工作流",
+      "data": {
+        "cmd": "/ecc %{任务}%",
+        "extensions": [
+          {
+            "name": "ECC 计划",
+            "cmd": "/ecc plan \"项目计划\"",
+            "params": {},
+            "keyword": "ecc plan"
+          },
+          {
+            "name": "ECC 开发",
+            "cmd": "/ecc develop \"功能开发\"",
+            "params": {},
+            "keyword": "ecc develop"
+          },
+          {
+            "name": "ECC 审查",
+            "cmd": "/ecc review \"代码审查\"",
+            "params": {},
+            "keyword": "ecc review"
+          },
+          {
+            "name": "ECC 构建",
+            "cmd": "/ecc build \"项目构建\"",
+            "params": {},
+            "keyword": "ecc build"
+          }
+        ],
+        "params": {
+          "任务": {
+            "type": "string",
+            "required": true,
+            "description": "任务类型",
+            "example": "开发",
+            "notes": ""
+          }
+        }
       }
     },
     {
       "dirPath": "/Claude Skills/openspec/",
-      "name": "1-01 openspec init",
-      "keyword": "openspec init",
-      "description": "",
+      "name": "openspec 规范管理",
+      "keyword": "/openspec",
+      "description": "OpenSpec 规范变更管理",
       "data": {
-        "cmd": "openspec init"
-      }
-    },
-    {
-      "dirPath": "/Claude Skills/everything-claude-code/",
-      "name": "1-01 plan 需求分析",
-      "keyword": "ecc:plan plan 需求分析",
-      "description": "/ecc:plan \"实现用户注册和登录功能，支持邮箱和第三方登录\"",
-      "data": {
-        "cmd": "/ecc:plan %{需求}%"
-      }
-    },
-    {
-      "dirPath": "/Claude Skills/spec-kit/",
-      "name": "1-01 specify init 初始化项目",
-      "keyword": "specify init 初始化项目",
-      "description": "",
-      "data": {
-        "cmd": "specify init --here --ai claude"
-      }
-    },
-    {
-      "dirPath": "/Claude Skills/oh-my-claude/",
-      "name": "1-01-1 autopilot 验证修复方案",
-      "keyword": "oh-my-claudecode:autopilot autopilot 验证修复方案",
-      "description": "",
-      "data": {
-        "cmd": "/oh-my-claudecode:autopilot 对刚才实施的修复进行全面的功能影响评估，以确定是否存在任何可能影响系统正常功能使用的潜在问题。具体包括：\n1. 验证修复是否完全解决了原始问题，同时没有引入新的功能缺陷\n2. 检查修复涉及的所有相关模块和功能点，确保其正常工作\n3. 测试与修复部分有依赖关系的其他功能，确认它们不受负面影响\n4. 验证边界条件和异常场景下的系统行为是否符合预期\n5. 评估修复对系统性能、安全性和稳定性的潜在影响\n6. 确认用户体验是否受到任何不良影响，包括但不限于操作流程、响应速度和界面展示\n\n请提供详细的检查结果，包括发现的任何问题、风险评估以及必要的改进建议。"
-      }
-    },
-    {
-      "dirPath": "/Claude Skills/oh-my-claude/",
-      "name": "1-01-2 autopilot 性能优化排查bug",
-      "keyword": "oh-my-claudecode:autopilot autopilot 性能优化排查bug",
-      "description": "",
-      "data": {
-        "cmd": "/oh-my-claudecode:autopilot 我现在负责的项目需要进行优化和bug修复工作。由于目前对项目的具体情况了解有限，请通过系统性提问的方式，逐步明确以下关键信息：项目类型与核心功能模块、当前面临的主要性能瓶颈或用户体验问题、已发现的具体bug表现及复现步骤、项目使用的技术栈与架构、优化的优先级要求、以及是否有特定的性能指标或质量标准需要达成。通过获取这些信息，以便精准确定优化方向和bug修复范围。"
-      }
-    },
-    {
-      "dirPath": "/Claude Skills/spec-kit/",
-      "name": "1-02 constitution 项目规则",
-      "keyword": "speckit-constitution constitution 项目规则",
-      "description": "",
-      "data": {
-        "cmd": "/speckit-constitution %{项目规则}%"
-      }
-    },
-    {
-      "dirPath": "/Claude Skills/oh-my-claude/",
-      "name": "1-02 deep-interview 沟通交流",
-      "keyword": "oh-my-claudecode:deep-interview deep-interview 沟通交流",
-      "description": "",
-      "data": {
-        "cmd": "/oh-my-claudecode:deep-interview %{想法}%"
-      }
-    },
-    {
-      "dirPath": "/Claude Skills/superpowers/",
-      "name": "1-02 git-worktrees 新建分支",
-      "keyword": "superpowers:using-git-worktrees git-worktrees 新建分支",
-      "description": "",
-      "data": {
-        "cmd": "/superpowers:using-git-worktrees "
-      }
-    },
-    {
-      "dirPath": "/Claude Skills/openspec/",
-      "name": "1-02 opsx propose 添加任务",
-      "keyword": "opsx:propose opsx propose 添加任务",
-      "description": "",
-      "data": {
-        "cmd": "/opsx:propose %{任务}%"
-      }
-    },
-    {
-      "dirPath": "/Claude Skills/openspec/",
-      "name": "1-03 opsx apply 执行任务",
-      "keyword": "opsx:apply opsx apply 执行任务",
-      "description": "",
-      "data": {
-        "cmd": "/opsx:apply  use context7"
-      }
-    },
-    {
-      "dirPath": "/Claude Skills/oh-my-claude/",
-      "name": "1-03 ralph 循环",
-      "keyword": "oh-my-claudecode:ralph ralph 循环",
-      "description": "",
-      "data": {
-        "cmd": "/oh-my-claudecode:ralph %{任务}%"
-      }
-    },
-    {
-      "dirPath": "/Claude Skills/spec-kit/",
-      "name": "1-03 specify 需求",
-      "keyword": "speckit-specify specify 需求",
-      "description": "文档位置 .specify/specs/user-auth.spec.md",
-      "data": {
-        "cmd": "/speckit-specify %{需求 Spec}%"
-      }
-    },
-    {
-      "dirPath": "/Claude Skills/everything-claude-code/",
-      "name": "1-03 tdd 开发",
-      "keyword": "tdd tdd 开发",
-      "description": "",
-      "data": {
-        "cmd": "/tdd  use context7"
-      }
-    },
-    {
-      "dirPath": "/Claude Skills/superpowers/",
-      "name": "1-03 writing-plans 编写计划",
-      "keyword": "superpowers:writing-plans writing-plans 编写计划",
-      "description": "",
-      "data": {
-        "cmd": "/superpowers:writing-plans "
-      }
-    },
-    {
-      "dirPath": "/Claude Skills/spec-kit/",
-      "name": "1-03-1 specify 需求完善",
-      "keyword": "speckit-specify specify 需求完善",
-      "description": "文档位置 .specify/specs/user-auth.spec.md",
-      "data": {
-        "cmd": "/speckit-specify 请对当前方案进行全面评估，识别其中存在的不足、潜在风险和可优化点。具体包括但不限于：方案的完整性、逻辑严密性、技术可行性、资源需求合理性、实施步骤清晰度、潜在风险及应对措施、与业务目标的契合度等方面。提出具体的完善建议和改进方向，并说明理由。然后，来提问我的方式，确认最终改动"
-      }
-    },
-    {
-      "dirPath": "/Claude Skills/spec-kit/",
-      "name": "1-03-2 clarify 澄清需求",
-      "keyword": "speckit-clarify clarify 澄清需求",
-      "description": "文档位置 .specify/specs/user-auth.spec.md",
-      "data": {
-        "cmd": "/speckit-clarify 结构化地澄清规格中的模糊部分"
-      }
-    },
-    {
-      "dirPath": "/Claude Skills/everything-claude-code/",
-      "name": "1-04 code-review 代码审查",
-      "keyword": "code-review code-review 代码审查",
-      "description": "",
-      "data": {
-        "cmd": "/code-review"
-      }
-    },
-    {
-      "dirPath": "/Claude Skills/openspec/",
-      "name": "1-04 opsx archive 归档任务",
-      "keyword": "opsx:archive opsx archive 归档任务",
-      "description": "",
-      "data": {
-        "cmd": "/opsx:archive "
-      }
-    },
-    {
-      "dirPath": "/Claude Skills/spec-kit/",
-      "name": "1-04 plan 方案",
-      "keyword": "speckit-plan plan 方案",
-      "description": "",
-      "data": {
-        "cmd": "/speckit-plan"
-      }
-    },
-    {
-      "dirPath": "/Claude Skills/oh-my-claude/",
-      "name": "1-04 ralplan 规划-循环",
-      "keyword": "oh-my-claudecode:ralplan ralplan 规划-循环",
-      "description": "",
-      "data": {
-        "cmd": "/oh-my-claudecode:ralplan %{任务}% 。use context7"
-      }
-    },
-    {
-      "dirPath": "/Claude Skills/superpowers/",
-      "name": "1-04 subagent-driven-development 执行计划",
-      "keyword": "superpowers:subagent-driven-development subagent-driven-development 执行计划",
-      "description": "",
-      "data": {
-        "cmd": "/superpowers:subagent-driven-development"
-      }
-    },
-    {
-      "dirPath": "/Claude Skills/everything-claude-code/",
-      "name": "1-05 build-fix 修复错误",
-      "keyword": "ecc:build-fix build-fix 修复错误",
-      "description": "",
-      "data": {
-        "cmd": "/ecc:build-fix"
-      }
-    },
-    {
-      "dirPath": "/Claude Skills/openspec/",
-      "name": "1-05 opsx explore 扩展",
-      "keyword": "opsx:explore opsx explore 扩展",
-      "description": "",
-      "data": {
-        "cmd": "/opsx:explore %{任务}%"
-      }
-    },
-    {
-      "dirPath": "/Claude Skills/spec-kit/",
-      "name": "1-05 tasks 分解任务",
-      "keyword": "speckit-tasks tasks 分解任务",
-      "description": "",
-      "data": {
-        "cmd": "/speckit-tasks"
-      }
-    },
-    {
-      "dirPath": "/Claude Skills/oh-my-claude/",
-      "name": "1-05 team 团队协作",
-      "keyword": "oh-my-claudecode:team team 团队协作",
-      "description": "",
-      "data": {
-        "cmd": "/oh-my-claudecode:team 3:executor %{任务}% 。use context7"
-      }
-    },
-    {
-      "dirPath": "/Claude Skills/superpowers/",
-      "name": "1-05 test-driven-development 测试",
-      "keyword": "superpowers:test-driven-development test-driven-development 测试",
-      "description": "",
-      "data": {
-        "cmd": "/superpowers:test-driven-development "
-      }
-    },
-    {
-      "dirPath": "/Claude Skills/openspec/",
-      "name": "1-05-1 opsx explore 扩展功能",
-      "keyword": "opsx:explore opsx explore 扩展功能",
-      "description": "",
-      "data": {
-        "cmd": "/opsx:explore 针对当前已实现的功能模块，系统地分析并提出可继续扩展的功能方向。请结合产品现有架构、用户使用场景及市场需求，从功能完善度、用户体验优化、性能提升、安全性增强、兼容性扩展等多个维度进行全面评估，列出具体的潜在扩展功能清单，并对每个建议的扩展功能说明其实现价值、技术可行性及优先级排序。"
-      }
-    },
-    {
-      "dirPath": "/Claude Skills/spec-kit/",
-      "name": "1-06 implement 实施任务",
-      "keyword": "speckit-implement implement 实施任务",
-      "description": "",
-      "data": {
-        "cmd": "/speckit-implement  use context7"
-      }
-    },
-    {
-      "dirPath": "/Claude Skills/superpowers/",
-      "name": "1-06 requesting-code-review 代码审查",
-      "keyword": "superpowers:requesting-code-review requesting-code-review 代码审查",
-      "description": "",
-      "data": {
-        "cmd": "/superpowers:requesting-code-review "
-      }
-    },
-    {
-      "dirPath": "/Claude Skills/everything-claude-code/",
-      "name": "1-06 security-scan 安全扫描",
-      "keyword": "security-scan security-scan 安全扫描",
-      "description": "",
-      "data": {
-        "cmd": "/security-scan"
-      }
-    },
-    {
-      "dirPath": "/Claude Skills/spec-kit/",
-      "name": "1-06-1 analyze 分析任务",
-      "keyword": "speckit-analyze analyze 分析任务",
-      "description": "",
-      "data": {
-        "cmd": "/speckit-analyze "
-      }
-    },
-    {
-      "dirPath": "/Claude Skills/spec-kit/",
-      "name": "1-07 autopilot 验证修复方案",
-      "keyword": "oh-my-claudecode:autopilot autopilot 验证修复方案",
-      "description": "",
-      "data": {
-        "cmd": "/oh-my-claudecode:autopilot 对刚才实施的修复进行全面的功能影响评估，以确定是否存在任何可能影响系统正常功能使用的潜在问题。具体包括：\n1. 验证修复是否完全解决了原始问题，同时没有引入新的功能缺陷\n2. 检查修复涉及的所有相关模块和功能点，确保其正常工作\n3. 测试与修复部分有依赖关系的其他功能，确认它们不受负面影响\n4. 验证边界条件和异常场景下的系统行为是否符合预期\n5. 评估修复对系统性能、安全性和稳定性的潜在影响\n6. 确认用户体验是否受到任何不良影响，包括但不限于操作流程、响应速度和界面展示\n请提供详细的检查结果，包括发现的任何问题、风险评估以及必要的改进建议。"
-      }
-    },
-    {
-      "dirPath": "/Claude Skills/everything-claude-code/",
-      "name": "1-07 e2e 端到端测试",
-      "keyword": "ecc:e2e e2e 端到端测试",
-      "description": "",
-      "data": {
-        "cmd": "/ecc:e2e "
-      }
-    },
-    {
-      "dirPath": "/Claude Skills/superpowers/",
-      "name": "1-07 finishing-a-development-branch 验证测试",
-      "keyword": "superpowers:finishing-a-development-branch finishing-a-development-branch 验证测试",
-      "description": "",
-      "data": {
-        "cmd": "/superpowers:finishing-a-development-branch "
-      }
-    },
-    {
-      "dirPath": "/Claude Skills/everything-claude-code/",
-      "name": "1-08 test-coverage 测试覆盖率检查",
-      "keyword": "test-coverage test-coverage 测试覆盖率检查",
-      "description": "",
-      "data": {
-        "cmd": "/test-coverage"
-      }
-    },
-    {
-      "dirPath": "/Claude Skills/everything-claude-code/",
-      "name": "1-09 verify 验证循环",
-      "keyword": "verify verify 验证循环",
-      "description": "",
-      "data": {
-        "cmd": "/verify"
-      }
-    },
-    {
-      "dirPath": "/Claude Skills/everything-claude-code/",
-      "name": "1-10 update-docs 更新文档",
-      "keyword": "update-docs update-docs 更新文档",
-      "description": "",
-      "data": {
-        "cmd": "/update-docs"
-      }
-    },
-    {
-      "dirPath": "/Linux 命令/",
-      "name": "cd",
-      "keyword": "cd",
-      "description": "",
-      "data": {
-        "cmd": "cd"
-      }
-    },
-    {
-      "dirPath": "/Linux 命令/",
-      "name": "cp",
-      "keyword": "cp",
-      "description": "",
-      "data": {
-        "cmd": "cp"
-      }
-    },
-    {
-      "dirPath": "/Linux 命令/文件操作/",
-      "name": "cp 复制文件夹",
-      "keyword": "cp 复制文件夹",
-      "description": "",
-      "data": {
-        "cmd": "cp -r %{源文件夹}% %{目标目录}%/"
-      }
-    },
-    {
-      "dirPath": "/Linux 命令/磁盘管理/",
-      "name": "df -h 磁盘空间使用情况",
-      "keyword": "df -h 磁盘空间使用情况",
-      "description": "",
-      "data": {
-        "cmd": "df -h"
-      }
-    },
-    {
-      "dirPath": "/Linux 命令/磁盘管理/",
-      "name": "du -sh 目录大小",
-      "keyword": "du -sh 目录大小",
-      "description": "显示目录的总大小",
-      "data": {
-        "cmd": "du -sh"
-      }
-    },
-    {
-      "dirPath": "/Linux 命令/文件操作/",
-      "name": "find 查找文件",
-      "keyword": "find 查找文件",
-      "description": "",
-      "data": {
-        "cmd": "find %{哪个目录}% -name \"%{文件名(支持正则表达式)}%\"%{aaa}%"
+        "cmd": "/openspec %{操作}%",
+        "extensions": [
+          {
+            "name": "初始化规范库",
+            "cmd": "/openspec init",
+            "params": {},
+            "keyword": "openspec init"
+          },
+          {
+            "name": "提议新规范",
+            "cmd": "/openspec propose \"新功能规范\"",
+            "params": {},
+            "keyword": "openspec propose"
+          },
+          {
+            "name": "应用规范变更",
+            "cmd": "/openspec apply",
+            "params": {},
+            "keyword": "openspec apply"
+          },
+          {
+            "name": "归档规范",
+            "cmd": "/openspec archive",
+            "params": {},
+            "keyword": "openspec archive"
+          },
+          {
+            "name": "浏览现有规范",
+            "cmd": "/openspec explore",
+            "params": {},
+            "keyword": "openspec explore"
+          }
+        ],
+        "params": {
+          "操作": {
+            "type": "string",
+            "required": true,
+            "description": "操作类型",
+            "example": "propose",
+            "notes": ""
+          }
+        }
       }
     },
     {
       "dirPath": "/Git 命令/",
-      "name": "git merge",
+      "name": "git init 初始化仓库",
+      "keyword": "git init",
+      "description": "初始化仓库",
+      "data": {
+        "cmd": "git init",
+        "extensions": [],
+        "params": {}
+      }
+    },
+    {
+      "dirPath": "/Git 命令/",
+      "name": "git clone 克隆仓库",
+      "keyword": "git clone",
+      "description": "克隆仓库",
+      "data": {
+        "cmd": "git clone %{仓库URL}%",
+        "extensions": [
+          {
+            "name": "克隆指定分支",
+            "cmd": "git clone -b %{分支}% %{URL}%",
+            "params": {},
+            "keyword": "git clone 克隆指定分支"
+          },
+          {
+            "name": "浅克隆",
+            "cmd": "git clone --depth 1 %{URL}%",
+            "params": {},
+            "keyword": "git clone 浅克隆"
+          },
+          {
+            "name": "克隆到指定目录",
+            "cmd": "git clone %{URL}% %{目录}%",
+            "params": {},
+            "keyword": "git clone 克隆到指定目录"
+          }
+        ],
+        "params": {
+          "仓库URL": {
+            "type": "string",
+            "required": true,
+            "description": "仓库URL参数",
+            "example": "",
+            "notes": ""
+          },
+          "分支": {
+            "type": "string",
+            "required": true,
+            "description": "分支参数",
+            "example": "",
+            "notes": ""
+          },
+          "URL": {
+            "type": "string",
+            "required": true,
+            "description": "URL参数",
+            "example": "",
+            "notes": ""
+          },
+          "目录": {
+            "type": "string",
+            "required": true,
+            "description": "目录参数",
+            "example": "",
+            "notes": ""
+          }
+        }
+      }
+    },
+    {
+      "dirPath": "/Git 命令/",
+      "name": "git status 查看状态",
+      "keyword": "git status",
+      "description": "查看状态",
+      "data": {
+        "cmd": "git status",
+        "extensions": [
+          {
+            "name": "简短输出",
+            "cmd": "git status -s",
+            "params": {},
+            "keyword": "git status 简短输出"
+          },
+          {
+            "name": "显示分支",
+            "cmd": "git status -b",
+            "params": {},
+            "keyword": "git status 显示分支"
+          }
+        ],
+        "params": {}
+      }
+    },
+    {
+      "dirPath": "/Git 命令/",
+      "name": "git add 添加文件到暂存区",
+      "keyword": "git add",
+      "description": "添加文件到暂存区",
+      "data": {
+        "cmd": "git add %{文件}%",
+        "extensions": [
+          {
+            "name": "添加所有文件",
+            "cmd": "git add .",
+            "params": {},
+            "keyword": "git add 添加所有文件"
+          },
+          {
+            "name": "交互式添加",
+            "cmd": "git add -p",
+            "params": {},
+            "keyword": "git add 交互式添加"
+          },
+          {
+            "name": "添加已修改的",
+            "cmd": "git add -u",
+            "params": {},
+            "keyword": "git add 添加已修改的"
+          }
+        ],
+        "params": {
+          "文件": {
+            "type": "string",
+            "required": true,
+            "description": "文件参数",
+            "example": "",
+            "notes": ""
+          }
+        }
+      }
+    },
+    {
+      "dirPath": "/Git 命令/",
+      "name": "git commit 提交变更",
+      "keyword": "git commit",
+      "description": "提交变更",
+      "data": {
+        "cmd": "git commit -m \"%{提交信息}%\"",
+        "extensions": [
+          {
+            "name": "添加并提交",
+            "cmd": "git commit -am \"%{信息}%\"",
+            "params": {},
+            "keyword": "git commit 添加并提交"
+          },
+          {
+            "name": "修改上次提交",
+            "cmd": "git commit --amend",
+            "params": {},
+            "keyword": "git commit 修改上次提交"
+          },
+          {
+            "name": "仅提交部分",
+            "cmd": "git commit -p",
+            "params": {},
+            "keyword": "git commit 仅提交部分"
+          },
+          {
+            "name": "跳过 Hooks",
+            "cmd": "git commit --no-verify",
+            "params": {},
+            "keyword": "git commit 跳过 Hooks"
+          }
+        ],
+        "params": {
+          "提交信息": {
+            "type": "string",
+            "required": true,
+            "description": "提交信息参数",
+            "example": "",
+            "notes": ""
+          },
+          "信息": {
+            "type": "string",
+            "required": true,
+            "description": "信息参数",
+            "example": "",
+            "notes": ""
+          }
+        }
+      }
+    },
+    {
+      "dirPath": "/Git 命令/",
+      "name": "git log 查看提交历史",
+      "keyword": "git log",
+      "description": "查看提交历史",
+      "data": {
+        "cmd": "git log",
+        "extensions": [
+          {
+            "name": "单行显示",
+            "cmd": "git log --oneline",
+            "params": {},
+            "keyword": "git log 单行显示"
+          },
+          {
+            "name": "图形化显示",
+            "cmd": "git log --graph --oneline --all",
+            "params": {},
+            "keyword": "git log 图形化显示"
+          },
+          {
+            "name": "最近 N 条",
+            "cmd": "git log -n %{数量}%",
+            "params": {},
+            "keyword": "git log 最近 N 条"
+          },
+          {
+            "name": "按作者过滤",
+            "cmd": "git log --author=\"%{作者}%\"",
+            "params": {},
+            "keyword": "git log 按作者过滤"
+          },
+          {
+            "name": "按日期过滤",
+            "cmd": "git log --after=\"%{日期}%\"",
+            "params": {},
+            "keyword": "git log 按日期过滤"
+          },
+          {
+            "name": "显示变更文件",
+            "cmd": "git log --stat",
+            "params": {},
+            "keyword": "git log 显示变更文件"
+          },
+          {
+            "name": "查看具体内容",
+            "cmd": "git log -p",
+            "params": {},
+            "keyword": "git log 查看具体内容"
+          }
+        ],
+        "params": {
+          "数量": {
+            "type": "string",
+            "required": true,
+            "description": "数量参数",
+            "example": "",
+            "notes": ""
+          },
+          "作者": {
+            "type": "string",
+            "required": true,
+            "description": "作者参数",
+            "example": "",
+            "notes": ""
+          },
+          "日期": {
+            "type": "string",
+            "required": true,
+            "description": "日期参数",
+            "example": "",
+            "notes": ""
+          }
+        }
+      }
+    },
+    {
+      "dirPath": "/Git 命令/",
+      "name": "git diff 查看差异",
+      "keyword": "git diff",
+      "description": "查看差异",
+      "data": {
+        "cmd": "git diff",
+        "extensions": [
+          {
+            "name": "暂存区差异",
+            "cmd": "git diff --staged",
+            "params": {},
+            "keyword": "git diff 暂存区差异"
+          },
+          {
+            "name": "两个分支差异",
+            "cmd": "git diff %{分支1}% %{分支2}%",
+            "params": {},
+            "keyword": "git diff 两个分支差异"
+          },
+          {
+            "name": "单个文件差异",
+            "cmd": "git diff %{文件}%",
+            "params": {},
+            "keyword": "git diff 单个文件差异"
+          },
+          {
+            "name": "统计变更",
+            "cmd": "git diff --stat",
+            "params": {},
+            "keyword": "git diff 统计变更"
+          }
+        ],
+        "params": {
+          "分支1": {
+            "type": "string",
+            "required": true,
+            "description": "分支1参数",
+            "example": "",
+            "notes": ""
+          },
+          "分支2": {
+            "type": "string",
+            "required": true,
+            "description": "分支2参数",
+            "example": "",
+            "notes": ""
+          },
+          "文件": {
+            "type": "string",
+            "required": true,
+            "description": "文件参数",
+            "example": "",
+            "notes": ""
+          }
+        }
+      }
+    },
+    {
+      "dirPath": "/Git 命令/",
+      "name": "git branch 分支操作",
+      "keyword": "git branch",
+      "description": "分支操作",
+      "data": {
+        "cmd": "git branch %{分支名}%",
+        "extensions": [
+          {
+            "name": "查看分支列表",
+            "cmd": "git branch -a",
+            "params": {},
+            "keyword": "git branch 查看分支列表"
+          },
+          {
+            "name": "删除分支",
+            "cmd": "git branch -d %{分支}%",
+            "params": {},
+            "keyword": "git branch 删除分支"
+          },
+          {
+            "name": "强制删除",
+            "cmd": "git branch -D %{分支}%",
+            "params": {},
+            "keyword": "git branch 强制删除"
+          },
+          {
+            "name": "重命名分支",
+            "cmd": "git branch -m %{旧名}% %{新名}%",
+            "params": {},
+            "keyword": "git branch 重命名分支"
+          }
+        ],
+        "params": {
+          "分支名": {
+            "type": "string",
+            "required": true,
+            "description": "分支名参数",
+            "example": "",
+            "notes": ""
+          },
+          "分支": {
+            "type": "string",
+            "required": true,
+            "description": "分支参数",
+            "example": "",
+            "notes": ""
+          },
+          "旧名": {
+            "type": "string",
+            "required": true,
+            "description": "旧名参数",
+            "example": "",
+            "notes": ""
+          },
+          "新名": {
+            "type": "string",
+            "required": true,
+            "description": "新名参数",
+            "example": "",
+            "notes": ""
+          }
+        }
+      }
+    },
+    {
+      "dirPath": "/Git 命令/",
+      "name": "git checkout 切换分支",
+      "keyword": "git checkout",
+      "description": "切换分支",
+      "data": {
+        "cmd": "git checkout %{分支名}%",
+        "extensions": [
+          {
+            "name": "创建并切换",
+            "cmd": "git checkout -b %{新分支}%",
+            "params": {},
+            "keyword": "git checkout 创建并切换"
+          },
+          {
+            "name": "切换回上一次",
+            "cmd": "git checkout -",
+            "params": {},
+            "keyword": "git checkout 切换回上一次"
+          },
+          {
+            "name": "检出文件",
+            "cmd": "git checkout %{文件}%",
+            "params": {},
+            "keyword": "git checkout 检出文件"
+          },
+          {
+            "name": "切换到提交",
+            "cmd": "git checkout %{提交SHA}%",
+            "params": {},
+            "keyword": "git checkout 切换到提交"
+          }
+        ],
+        "params": {
+          "分支名": {
+            "type": "string",
+            "required": true,
+            "description": "分支名参数",
+            "example": "",
+            "notes": ""
+          },
+          "新分支": {
+            "type": "string",
+            "required": true,
+            "description": "新分支参数",
+            "example": "",
+            "notes": ""
+          },
+          "文件": {
+            "type": "string",
+            "required": true,
+            "description": "文件参数",
+            "example": "",
+            "notes": ""
+          },
+          "提交SHA": {
+            "type": "string",
+            "required": true,
+            "description": "提交SHA参数",
+            "example": "",
+            "notes": ""
+          }
+        }
+      }
+    },
+    {
+      "dirPath": "/Git 命令/",
+      "name": "git switch 切换分支（新版）",
+      "keyword": "git switch",
+      "description": "切换分支（新版）",
+      "data": {
+        "cmd": "git switch %{分支名}%",
+        "extensions": [
+          {
+            "name": "创建并切换",
+            "cmd": "git switch -c %{新分支}%",
+            "params": {},
+            "keyword": "git switch 创建并切换"
+          },
+          {
+            "name": "切换远程分支",
+            "cmd": "git switch %{远程分支}%",
+            "params": {},
+            "keyword": "git switch 切换远程分支"
+          }
+        ],
+        "params": {
+          "分支名": {
+            "type": "string",
+            "required": true,
+            "description": "分支名参数",
+            "example": "",
+            "notes": ""
+          },
+          "新分支": {
+            "type": "string",
+            "required": true,
+            "description": "新分支参数",
+            "example": "",
+            "notes": ""
+          },
+          "远程分支": {
+            "type": "string",
+            "required": true,
+            "description": "远程分支参数",
+            "example": "",
+            "notes": ""
+          }
+        }
+      }
+    },
+    {
+      "dirPath": "/Git 命令/",
+      "name": "git merge 合并分支",
       "keyword": "git merge",
-      "description": "",
+      "description": "合并分支",
       "data": {
-        "cmd": "git merge --abort"
+        "cmd": "git merge %{分支名}%",
+        "extensions": [
+          {
+            "name": "中止合并",
+            "cmd": "git merge --abort",
+            "params": {},
+            "keyword": "git merge 中止合并"
+          },
+          {
+            "name": "合并不提交",
+            "cmd": "git merge --no-commit %{分支}%",
+            "params": {},
+            "keyword": "git merge 合并不提交"
+          },
+          {
+            "name": "使用 rebase",
+            "cmd": "git rebase %{分支}%",
+            "params": {},
+            "keyword": "git merge 使用 rebase"
+          },
+          {
+            "name": "解决冲突后",
+            "cmd": "git merge --continue",
+            "params": {},
+            "keyword": "git merge 解决冲突后"
+          }
+        ],
+        "params": {
+          "分支名": {
+            "type": "string",
+            "required": true,
+            "description": "分支名参数",
+            "example": "",
+            "notes": ""
+          },
+          "分支": {
+            "type": "string",
+            "required": true,
+            "description": "分支参数",
+            "example": "",
+            "notes": ""
+          }
+        }
       }
     },
     {
       "dirPath": "/Git 命令/",
-      "name": "git pull",
+      "name": "git tag 标签管理",
+      "keyword": "git tag",
+      "description": "标签管理",
+      "data": {
+        "cmd": "git tag %{标签名}%",
+        "extensions": [
+          {
+            "name": "创建带注释标签",
+            "cmd": "git tag -a v1.0 -m \"%{说明}%\"",
+            "params": {},
+            "keyword": "git tag 创建带注释标签"
+          },
+          {
+            "name": "查看标签列表",
+            "cmd": "git tag -l",
+            "params": {},
+            "keyword": "git tag 查看标签列表"
+          },
+          {
+            "name": "推送标签",
+            "cmd": "git push origin %{标签名}%",
+            "params": {},
+            "keyword": "git tag 推送标签"
+          },
+          {
+            "name": "推送所有标签",
+            "cmd": "git push origin --tags",
+            "params": {},
+            "keyword": "git tag 推送所有标签"
+          },
+          {
+            "name": "删除标签",
+            "cmd": "git tag -d %{标签名}%",
+            "params": {},
+            "keyword": "git tag 删除标签"
+          },
+          {
+            "name": "删除远程标签",
+            "cmd": "git push origin --delete %{标签名}%",
+            "params": {},
+            "keyword": "git tag 删除远程标签"
+          }
+        ],
+        "params": {
+          "标签名": {
+            "type": "string",
+            "required": true,
+            "description": "标签名参数",
+            "example": "",
+            "notes": ""
+          },
+          "说明": {
+            "type": "string",
+            "required": true,
+            "description": "说明参数",
+            "example": "",
+            "notes": ""
+          }
+        }
+      }
+    },
+    {
+      "dirPath": "/Git 命令/",
+      "name": "git remote 远程仓库管理",
+      "keyword": "git remote",
+      "description": "远程仓库管理",
+      "data": {
+        "cmd": "git remote -v",
+        "extensions": [
+          {
+            "name": "添加远程",
+            "cmd": "git remote add origin %{URL}%",
+            "params": {},
+            "keyword": "git remote 添加远程"
+          },
+          {
+            "name": "修改远程",
+            "cmd": "git remote set-url origin %{新URL}%",
+            "params": {},
+            "keyword": "git remote 修改远程"
+          },
+          {
+            "name": "删除远程",
+            "cmd": "git remote remove %{名称}%",
+            "params": {},
+            "keyword": "git remote 删除远程"
+          }
+        ],
+        "params": {
+          "URL": {
+            "type": "string",
+            "required": true,
+            "description": "URL参数",
+            "example": "",
+            "notes": ""
+          },
+          "新URL": {
+            "type": "string",
+            "required": true,
+            "description": "新URL参数",
+            "example": "",
+            "notes": ""
+          },
+          "名称": {
+            "type": "string",
+            "required": true,
+            "description": "名称参数",
+            "example": "",
+            "notes": ""
+          }
+        }
+      }
+    },
+    {
+      "dirPath": "/Git 命令/",
+      "name": "git fetch 获取远程更新",
+      "keyword": "git fetch",
+      "description": "获取远程更新",
+      "data": {
+        "cmd": "git fetch origin",
+        "extensions": [
+          {
+            "name": "获取并修剪",
+            "cmd": "git fetch --prune",
+            "params": {},
+            "keyword": "git fetch 获取并修剪"
+          },
+          {
+            "name": "获取所有远程",
+            "cmd": "git fetch --all",
+            "params": {},
+            "keyword": "git fetch 获取所有远程"
+          }
+        ],
+        "params": {}
+      }
+    },
+    {
+      "dirPath": "/Git 命令/",
+      "name": "git pull 拉取并合并",
       "keyword": "git pull",
-      "description": "",
+      "description": "拉取并合并",
       "data": {
-        "cmd": "git pull"
+        "cmd": "git pull origin %{分支名}%",
+        "extensions": [
+          {
+            "name": "拉取并 rebase",
+            "cmd": "git pull --rebase origin %{分支}%",
+            "params": {},
+            "keyword": "git pull 拉取并 rebase"
+          },
+          {
+            "name": "仅拉取不合并",
+            "cmd": "git fetch origin",
+            "params": {},
+            "keyword": "git pull 仅拉取不合并"
+          }
+        ],
+        "params": {
+          "分支名": {
+            "type": "string",
+            "required": true,
+            "description": "分支名参数",
+            "example": "",
+            "notes": ""
+          },
+          "分支": {
+            "type": "string",
+            "required": true,
+            "description": "分支参数",
+            "example": "",
+            "notes": ""
+          }
+        }
       }
     },
     {
       "dirPath": "/Git 命令/",
-      "name": "git reset",
+      "name": "git push 推送变更",
+      "keyword": "git push",
+      "description": "推送变更",
+      "data": {
+        "cmd": "git push origin %{分支名}%",
+        "extensions": [
+          {
+            "name": "设置上游分支",
+            "cmd": "git push -u origin %{分支}%",
+            "params": {},
+            "keyword": "git push 设置上游分支"
+          },
+          {
+            "name": "强制推送",
+            "cmd": "git push --force-with-lease",
+            "params": {},
+            "keyword": "git push 强制推送"
+          },
+          {
+            "name": "推送所有分支",
+            "cmd": "git push --all",
+            "params": {},
+            "keyword": "git push 推送所有分支"
+          },
+          {
+            "name": "推送标签",
+            "cmd": "git push --tags",
+            "params": {},
+            "keyword": "git push 推送标签"
+          },
+          {
+            "name": "删除远程分支",
+            "cmd": "git push origin --delete %{分支}%",
+            "params": {},
+            "keyword": "git push 删除远程分支"
+          }
+        ],
+        "params": {
+          "分支名": {
+            "type": "string",
+            "required": true,
+            "description": "分支名参数",
+            "example": "",
+            "notes": ""
+          },
+          "分支": {
+            "type": "string",
+            "required": true,
+            "description": "分支参数",
+            "example": "",
+            "notes": ""
+          }
+        }
+      }
+    },
+    {
+      "dirPath": "/Git 命令/",
+      "name": "git stash 暂存变更",
+      "keyword": "git stash",
+      "description": "暂存变更",
+      "data": {
+        "cmd": "git stash",
+        "extensions": [
+          {
+            "name": "查看暂存列表",
+            "cmd": "git stash list",
+            "params": {},
+            "keyword": "git stash 查看暂存列表"
+          },
+          {
+            "name": "应用暂存",
+            "cmd": "git stash pop",
+            "params": {},
+            "keyword": "git stash 应用暂存"
+          },
+          {
+            "name": "应用但保留",
+            "cmd": "git stash apply",
+            "params": {},
+            "keyword": "git stash 应用但保留"
+          },
+          {
+            "name": "查看暂存内容",
+            "cmd": "git stash show -p",
+            "params": {},
+            "keyword": "git stash 查看暂存内容"
+          },
+          {
+            "name": "创建带名称暂存",
+            "cmd": "git stash push -m \"%{名称}%\"",
+            "params": {},
+            "keyword": "git stash 创建带名称暂存"
+          },
+          {
+            "name": "删除暂存",
+            "cmd": "git stash drop %{stash@{n}}%",
+            "params": {},
+            "keyword": "git stash 删除暂存"
+          },
+          {
+            "name": "清空所有暂存",
+            "cmd": "git stash clear",
+            "params": {},
+            "keyword": "git stash 清空所有暂存"
+          }
+        ],
+        "params": {
+          "名称": {
+            "type": "string",
+            "required": true,
+            "description": "名称参数",
+            "example": "",
+            "notes": ""
+          }
+        }
+      }
+    },
+    {
+      "dirPath": "/Git 命令/",
+      "name": "git reset 重置",
       "keyword": "git reset",
-      "description": "",
+      "description": "重置",
       "data": {
-        "cmd": "git reset --merge"
+        "cmd": "git reset --hard %{修订号}%",
+        "extensions": [
+          {
+            "name": "软重置",
+            "cmd": "git reset --soft HEAD~%{N}%",
+            "params": {},
+            "keyword": "git reset 软重置"
+          },
+          {
+            "name": "混合重置",
+            "cmd": "git reset --mixed HEAD~%{N}%",
+            "params": {},
+            "keyword": "git reset 混合重置"
+          },
+          {
+            "name": "回退一次提交",
+            "cmd": "git reset --soft HEAD~1",
+            "params": {},
+            "keyword": "git reset 回退一次提交"
+          },
+          {
+            "name": "重置单个文件",
+            "cmd": "git reset HEAD %{文件}%",
+            "params": {},
+            "keyword": "git reset 重置单个文件"
+          }
+        ],
+        "params": {
+          "修订号": {
+            "type": "string",
+            "required": true,
+            "description": "修订号参数",
+            "example": "",
+            "notes": ""
+          },
+          "N": {
+            "type": "string",
+            "required": true,
+            "description": "N参数",
+            "example": "",
+            "notes": ""
+          },
+          "文件": {
+            "type": "string",
+            "required": true,
+            "description": "文件参数",
+            "example": "",
+            "notes": ""
+          }
+        }
       }
     },
     {
       "dirPath": "/Git 命令/",
-      "name": "git 回退提交",
-      "keyword": "git 回退提交",
-      "description": "",
+      "name": "git revert 撤销提交",
+      "keyword": "git revert",
+      "description": "撤销提交",
       "data": {
-        "cmd": "git reset --hard %{修订号}%                                                        git push --force origin %{远程分支}%"
+        "cmd": "git revert %{提交SHA}%",
+        "extensions": [
+          {
+            "name": "撤销多次提交",
+            "cmd": "git revert %{SHA1}% %{SHA2}%",
+            "params": {},
+            "keyword": "git revert 撤销多次提交"
+          },
+          {
+            "name": "不自动提交",
+            "cmd": "git revert --no-commit %{SHA}%",
+            "params": {},
+            "keyword": "git revert 不自动提交"
+          }
+        ],
+        "params": {
+          "提交SHA": {
+            "type": "string",
+            "required": true,
+            "description": "提交SHA参数",
+            "example": "",
+            "notes": ""
+          },
+          "SHA1": {
+            "type": "string",
+            "required": true,
+            "description": "SHA1参数",
+            "example": "",
+            "notes": ""
+          },
+          "SHA2": {
+            "type": "string",
+            "required": true,
+            "description": "SHA2参数",
+            "example": "",
+            "notes": ""
+          },
+          "SHA": {
+            "type": "string",
+            "required": true,
+            "description": "SHA参数",
+            "example": "",
+            "notes": ""
+          }
+        }
       }
     },
     {
       "dirPath": "/Git 命令/",
-      "name": "git 显示当前提交的完整SHA",
-      "keyword": "git 显示当前提交的完整SHA",
-      "description": "",
+      "name": "git cherry-pick 拣选提交",
+      "keyword": "git cherry-pick",
+      "description": "拣选提交",
       "data": {
-        "cmd": "git rev-parse HEAD"
+        "cmd": "git cherry-pick %{提交SHA}%",
+        "extensions": [
+          {
+            "name": "拣选多个提交",
+            "cmd": "git cherry-pick %{SHA1}% %{SHA2}%",
+            "params": {},
+            "keyword": "git cherry-pick 拣选多个提交"
+          },
+          {
+            "name": "拣选范围",
+            "cmd": "git cherry-pick %{SHA1}%..%{SHA2}%",
+            "params": {},
+            "keyword": "git cherry-pick 拣选范围"
+          },
+          {
+            "name": "不自动提交",
+            "cmd": "git cherry-pick --no-commit %{SHA}%",
+            "params": {},
+            "keyword": "git cherry-pick 不自动提交"
+          }
+        ],
+        "params": {
+          "提交SHA": {
+            "type": "string",
+            "required": true,
+            "description": "提交SHA参数",
+            "example": "",
+            "notes": ""
+          },
+          "SHA1": {
+            "type": "string",
+            "required": true,
+            "description": "SHA1参数",
+            "example": "",
+            "notes": ""
+          },
+          "SHA2": {
+            "type": "string",
+            "required": true,
+            "description": "SHA2参数",
+            "example": "",
+            "notes": ""
+          },
+          "SHA": {
+            "type": "string",
+            "required": true,
+            "description": "SHA参数",
+            "example": "",
+            "notes": ""
+          }
+        }
       }
     },
     {
-      "dirPath": "/Linux 命令/文件操作/",
-      "name": "grep 搜索文件内容",
-      "keyword": "grep 搜索文件内容",
-      "description": "",
+      "dirPath": "/Git 命令/",
+      "name": "git reflog 操作日志",
+      "keyword": "git reflog",
+      "description": "操作日志",
       "data": {
-        "cmd": "grep \"%{查找的内容}%\" %{在哪一个文件查找}%"
+        "cmd": "git reflog",
+        "extensions": [],
+        "params": {}
       }
     },
     {
-      "dirPath": "/Linux 命令/文件操作/",
-      "name": "head 查看文件开头",
-      "keyword": "head 查看文件开头",
-      "description": "",
+      "dirPath": "/Git 命令/",
+      "name": "git bisect 二分查找",
+      "keyword": "git bisect",
+      "description": "二分查找",
       "data": {
-        "cmd": "head -n %{多少行}% %{在哪一个文件}%"
+        "cmd": "git bisect start",
+        "extensions": [],
+        "params": {
+          "好版本SHA": {
+            "type": "string",
+            "required": true,
+            "description": "好版本SHA参数",
+            "example": "",
+            "notes": ""
+          }
+        }
       }
     },
     {
-      "dirPath": "/Linux 命令/系统信息/",
-      "name": "hostname 本机ip",
-      "keyword": "hostname 本机ip",
-      "description": "",
+      "dirPath": "/Docker 命令/",
+      "name": "docker run 运行容器",
+      "keyword": "docker run",
+      "description": "运行容器",
       "data": {
-        "cmd": "hostname -I"
+        "cmd": "docker run -d --name %{容器名称}% -p %{主机端口}%:%{容器端口}% %{镜像名称}%",
+        "extensions": [
+          {
+            "name": "挂载卷",
+            "cmd": "docker run -d --name %{名称}% -v %{主机路径}%:%{容器路径}% %{镜像}%",
+            "params": {},
+            "keyword": "docker run 挂载卷"
+          },
+          {
+            "name": "环境变量",
+            "cmd": "docker run -d --name %{名称}% -e %{变量}%=%{值}% %{镜像}%",
+            "params": {},
+            "keyword": "docker run 环境变量"
+          },
+          {
+            "name": "连接网络",
+            "cmd": "docker run -d --name %{名称}% --network %{网络名称}% %{镜像}%",
+            "params": {},
+            "keyword": "docker run 连接网络"
+          },
+          {
+            "name": "交互模式",
+            "cmd": "docker run -it %{镜像}% /bin/bash",
+            "params": {},
+            "keyword": "docker run 交互模式"
+          }
+        ],
+        "params": {
+          "容器名称": {
+            "type": "string",
+            "required": true,
+            "description": "容器名称参数",
+            "example": "",
+            "notes": ""
+          },
+          "主机端口": {
+            "type": "string",
+            "required": true,
+            "description": "主机端口参数",
+            "example": "",
+            "notes": ""
+          },
+          "容器端口": {
+            "type": "string",
+            "required": true,
+            "description": "容器端口参数",
+            "example": "",
+            "notes": ""
+          },
+          "镜像名称": {
+            "type": "string",
+            "required": true,
+            "description": "镜像名称参数",
+            "example": "",
+            "notes": ""
+          },
+          "名称": {
+            "type": "string",
+            "required": true,
+            "description": "名称参数",
+            "example": "",
+            "notes": ""
+          },
+          "主机路径": {
+            "type": "string",
+            "required": true,
+            "description": "主机路径参数",
+            "example": "",
+            "notes": ""
+          },
+          "容器路径": {
+            "type": "string",
+            "required": true,
+            "description": "容器路径参数",
+            "example": "",
+            "notes": ""
+          },
+          "镜像": {
+            "type": "string",
+            "required": true,
+            "description": "镜像参数",
+            "example": "",
+            "notes": ""
+          },
+          "变量": {
+            "type": "string",
+            "required": true,
+            "description": "变量参数",
+            "example": "",
+            "notes": ""
+          },
+          "值": {
+            "type": "string",
+            "required": true,
+            "description": "值参数",
+            "example": "",
+            "notes": ""
+          },
+          "网络名称": {
+            "type": "string",
+            "required": true,
+            "description": "网络名称参数",
+            "example": "",
+            "notes": ""
+          }
+        }
       }
     },
     {
-      "dirPath": "/Linux 命令/系统信息/",
-      "name": "htop",
-      "keyword": "htop",
-      "description": "",
+      "dirPath": "/Docker 命令/",
+      "name": "docker ps 查看容器",
+      "keyword": "docker ps",
+      "description": "查看容器",
       "data": {
-        "cmd": "htop"
+        "cmd": "docker ps",
+        "extensions": [
+          {
+            "name": "所有容器",
+            "cmd": "docker ps -a",
+            "params": {},
+            "keyword": "docker ps 所有容器"
+          },
+          {
+            "name": "显示大小",
+            "cmd": "docker ps -s",
+            "params": {},
+            "keyword": "docker ps 显示大小"
+          },
+          {
+            "name": "仅显示ID",
+            "cmd": "docker ps -q",
+            "params": {},
+            "keyword": "docker ps 仅显示ID"
+          }
+        ],
+        "params": {}
       }
     },
     {
-      "dirPath": "/Linux 命令/系统信息/",
-      "name": "ifconfig 查看网络接口信息",
-      "keyword": "ifconfig 查看网络接口信息",
-      "description": "",
+      "dirPath": "/Docker 命令/",
+      "name": "docker stop 停止容器",
+      "keyword": "docker stop",
+      "description": "停止容器",
       "data": {
-        "cmd": "ifconfig"
+        "cmd": "docker stop %{容器名称或ID}%",
+        "extensions": [
+          {
+            "name": "启动容器",
+            "cmd": "docker start %{容器名称或ID}%",
+            "params": {},
+            "keyword": "docker stop 启动容器"
+          },
+          {
+            "name": "重启容器",
+            "cmd": "docker restart %{容器名称或ID}%",
+            "params": {},
+            "keyword": "docker stop 重启容器"
+          },
+          {
+            "name": "强制停止",
+            "cmd": "docker kill %{容器名称或ID}%",
+            "params": {},
+            "keyword": "docker stop 强制停止"
+          }
+        ],
+        "params": {
+          "容器名称或ID": {
+            "type": "string",
+            "required": true,
+            "description": "容器名称或ID参数",
+            "example": "",
+            "notes": ""
+          }
+        }
+      }
+    },
+    {
+      "dirPath": "/Docker 命令/",
+      "name": "docker rm 删除容器",
+      "keyword": "docker rm",
+      "description": "删除容器",
+      "data": {
+        "cmd": "docker rm %{容器名称或ID}%",
+        "extensions": [
+          {
+            "name": "强制删除",
+            "cmd": "docker rm -f %{容器名称或ID}%",
+            "params": {},
+            "keyword": "docker rm 强制删除"
+          },
+          {
+            "name": "删除所有停止的",
+            "cmd": "docker rm $(docker ps -aq)",
+            "params": {},
+            "keyword": "docker rm 删除所有停止的"
+          },
+          {
+            "name": "删除容器及卷",
+            "cmd": "docker rm -v %{容器名称}%",
+            "params": {},
+            "keyword": "docker rm 删除容器及卷"
+          }
+        ],
+        "params": {
+          "容器名称或ID": {
+            "type": "string",
+            "required": true,
+            "description": "容器名称或ID参数",
+            "example": "",
+            "notes": ""
+          },
+          "容器名称": {
+            "type": "string",
+            "required": true,
+            "description": "容器名称参数",
+            "example": "",
+            "notes": ""
+          }
+        }
+      }
+    },
+    {
+      "dirPath": "/Docker 命令/",
+      "name": "docker logs 查看日志",
+      "keyword": "docker logs",
+      "description": "查看日志",
+      "data": {
+        "cmd": "docker logs %{容器名称或ID}%",
+        "extensions": [
+          {
+            "name": "实时跟踪",
+            "cmd": "docker logs -f %{容器名称}%",
+            "params": {},
+            "keyword": "docker logs 实时跟踪"
+          },
+          {
+            "name": "最后N行",
+            "cmd": "docker logs --tail %{行数}% %{容器名称}%",
+            "params": {},
+            "keyword": "docker logs 最后N行"
+          },
+          {
+            "name": "指定时间后",
+            "cmd": "docker logs --since %{时间}% %{容器名称}%",
+            "params": {},
+            "keyword": "docker logs 指定时间后"
+          }
+        ],
+        "params": {
+          "容器名称或ID": {
+            "type": "string",
+            "required": true,
+            "description": "容器名称或ID参数",
+            "example": "",
+            "notes": ""
+          },
+          "容器名称": {
+            "type": "string",
+            "required": true,
+            "description": "容器名称参数",
+            "example": "",
+            "notes": ""
+          },
+          "行数": {
+            "type": "string",
+            "required": true,
+            "description": "行数参数",
+            "example": "",
+            "notes": ""
+          },
+          "时间": {
+            "type": "string",
+            "required": true,
+            "description": "时间参数",
+            "example": "",
+            "notes": ""
+          }
+        }
+      }
+    },
+    {
+      "dirPath": "/Docker 命令/",
+      "name": "docker exec 进入容器",
+      "keyword": "docker exec",
+      "description": "进入容器",
+      "data": {
+        "cmd": "docker exec -it %{容器名称或ID}% /bin/bash",
+        "extensions": [
+          {
+            "name": "执行单命令",
+            "cmd": "docker exec %{容器名称}% %{命令}%",
+            "params": {},
+            "keyword": "docker exec 执行单命令"
+          },
+          {
+            "name": "指定用户",
+            "cmd": "docker exec -u %{用户名}% -it %{容器名称}% /bin/bash",
+            "params": {},
+            "keyword": "docker exec 指定用户"
+          }
+        ],
+        "params": {
+          "容器名称或ID": {
+            "type": "string",
+            "required": true,
+            "description": "容器名称或ID参数",
+            "example": "",
+            "notes": ""
+          },
+          "容器名称": {
+            "type": "string",
+            "required": true,
+            "description": "容器名称参数",
+            "example": "",
+            "notes": ""
+          },
+          "命令": {
+            "type": "string",
+            "required": true,
+            "description": "命令参数",
+            "example": "",
+            "notes": ""
+          },
+          "用户名": {
+            "type": "string",
+            "required": true,
+            "description": "用户名参数",
+            "example": "",
+            "notes": ""
+          }
+        }
+      }
+    },
+    {
+      "dirPath": "/Docker 命令/",
+      "name": "docker pull 拉取镜像",
+      "keyword": "docker pull",
+      "description": "拉取镜像",
+      "data": {
+        "cmd": "docker pull %{镜像名称}%:%{标签}%",
+        "extensions": [
+          {
+            "name": "最新镜像",
+            "cmd": "docker pull %{镜像名称}%",
+            "params": {},
+            "keyword": "docker pull 最新镜像"
+          },
+          {
+            "name": "指定仓库",
+            "cmd": "docker pull %{仓库地址}%/%{镜像}%:%{标签}%",
+            "params": {},
+            "keyword": "docker pull 指定仓库"
+          }
+        ],
+        "params": {
+          "镜像名称": {
+            "type": "string",
+            "required": true,
+            "description": "镜像名称参数",
+            "example": "",
+            "notes": ""
+          },
+          "标签": {
+            "type": "string",
+            "required": true,
+            "description": "标签参数",
+            "example": "",
+            "notes": ""
+          },
+          "仓库地址": {
+            "type": "string",
+            "required": true,
+            "description": "仓库地址参数",
+            "example": "",
+            "notes": ""
+          },
+          "镜像": {
+            "type": "string",
+            "required": true,
+            "description": "镜像参数",
+            "example": "",
+            "notes": ""
+          }
+        }
+      }
+    },
+    {
+      "dirPath": "/Docker 命令/",
+      "name": "docker images 查看镜像",
+      "keyword": "docker images",
+      "description": "查看镜像",
+      "data": {
+        "cmd": "docker images",
+        "extensions": [
+          {
+            "name": "仅显示ID",
+            "cmd": "docker images -q",
+            "params": {},
+            "keyword": "docker images 仅显示ID"
+          },
+          {
+            "name": "中间镜像",
+            "cmd": "docker images -a",
+            "params": {},
+            "keyword": "docker images 中间镜像"
+          },
+          {
+            "name": "按名称过滤",
+            "cmd": "docker images %{镜像名称}%",
+            "params": {},
+            "keyword": "docker images 按名称过滤"
+          }
+        ],
+        "params": {
+          "镜像名称": {
+            "type": "string",
+            "required": true,
+            "description": "镜像名称参数",
+            "example": "",
+            "notes": ""
+          }
+        }
+      }
+    },
+    {
+      "dirPath": "/Docker 命令/",
+      "name": "docker rmi 删除镜像",
+      "keyword": "docker rmi",
+      "description": "删除镜像",
+      "data": {
+        "cmd": "docker rmi %{镜像名称或ID}%",
+        "extensions": [
+          {
+            "name": "强制删除",
+            "cmd": "docker rmi -f %{镜像名称或ID}%",
+            "params": {},
+            "keyword": "docker rmi 强制删除"
+          },
+          {
+            "name": "删除未使用",
+            "cmd": "docker image prune -a",
+            "params": {},
+            "keyword": "docker rmi 删除未使用"
+          }
+        ],
+        "params": {
+          "镜像名称或ID": {
+            "type": "string",
+            "required": true,
+            "description": "镜像名称或ID参数",
+            "example": "",
+            "notes": ""
+          }
+        }
+      }
+    },
+    {
+      "dirPath": "/Docker 命令/",
+      "name": "docker build 构建镜像",
+      "keyword": "docker build",
+      "description": "构建镜像",
+      "data": {
+        "cmd": "docker build -t %{镜像名称}%:%{标签}% %{Dockerfile路径}%",
+        "extensions": [
+          {
+            "name": "无缓存构建",
+            "cmd": "docker build --no-cache -t %{镜像}%:%{标签}% %{路径}%",
+            "params": {},
+            "keyword": "docker build 无缓存构建"
+          },
+          {
+            "name": "指定Dockerfile",
+            "cmd": "docker build -f %{Dockerfile文件}% -t %{镜像}%:%{标签}% %{上下文}%",
+            "params": {},
+            "keyword": "docker build 指定Dockerfile"
+          },
+          {
+            "name": "BuildKit构建",
+            "cmd": "DOCKER_BUILDKIT=1 docker build -t %{镜像}%:%{标签}% %{路径}%",
+            "params": {},
+            "keyword": "docker build BuildKit构建"
+          }
+        ],
+        "params": {
+          "镜像名称": {
+            "type": "string",
+            "required": true,
+            "description": "镜像名称参数",
+            "example": "",
+            "notes": ""
+          },
+          "标签": {
+            "type": "string",
+            "required": true,
+            "description": "标签参数",
+            "example": "",
+            "notes": ""
+          },
+          "Dockerfile路径": {
+            "type": "string",
+            "required": true,
+            "description": "Dockerfile路径参数",
+            "example": "",
+            "notes": ""
+          },
+          "镜像": {
+            "type": "string",
+            "required": true,
+            "description": "镜像参数",
+            "example": "",
+            "notes": ""
+          },
+          "路径": {
+            "type": "string",
+            "required": true,
+            "description": "路径参数",
+            "example": "",
+            "notes": ""
+          },
+          "Dockerfile文件": {
+            "type": "string",
+            "required": true,
+            "description": "Dockerfile文件参数",
+            "example": "",
+            "notes": ""
+          },
+          "上下文": {
+            "type": "string",
+            "required": true,
+            "description": "上下文参数",
+            "example": "",
+            "notes": ""
+          }
+        }
+      }
+    },
+    {
+      "dirPath": "/Docker 命令/",
+      "name": "docker push 推送镜像",
+      "keyword": "docker push",
+      "description": "推送镜像",
+      "data": {
+        "cmd": "docker push %{镜像名称}%:%{标签}%",
+        "extensions": [],
+        "params": {
+          "镜像名称": {
+            "type": "string",
+            "required": true,
+            "description": "镜像名称参数",
+            "example": "",
+            "notes": ""
+          },
+          "标签": {
+            "type": "string",
+            "required": true,
+            "description": "标签参数",
+            "example": "",
+            "notes": ""
+          }
+        }
+      }
+    },
+    {
+      "dirPath": "/Docker 命令/",
+      "name": "docker-compose up 启动服务",
+      "keyword": "docker-compose up",
+      "description": "启动服务",
+      "data": {
+        "cmd": "docker-compose up -d",
+        "extensions": [],
+        "params": {
+          "服务1": {
+            "type": "string",
+            "required": true,
+            "description": "服务1参数",
+            "example": "",
+            "notes": ""
+          },
+          "服务2": {
+            "type": "string",
+            "required": true,
+            "description": "服务2参数",
+            "example": "",
+            "notes": ""
+          }
+        }
+      }
+    },
+    {
+      "dirPath": "/Docker 命令/",
+      "name": "docker-compose down 停止服务",
+      "keyword": "docker-compose down",
+      "description": "停止服务",
+      "data": {
+        "cmd": "docker-compose down",
+        "extensions": [],
+        "params": {}
+      }
+    },
+    {
+      "dirPath": "/Docker 命令/",
+      "name": "docker-compose ps 查看服务",
+      "keyword": "docker-compose ps",
+      "description": "查看服务",
+      "data": {
+        "cmd": "docker-compose ps",
+        "extensions": [],
+        "params": {}
+      }
+    },
+    {
+      "dirPath": "/Docker 命令/",
+      "name": "docker-compose logs 查看日志",
+      "keyword": "docker-compose logs",
+      "description": "查看日志",
+      "data": {
+        "cmd": "docker-compose logs -f %{服务名称}%",
+        "extensions": [],
+        "params": {
+          "服务名称": {
+            "type": "string",
+            "required": true,
+            "description": "服务名称参数",
+            "example": "",
+            "notes": ""
+          },
+          "行数": {
+            "type": "string",
+            "required": true,
+            "description": "行数参数",
+            "example": "",
+            "notes": ""
+          },
+          "服务": {
+            "type": "string",
+            "required": true,
+            "description": "服务参数",
+            "example": "",
+            "notes": ""
+          }
+        }
+      }
+    },
+    {
+      "dirPath": "/Docker 命令/",
+      "name": "docker-compose build 构建服务",
+      "keyword": "docker-compose build",
+      "description": "构建服务",
+      "data": {
+        "cmd": "docker-compose build",
+        "extensions": [],
+        "params": {
+          "服务名称": {
+            "type": "string",
+            "required": true,
+            "description": "服务名称参数",
+            "example": "",
+            "notes": ""
+          }
+        }
+      }
+    },
+    {
+      "dirPath": "/Docker 命令/",
+      "name": "docker network create 创建网络",
+      "keyword": "docker network create",
+      "description": "创建网络",
+      "data": {
+        "cmd": "docker network create %{网络名称}%",
+        "extensions": [
+          {
+            "name": "查看网络列表",
+            "cmd": "docker network ls",
+            "params": {},
+            "keyword": "docker network create 查看网络列表"
+          },
+          {
+            "name": "查看网络详情",
+            "cmd": "docker network inspect %{网络名称}%",
+            "params": {},
+            "keyword": "docker network create 查看网络详情"
+          },
+          {
+            "name": "删除网络",
+            "cmd": "docker network rm %{网络名称}%",
+            "params": {},
+            "keyword": "docker network create 删除网络"
+          }
+        ],
+        "params": {
+          "网络名称": {
+            "type": "string",
+            "required": true,
+            "description": "网络名称参数",
+            "example": "",
+            "notes": ""
+          }
+        }
+      }
+    },
+    {
+      "dirPath": "/Docker 命令/",
+      "name": "docker volume create 创建卷",
+      "keyword": "docker volume create",
+      "description": "创建卷",
+      "data": {
+        "cmd": "docker volume create %{卷名称}%",
+        "extensions": [
+          {
+            "name": "查看卷列表",
+            "cmd": "docker volume ls",
+            "params": {},
+            "keyword": "docker volume create 查看卷列表"
+          },
+          {
+            "name": "查看卷详情",
+            "cmd": "docker volume inspect %{卷名称}%",
+            "params": {},
+            "keyword": "docker volume create 查看卷详情"
+          },
+          {
+            "name": "删除未使用卷",
+            "cmd": "docker volume prune",
+            "params": {},
+            "keyword": "docker volume create 删除未使用卷"
+          }
+        ],
+        "params": {
+          "卷名称": {
+            "type": "string",
+            "required": true,
+            "description": "卷名称参数",
+            "example": "",
+            "notes": ""
+          }
+        }
+      }
+    },
+    {
+      "dirPath": "/Docker 命令/",
+      "name": "docker inspect 查看详情",
+      "keyword": "docker inspect",
+      "description": "查看详情",
+      "data": {
+        "cmd": "docker inspect %{容器或镜像名称}%",
+        "extensions": [
+          {
+            "name": "查看IP地址",
+            "cmd": "docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' %{容器}%",
+            "params": {},
+            "keyword": "docker inspect 查看IP地址"
+          },
+          {
+            "name": "查看挂载点",
+            "cmd": "docker inspect -f '{{json .Mounts}}' %{容器}%",
+            "params": {},
+            "keyword": "docker inspect 查看挂载点"
+          }
+        ],
+        "params": {
+          "容器或镜像名称": {
+            "type": "string",
+            "required": true,
+            "description": "容器或镜像名称参数",
+            "example": "",
+            "notes": ""
+          },
+          "容器": {
+            "type": "string",
+            "required": true,
+            "description": "容器参数",
+            "example": "",
+            "notes": ""
+          }
+        }
+      }
+    },
+    {
+      "dirPath": "/Docker 命令/",
+      "name": "docker stats 查看资源使用",
+      "keyword": "docker stats",
+      "description": "查看资源使用",
+      "data": {
+        "cmd": "docker stats",
+        "extensions": [
+          {
+            "name": "指定容器",
+            "cmd": "docker stats %{容器名称}%",
+            "params": {},
+            "keyword": "docker stats 指定容器"
+          },
+          {
+            "name": "一次性查看",
+            "cmd": "docker stats --no-stream",
+            "params": {},
+            "keyword": "docker stats 一次性查看"
+          }
+        ],
+        "params": {
+          "容器名称": {
+            "type": "string",
+            "required": true,
+            "description": "容器名称参数",
+            "example": "",
+            "notes": ""
+          }
+        }
+      }
+    },
+    {
+      "dirPath": "/Docker 命令/",
+      "name": "docker cp 复制文件",
+      "keyword": "docker cp",
+      "description": "复制文件",
+      "data": {
+        "cmd": "docker cp %{源路径}% %{容器名称}%:%{目标路径}%",
+        "extensions": [
+          {
+            "name": "容器到主机",
+            "cmd": "docker cp %{容器名称}%:%{容器内路径}% %{主机目标路径}%",
+            "params": {},
+            "keyword": "docker cp 容器到主机"
+          }
+        ],
+        "params": {
+          "源路径": {
+            "type": "string",
+            "required": true,
+            "description": "源路径参数",
+            "example": "",
+            "notes": ""
+          },
+          "容器名称": {
+            "type": "string",
+            "required": true,
+            "description": "容器名称参数",
+            "example": "",
+            "notes": ""
+          },
+          "目标路径": {
+            "type": "string",
+            "required": true,
+            "description": "目标路径参数",
+            "example": "",
+            "notes": ""
+          },
+          "容器内路径": {
+            "type": "string",
+            "required": true,
+            "description": "容器内路径参数",
+            "example": "",
+            "notes": ""
+          },
+          "主机目标路径": {
+            "type": "string",
+            "required": true,
+            "description": "主机目标路径参数",
+            "example": "",
+            "notes": ""
+          }
+        }
       }
     },
     {
       "dirPath": "/Linux 命令/",
-      "name": "ls -la",
-      "keyword": "ls -la",
-      "description": "",
+      "name": "cd 切换目录",
+      "keyword": "cd",
+      "description": "切换目录",
       "data": {
-        "cmd": "ls -la"
-      }
-    },
-    {
-      "dirPath": "/Linux 命令/文件操作/",
-      "name": "ls -la 查看文件详细信息",
-      "keyword": "ls -la 查看文件详细信息",
-      "description": "显示所有文件（包括隐藏文件）的详细信息",
-      "data": {
-        "cmd": "ls -la"
-      }
-    },
-    {
-      "dirPath": "/Linux 命令/",
-      "name": "mkdir",
-      "keyword": "mkdir",
-      "description": "",
-      "data": {
-        "cmd": "mkdir"
-      }
-    },
-    {
-      "dirPath": "/Linux 命令/文件操作/",
-      "name": "mkdir 创建文件夹",
-      "keyword": "mkdir 创建文件夹",
-      "description": "",
-      "data": {
-        "cmd": "mkdir %{文件夹名称}%"
-      }
-    },
-    {
-      "dirPath": "/Linux 命令/文件操作/",
-      "name": "mkdir 创建文件夹-10",
-      "keyword": "mkdir 创建文件夹-1",
-      "description": "",
-      "data": {
-        "cmd": "mkdir "
-      }
-    },
-    {
-      "dirPath": "/Linux 命令/文件操作/",
-      "name": "mkdir 创建目录",
-      "keyword": "mkdir 创建目录",
-      "description": "",
-      "data": {
-        "cmd": "mkdir %{aaa}%"
-      }
-    },
-    {
-      "dirPath": "/Linux 命令/文件操作/",
-      "name": "mv 移动文件夹",
-      "keyword": "mv 移动文件夹",
-      "description": "",
-      "data": {
-        "cmd": "mv %{源文件}% %{新文件夹}%/"
-      }
-    },
-    {
-      "dirPath": "/Linux 命令/系统信息/",
-      "name": "pip install 第三方库",
-      "keyword": "pip install 第三方库",
-      "description": "",
-      "data": {
-        "cmd": "pip install %{第三方库}%"
+        "cmd": "cd %{目录路径}%",
+        "extensions": [
+          {
+            "name": "返回上一次目录",
+            "cmd": "cd -",
+            "params": {},
+            "keyword": "cd 返回上一次目录"
+          },
+          {
+            "name": "返回用户主目录",
+            "cmd": "cd ~",
+            "params": {},
+            "keyword": "cd 返回用户主目录"
+          },
+          {
+            "name": "上级目录",
+            "cmd": "cd ..",
+            "params": {},
+            "keyword": "cd 上级目录"
+          },
+          {
+            "name": "根目录",
+            "cmd": "cd /",
+            "params": {},
+            "keyword": "cd 根目录"
+          }
+        ],
+        "params": {
+          "目录路径": {
+            "type": "string",
+            "required": true,
+            "description": "目录路径参数",
+            "example": "",
+            "notes": ""
+          }
+        }
       }
     },
     {
       "dirPath": "/Linux 命令/",
-      "name": "pwd",
+      "name": "pwd 显示当前目录",
       "keyword": "pwd",
-      "description": "",
+      "description": "显示当前目录",
       "data": {
-        "cmd": "pwd"
-      }
-    },
-    {
-      "dirPath": "/Linux 命令/文件操作/",
-      "name": "rsync 复制文件夹",
-      "keyword": "rsync 复制文件夹",
-      "description": "",
-      "data": {
-        "cmd": "rsync -ah --progress \"%{源文件目录}%\" \"%{新文件夹目录}%/\""
-      }
-    },
-    {
-      "dirPath": "/Linux 命令/Screen 会话/",
-      "name": "screen -ls 查看所有后台窗口",
-      "keyword": "screen -ls 查看所有后台窗口",
-      "description": "",
-      "data": {
-        "cmd": "screen -ls"
-      }
-    },
-    {
-      "dirPath": "/Linux 命令/Screen 会话/",
-      "name": "screen -R 创建会话",
-      "keyword": "screen -R 创建会话",
-      "description": "",
-      "data": {
-        "cmd": "screen -R %{会话名}%"
-      }
-    },
-    {
-      "dirPath": "/Linux 命令/Screen 会话/",
-      "name": "screen -r 回到窗口",
-      "keyword": "screen -r 回到窗口",
-      "description": "",
-      "data": {
-        "cmd": "screen -r %{名字}%"
-      }
-    },
-    {
-      "dirPath": "/Linux 命令/Screen 会话/",
-      "name": "screen exit 窗口里执行",
-      "keyword": "screen exit 窗口里执行",
-      "description": "",
-      "data": {
-        "cmd": "exit"
-      }
-    },
-    {
-      "dirPath": "/Linux 命令/文件操作/",
-      "name": "tail 查看文件末尾",
-      "keyword": "tail 查看文件末尾",
-      "description": "",
-      "data": {
-        "cmd": "tail -f %{哪一个文件}%"
-      }
-    },
-    {
-      "dirPath": "/Linux 命令/文件操作/",
-      "name": "tar -cf 打包分块",
-      "keyword": "tar -cf 打包分块",
-      "description": "",
-      "data": {
-        "cmd": "stdbuf -oL tar -cf - %{目录}% | pv -s $(du -sb %{目录}% | awk '{print $1}') | split -b %{多少G分块}%G - %{压缩包}%.tar."
-      }
-    },
-    {
-      "dirPath": "/Linux 命令/文件操作/",
-      "name": "tar -cf 用 cat 合并压缩包",
-      "keyword": "tar -cf 用 cat 合并压缩包",
-      "description": "",
-      "data": {
-        "cmd": "cat %{压缩包}%.tar.* | tar -xf -"
-      }
-    },
-    {
-      "dirPath": "/Linux 命令/文件操作/",
-      "name": "tar 打包目录",
-      "keyword": "tar 打包目录",
-      "description": "",
-      "data": {
-        "cmd": "tar -czvf %{压缩包名称(.tar.gz)}%.tar.gz %{目录位置}% "
-      }
-    },
-    {
-      "dirPath": "/Linux 命令/文件操作/",
-      "name": "tar 解压目录",
-      "keyword": "tar 解压目录",
-      "description": "",
-      "data": {
-        "cmd": "tar -xzvf %{压缩包名称(.tar.gz)}%.tar.gz"
-      }
-    },
-    {
-      "dirPath": "/Linux 命令/文件操作/",
-      "name": "touch 创建空文件",
-      "keyword": "touch 创建空文件",
-      "description": "",
-      "data": {
-        "cmd": "touch %{空文件名称}%"
+        "cmd": "pwd",
+        "extensions": [],
+        "params": {}
       }
     },
     {
       "dirPath": "/Linux 命令/",
-      "name": "uname -a",
-      "keyword": "uname -a",
-      "description": "",
+      "name": "ls 列出目录内容",
+      "keyword": "ls",
+      "description": "列出目录内容",
       "data": {
-        "cmd": "uname -a"
+        "cmd": "ls -la",
+        "extensions": [
+          {
+            "name": "按时间排序",
+            "cmd": "ls -lt",
+            "params": {},
+            "keyword": "ls 按时间排序"
+          },
+          {
+            "name": "按大小排序",
+            "cmd": "ls -lS",
+            "params": {},
+            "keyword": "ls 按大小排序"
+          },
+          {
+            "name": "递归显示",
+            "cmd": "ls -lR",
+            "params": {},
+            "keyword": "ls 递归显示"
+          },
+          {
+            "name": "人类可读大小",
+            "cmd": "ls -lh",
+            "params": {},
+            "keyword": "ls 人类可读大小"
+          },
+          {
+            "name": "显示隐藏文件",
+            "cmd": "ls -a",
+            "params": {},
+            "keyword": "ls 显示隐藏文件"
+          }
+        ],
+        "params": {}
       }
     },
     {
-      "dirPath": "/Linux 命令/文件操作/",
-      "name": "zip 压缩文件",
-      "keyword": "zip 压缩文件",
-      "description": "",
+      "dirPath": "/Linux 命令/",
+      "name": "mkdir 创建目录",
+      "keyword": "mkdir",
+      "description": "创建目录",
       "data": {
-        "cmd": "zip %{压缩包名称}%.zip %{文件名称}%"
+        "cmd": "mkdir -p %{文件夹路径}%",
+        "extensions": [],
+        "params": {
+          "文件夹路径": {
+            "type": "string",
+            "required": true,
+            "description": "文件夹路径参数",
+            "example": "",
+            "notes": ""
+          },
+          "目录": {
+            "type": "string",
+            "required": true,
+            "description": "目录参数",
+            "example": "",
+            "notes": ""
+          }
+        }
       }
     },
     {
-      "dirPath": "/Linux 命令/文件操作/",
-      "name": "zip 解压文件",
-      "keyword": "zip 解压文件",
-      "description": "",
+      "dirPath": "/Linux 命令/",
+      "name": "cp 复制文件",
+      "keyword": "cp",
+      "description": "复制文件",
       "data": {
-        "cmd": "unzip %{压缩包名称}%.zip"
+        "cmd": "cp -r %{源文件夹}% %{目标目录}%/",
+        "extensions": [],
+        "params": {
+          "源文件夹": {
+            "type": "string",
+            "required": true,
+            "description": "源文件夹参数",
+            "example": "",
+            "notes": ""
+          },
+          "目标目录": {
+            "type": "string",
+            "required": true,
+            "description": "目标目录参数",
+            "example": "",
+            "notes": ""
+          },
+          "源": {
+            "type": "string",
+            "required": true,
+            "description": "源参数",
+            "example": "",
+            "notes": ""
+          },
+          "目标": {
+            "type": "string",
+            "required": true,
+            "description": "目标参数",
+            "example": "",
+            "notes": ""
+          }
+        }
       }
     },
     {
-      "dirPath": "/提示词/",
-      "name": "docker 操作",
-      "keyword": "docker 操作",
+      "dirPath": "/Linux 命令/",
+      "name": "mv 移动/重命名文件",
+      "keyword": "mv",
+      "description": "移动/重命名文件",
       "data": {
-        "name": "docker 操作"
+        "cmd": "mv %{源文件}% %{新文件夹}%/",
+        "extensions": [],
+        "params": {
+          "源文件": {
+            "type": "string",
+            "required": true,
+            "description": "源文件参数",
+            "example": "",
+            "notes": ""
+          },
+          "新文件夹": {
+            "type": "string",
+            "required": true,
+            "description": "新文件夹参数",
+            "example": "",
+            "notes": ""
+          },
+          "旧名": {
+            "type": "string",
+            "required": true,
+            "description": "旧名参数",
+            "example": "",
+            "notes": ""
+          },
+          "新名": {
+            "type": "string",
+            "required": true,
+            "description": "新名参数",
+            "example": "",
+            "notes": ""
+          },
+          "源": {
+            "type": "string",
+            "required": true,
+            "description": "源参数",
+            "example": "",
+            "notes": ""
+          },
+          "目标": {
+            "type": "string",
+            "required": true,
+            "description": "目标参数",
+            "example": "",
+            "notes": ""
+          }
+        }
       }
     },
     {
-      "dirPath": "/提示词/",
-      "name": "git 操作",
-      "keyword": "git 操作",
+      "dirPath": "/Linux 命令/",
+      "name": "rm 删除文件",
+      "keyword": "rm",
+      "description": "删除文件",
       "data": {
-        "name": "git 操作"
+        "cmd": "rm %{文件}%",
+        "extensions": [],
+        "params": {
+          "文件": {
+            "type": "string",
+            "required": true,
+            "description": "文件参数",
+            "example": "",
+            "notes": ""
+          },
+          "目录": {
+            "type": "string",
+            "required": true,
+            "description": "目录参数",
+            "example": "",
+            "notes": ""
+          }
+        }
       }
     },
     {
-      "dirPath": "/GSD 工作流/",
-      "name": "GSD 1-01 步骤",
-      "keyword": "GSD 1-01 步骤",
+      "dirPath": "/Linux 命令/",
+      "name": "find 查找文件",
+      "keyword": "find",
+      "description": "查找文件",
       "data": {
-        "name": "GSD 1-01 步骤"
+        "cmd": "find %{哪个目录}% -name \"%{文件名(支持正则表达式)}%\"",
+        "extensions": [],
+        "params": {
+          "哪个目录": {
+            "type": "string",
+            "required": true,
+            "description": "哪个目录参数",
+            "example": "",
+            "notes": ""
+          },
+          "文件名(支持正则表达式)": {
+            "type": "string",
+            "required": true,
+            "description": "文件名(支持正则表达式)参数",
+            "example": "",
+            "notes": ""
+          },
+          "目录": {
+            "type": "string",
+            "required": true,
+            "description": "目录参数",
+            "example": "",
+            "notes": ""
+          }
+        }
       }
     },
     {
-      "dirPath": "/GSD 工作流/",
-      "name": "GSD gsd-discuss-phase 实施决策",
-      "keyword": "GSD gsd-discuss-phase 实施决策",
+      "dirPath": "/Linux 命令/",
+      "name": "grep 搜索文件内容",
+      "keyword": "grep",
+      "description": "搜索文件内容",
       "data": {
-        "name": "GSD gsd-discuss-phase 实施决策"
+        "cmd": "grep \"%{查找的内容}%\" %{在哪一个文件查找}%",
+        "extensions": [],
+        "params": {
+          "查找的内容": {
+            "type": "string",
+            "required": true,
+            "description": "查找的内容参数",
+            "example": "",
+            "notes": ""
+          },
+          "在哪一个文件查找": {
+            "type": "string",
+            "required": true,
+            "description": "在哪一个文件查找参数",
+            "example": "",
+            "notes": ""
+          },
+          "内容": {
+            "type": "string",
+            "required": true,
+            "description": "内容参数",
+            "example": "",
+            "notes": ""
+          },
+          "目录": {
+            "type": "string",
+            "required": true,
+            "description": "目录参数",
+            "example": "",
+            "notes": ""
+          },
+          "文件": {
+            "type": "string",
+            "required": true,
+            "description": "文件参数",
+            "example": "",
+            "notes": ""
+          },
+          "正则": {
+            "type": "string",
+            "required": true,
+            "description": "正则参数",
+            "example": "",
+            "notes": ""
+          }
+        }
       }
     },
     {
-      "dirPath": "/GSD 工作流/",
-      "name": "GSD status 状态",
-      "keyword": "GSD status 状态",
+      "dirPath": "/Linux 命令/",
+      "name": "cat 查看文件内容",
+      "keyword": "cat",
+      "description": "查看文件内容",
       "data": {
-        "name": "GSD status 状态"
+        "cmd": "cat %{文件}%",
+        "extensions": [],
+        "params": {
+          "文件": {
+            "type": "string",
+            "required": true,
+            "description": "文件参数",
+            "example": "",
+            "notes": ""
+          }
+        }
       }
     },
     {
-      "dirPath": "/GSD 工作流/",
-      "name": "GSD step",
-      "keyword": "GSD step",
+      "dirPath": "/Linux 命令/",
+      "name": "head 查看文件开头",
+      "keyword": "head",
+      "description": "查看文件开头",
       "data": {
-        "name": "GSD step"
+        "cmd": "head -n %{多少行}% %{在哪一个文件}%",
+        "extensions": [],
+        "params": {
+          "多少行": {
+            "type": "string",
+            "required": true,
+            "description": "多少行参数",
+            "example": "",
+            "notes": ""
+          },
+          "在哪一个文件": {
+            "type": "string",
+            "required": true,
+            "description": "在哪一个文件参数",
+            "example": "",
+            "notes": ""
+          }
+        }
       }
     },
     {
-      "dirPath": "/GSD 工作流/",
-      "name": "GSD UI",
-      "keyword": "GSD UI",
+      "dirPath": "/Linux 命令/",
+      "name": "tail 查看文件末尾",
+      "keyword": "tail",
+      "description": "查看文件末尾",
       "data": {
-        "name": "GSD UI"
+        "cmd": "tail -f %{哪一个文件}%",
+        "extensions": [],
+        "params": {
+          "哪一个文件": {
+            "type": "string",
+            "required": true,
+            "description": "哪一个文件参数",
+            "example": "",
+            "notes": ""
+          },
+          "文件": {
+            "type": "string",
+            "required": true,
+            "description": "文件参数",
+            "example": "",
+            "notes": ""
+          }
+        }
       }
     },
     {
-      "dirPath": "/GSD 工作流/",
-      "name": "GSD workteams 工作流管理",
-      "keyword": "GSD workteams 工作流管理",
+      "dirPath": "/Linux 命令/",
+      "name": "sort 排序",
+      "keyword": "sort",
+      "description": "排序",
       "data": {
-        "name": "GSD workteams 工作流管理"
+        "cmd": "sort %{文件}%",
+        "extensions": [],
+        "params": {
+          "文件": {
+            "type": "string",
+            "required": true,
+            "description": "文件参数",
+            "example": "",
+            "notes": ""
+          }
+        }
       }
     },
     {
-      "dirPath": "/GSD 工作流/",
-      "name": "GSD worktree",
-      "keyword": "GSD worktree",
+      "dirPath": "/Linux 命令/",
+      "name": "uniq 去重",
+      "keyword": "uniq",
+      "description": "去重",
       "data": {
-        "name": "GSD worktree"
+        "cmd": "uniq %{文件}%",
+        "extensions": [],
+        "params": {
+          "文件": {
+            "type": "string",
+            "required": true,
+            "description": "文件参数",
+            "example": "",
+            "notes": ""
+          }
+        }
       }
     },
     {
-      "dirPath": "/GSD 工作流/",
-      "name": "GSD 会话",
-      "keyword": "GSD 会话",
+      "dirPath": "/Linux 命令/",
+      "name": "wc 统计行数",
+      "keyword": "wc",
+      "description": "统计行数",
       "data": {
-        "name": "GSD 会话"
+        "cmd": "wc %{文件}%",
+        "extensions": [],
+        "params": {
+          "文件": {
+            "type": "string",
+            "required": true,
+            "description": "文件参数",
+            "example": "",
+            "notes": ""
+          }
+        }
       }
     },
     {
-      "dirPath": "/GSD 工作流/",
-      "name": "GSD 阶段管理",
-      "keyword": "GSD 阶段管理",
+      "dirPath": "/Linux 命令/",
+      "name": "chmod 修改权限",
+      "keyword": "chmod",
+      "description": "修改权限",
       "data": {
-        "name": "GSD 阶段管理"
+        "cmd": "chmod %{权限}% %{文件}%",
+        "extensions": [],
+        "params": {
+          "权限": {
+            "type": "string",
+            "required": true,
+            "description": "权限参数",
+            "example": "",
+            "notes": ""
+          },
+          "文件": {
+            "type": "string",
+            "required": true,
+            "description": "文件参数",
+            "example": "",
+            "notes": ""
+          },
+          "目录": {
+            "type": "string",
+            "required": true,
+            "description": "目录参数",
+            "example": "",
+            "notes": ""
+          }
+        }
       }
     },
     {
-      "dirPath": "/提示词/",
-      "name": "linux常用命令",
-      "keyword": "linux常用命令",
+      "dirPath": "/Linux 命令/",
+      "name": "chown 修改所有者",
+      "keyword": "chown",
+      "description": "修改所有者",
       "data": {
-        "name": "linux常用命令"
+        "cmd": "chown %{用户}:%{组}% %{文件}%",
+        "extensions": [],
+        "params": {
+          "组": {
+            "type": "string",
+            "required": true,
+            "description": "组参数",
+            "example": "",
+            "notes": ""
+          },
+          "文件": {
+            "type": "string",
+            "required": true,
+            "description": "文件参数",
+            "example": "",
+            "notes": ""
+          },
+          "用户": {
+            "type": "string",
+            "required": true,
+            "description": "用户参数",
+            "example": "",
+            "notes": ""
+          },
+          "目录": {
+            "type": "string",
+            "required": true,
+            "description": "目录参数",
+            "example": "",
+            "notes": ""
+          }
+        }
       }
     },
     {
-      "dirPath": "/提示词/",
-      "name": "npm 操作",
-      "keyword": "npm 操作",
+      "dirPath": "/Linux 命令/",
+      "name": "tar 打包压缩",
+      "keyword": "tar",
+      "description": "打包压缩",
       "data": {
-        "name": "npm 操作"
+        "cmd": "tar -czvf %{压缩包名称(.tar.gz)}%.tar.gz %{目录位置}%",
+        "extensions": [],
+        "params": {
+          "压缩包名称(.tar.gz)": {
+            "type": "string",
+            "required": true,
+            "description": "压缩包名称(.tar.gz)参数",
+            "example": "",
+            "notes": ""
+          },
+          "目录位置": {
+            "type": "string",
+            "required": true,
+            "description": "目录位置参数",
+            "example": "",
+            "notes": ""
+          },
+          "压缩包": {
+            "type": "string",
+            "required": true,
+            "description": "压缩包参数",
+            "example": "",
+            "notes": ""
+          },
+          "名称": {
+            "type": "string",
+            "required": true,
+            "description": "名称参数",
+            "example": "",
+            "notes": ""
+          },
+          "目录": {
+            "type": "string",
+            "required": true,
+            "description": "目录参数",
+            "example": "",
+            "notes": ""
+          },
+          "目标目录": {
+            "type": "string",
+            "required": true,
+            "description": "目标目录参数",
+            "example": "",
+            "notes": ""
+          }
+        }
       }
     },
     {
-      "dirPath": "/提示词/linux常用命令/",
-      "name": "screen",
+      "dirPath": "/Linux 命令/",
+      "name": "zip/unzip 压缩解压",
+      "keyword": "zip/unzip",
+      "description": "压缩解压",
+      "data": {
+        "cmd": "zip -r %{压缩包名称}%.zip %{文件名称}%",
+        "extensions": [],
+        "params": {
+          "压缩包名称": {
+            "type": "string",
+            "required": true,
+            "description": "压缩包名称参数",
+            "example": "",
+            "notes": ""
+          },
+          "文件名称": {
+            "type": "string",
+            "required": true,
+            "description": "文件名称参数",
+            "example": "",
+            "notes": ""
+          },
+          "目标目录": {
+            "type": "string",
+            "required": true,
+            "description": "目标目录参数",
+            "example": "",
+            "notes": ""
+          }
+        }
+      }
+    },
+    {
+      "dirPath": "/Linux 命令/",
+      "name": "gzip/gunzip gzip 压缩",
+      "keyword": "gzip/gunzip",
+      "description": "gzip 压缩",
+      "data": {
+        "cmd": "gzip %{文件}%",
+        "extensions": [],
+        "params": {
+          "文件": {
+            "type": "string",
+            "required": true,
+            "description": "文件参数",
+            "example": "",
+            "notes": ""
+          }
+        }
+      }
+    },
+    {
+      "dirPath": "/Linux 命令/",
+      "name": "df 磁盘空间使用情况",
+      "keyword": "df",
+      "description": "磁盘空间使用情况",
+      "data": {
+        "cmd": "df -h",
+        "extensions": [],
+        "params": {
+          "目录": {
+            "type": "string",
+            "required": true,
+            "description": "目录参数",
+            "example": "",
+            "notes": ""
+          }
+        }
+      }
+    },
+    {
+      "dirPath": "/Linux 命令/",
+      "name": "du 目录大小",
+      "keyword": "du",
+      "description": "目录大小",
+      "data": {
+        "cmd": "du -sh %{目录}%",
+        "extensions": [],
+        "params": {
+          "目录": {
+            "type": "string",
+            "required": true,
+            "description": "目录参数",
+            "example": "",
+            "notes": ""
+          }
+        }
+      }
+    },
+    {
+      "dirPath": "/Linux 命令/",
+      "name": "ps 查看进程",
+      "keyword": "ps",
+      "description": "查看进程",
+      "data": {
+        "cmd": "ps aux",
+        "extensions": [],
+        "params": {
+          "用户名": {
+            "type": "string",
+            "required": true,
+            "description": "用户名参数",
+            "example": "",
+            "notes": ""
+          },
+          "进程名": {
+            "type": "string",
+            "required": true,
+            "description": "进程名参数",
+            "example": "",
+            "notes": ""
+          }
+        }
+      }
+    },
+    {
+      "dirPath": "/Linux 命令/",
+      "name": "top/htop 进程监控",
+      "keyword": "top/htop",
+      "description": "进程监控",
+      "data": {
+        "cmd": "htop",
+        "extensions": [],
+        "params": {
+          "用户名": {
+            "type": "string",
+            "required": true,
+            "description": "用户名参数",
+            "example": "",
+            "notes": ""
+          },
+          "PID": {
+            "type": "string",
+            "required": true,
+            "description": "PID参数",
+            "example": "",
+            "notes": ""
+          }
+        }
+      }
+    },
+    {
+      "dirPath": "/Linux 命令/",
+      "name": "kill 终止进程",
+      "keyword": "kill",
+      "description": "终止进程",
+      "data": {
+        "cmd": "kill %{PID}%",
+        "extensions": [],
+        "params": {
+          "PID": {
+            "type": "string",
+            "required": true,
+            "description": "PID参数",
+            "example": "",
+            "notes": ""
+          },
+          "进程名": {
+            "type": "string",
+            "required": true,
+            "description": "进程名参数",
+            "example": "",
+            "notes": ""
+          }
+        }
+      }
+    },
+    {
+      "dirPath": "/Linux 命令/",
+      "name": "nohup 后台运行",
+      "keyword": "nohup",
+      "description": "后台运行",
+      "data": {
+        "cmd": "nohup %{命令}% > output.log 2>&1 &",
+        "extensions": [],
+        "params": {
+          "命令": {
+            "type": "string",
+            "required": true,
+            "description": "命令参数",
+            "example": "",
+            "notes": ""
+          }
+        }
+      }
+    },
+    {
+      "dirPath": "/Linux 命令/",
+      "name": "ping 测试网络连通性",
+      "keyword": "ping",
+      "description": "测试网络连通性",
+      "data": {
+        "cmd": "ping %{主机或IP}%",
+        "extensions": [],
+        "params": {
+          "主机或IP": {
+            "type": "string",
+            "required": true,
+            "description": "主机或IP参数",
+            "example": "",
+            "notes": ""
+          },
+          "主机": {
+            "type": "string",
+            "required": true,
+            "description": "主机参数",
+            "example": "",
+            "notes": ""
+          }
+        }
+      }
+    },
+    {
+      "dirPath": "/Linux 命令/",
+      "name": "curl HTTP 请求",
+      "keyword": "curl",
+      "description": "HTTP 请求",
+      "data": {
+        "cmd": "curl %{URL}%",
+        "extensions": [],
+        "params": {
+          "URL": {
+            "type": "string",
+            "required": true,
+            "description": "URL参数",
+            "example": "",
+            "notes": ""
+          },
+          "token": {
+            "type": "string",
+            "required": true,
+            "description": "token参数",
+            "example": "",
+            "notes": ""
+          }
+        }
+      }
+    },
+    {
+      "dirPath": "/Linux 命令/",
+      "name": "wget 下载文件",
+      "keyword": "wget",
+      "description": "下载文件",
+      "data": {
+        "cmd": "wget %{URL}%",
+        "extensions": [],
+        "params": {
+          "URL": {
+            "type": "string",
+            "required": true,
+            "description": "URL参数",
+            "example": "",
+            "notes": ""
+          },
+          "文件名": {
+            "type": "string",
+            "required": true,
+            "description": "文件名参数",
+            "example": "",
+            "notes": ""
+          }
+        }
+      }
+    },
+    {
+      "dirPath": "/Linux 命令/",
+      "name": "ssh 远程连接",
+      "keyword": "ssh",
+      "description": "远程连接",
+      "data": {
+        "cmd": "ssh %{用户}@%{主机}%",
+        "extensions": [],
+        "params": {
+          "主机": {
+            "type": "string",
+            "required": true,
+            "description": "主机参数",
+            "example": "",
+            "notes": ""
+          },
+          "端口": {
+            "type": "string",
+            "required": true,
+            "description": "端口参数",
+            "example": "",
+            "notes": ""
+          },
+          "密钥文件": {
+            "type": "string",
+            "required": true,
+            "description": "密钥文件参数",
+            "example": "",
+            "notes": ""
+          },
+          "命令": {
+            "type": "string",
+            "required": true,
+            "description": "命令参数",
+            "example": "",
+            "notes": ""
+          },
+          "本地端口": {
+            "type": "string",
+            "required": true,
+            "description": "本地端口参数",
+            "example": "",
+            "notes": ""
+          },
+          "远程端口": {
+            "type": "string",
+            "required": true,
+            "description": "远程端口参数",
+            "example": "",
+            "notes": ""
+          }
+        }
+      }
+    },
+    {
+      "dirPath": "/Linux 命令/",
+      "name": "scp 远程复制",
+      "keyword": "scp",
+      "description": "远程复制",
+      "data": {
+        "cmd": "scp %{本地文件}% %{用户}@%{远程主机}%:%{远程路径}%",
+        "extensions": [],
+        "params": {
+          "本地文件": {
+            "type": "string",
+            "required": true,
+            "description": "本地文件参数",
+            "example": "",
+            "notes": ""
+          },
+          "远程主机": {
+            "type": "string",
+            "required": true,
+            "description": "远程主机参数",
+            "example": "",
+            "notes": ""
+          },
+          "远程路径": {
+            "type": "string",
+            "required": true,
+            "description": "远程路径参数",
+            "example": "",
+            "notes": ""
+          },
+          "主机": {
+            "type": "string",
+            "required": true,
+            "description": "主机参数",
+            "example": "",
+            "notes": ""
+          },
+          "远程文件": {
+            "type": "string",
+            "required": true,
+            "description": "远程文件参数",
+            "example": "",
+            "notes": ""
+          },
+          "本地路径": {
+            "type": "string",
+            "required": true,
+            "description": "本地路径参数",
+            "example": "",
+            "notes": ""
+          },
+          "本地目录": {
+            "type": "string",
+            "required": true,
+            "description": "本地目录参数",
+            "example": "",
+            "notes": ""
+          },
+          "端口": {
+            "type": "string",
+            "required": true,
+            "description": "端口参数",
+            "example": "",
+            "notes": ""
+          },
+          "文件": {
+            "type": "string",
+            "required": true,
+            "description": "文件参数",
+            "example": "",
+            "notes": ""
+          },
+          "路径": {
+            "type": "string",
+            "required": true,
+            "description": "路径参数",
+            "example": "",
+            "notes": ""
+          }
+        }
+      }
+    },
+    {
+      "dirPath": "/Linux 命令/",
+      "name": "uname 系统信息",
+      "keyword": "uname",
+      "description": "系统信息",
+      "data": {
+        "cmd": "uname -a",
+        "extensions": [],
+        "params": {}
+      }
+    },
+    {
+      "dirPath": "/Linux 命令/",
+      "name": "hostname 主机名/IP",
+      "keyword": "hostname",
+      "description": "主机名/IP",
+      "data": {
+        "cmd": "hostname -I",
+        "extensions": [],
+        "params": {}
+      }
+    },
+    {
+      "dirPath": "/Linux 命令/",
+      "name": "free 内存使用",
+      "keyword": "free",
+      "description": "内存使用",
+      "data": {
+        "cmd": "free -h",
+        "extensions": [],
+        "params": {}
+      }
+    },
+    {
+      "dirPath": "/Linux 命令/",
+      "name": "uptime 运行时间",
+      "keyword": "uptime",
+      "description": "运行时间",
+      "data": {
+        "cmd": "uptime",
+        "extensions": [],
+        "params": {}
+      }
+    },
+    {
+      "dirPath": "/Linux 命令/",
+      "name": "ifconfig/ip 网络接口",
+      "keyword": "ifconfig/ip",
+      "description": "网络接口",
+      "data": {
+        "cmd": "ifconfig",
+        "extensions": [],
+        "params": {}
+      }
+    },
+    {
+      "dirPath": "/Linux 命令/",
+      "name": "pip Python 包管理",
+      "keyword": "pip",
+      "description": "Python 包管理",
+      "data": {
+        "cmd": "pip install %{第三方库}%",
+        "extensions": [],
+        "params": {
+          "第三方库": {
+            "type": "string",
+            "required": true,
+            "description": "第三方库参数",
+            "example": "",
+            "notes": ""
+          },
+          "版本": {
+            "type": "string",
+            "required": true,
+            "description": "版本参数",
+            "example": "",
+            "notes": ""
+          },
+          "库": {
+            "type": "string",
+            "required": true,
+            "description": "库参数",
+            "example": "",
+            "notes": ""
+          }
+        }
+      }
+    },
+    {
+      "dirPath": "/Linux 命令/",
+      "name": "screen 终端会话管理",
       "keyword": "screen",
+      "description": "终端会话管理",
       "data": {
-        "name": "screen"
+        "cmd": "screen -S %{会话名}%",
+        "extensions": [],
+        "params": {
+          "会话名": {
+            "type": "string",
+            "required": true,
+            "description": "会话名参数",
+            "example": "",
+            "notes": ""
+          },
+          "命令": {
+            "type": "string",
+            "required": true,
+            "description": "命令参数",
+            "example": "",
+            "notes": ""
+          }
+        }
       }
     },
     {
-      "dirPath": "/提示词/linux常用命令/",
-      "name": "常用命令",
-      "keyword": "常用命令",
+      "dirPath": "/Linux 命令/",
+      "name": "tmux 终端复用器",
+      "keyword": "tmux",
+      "description": "终端复用器",
       "data": {
-        "name": "常用命令"
+        "cmd": "tmux new -s %{会话名}%",
+        "extensions": [],
+        "params": {
+          "会话名": {
+            "type": "string",
+            "required": true,
+            "description": "会话名参数",
+            "example": "",
+            "notes": ""
+          }
+        }
       }
     },
     {
-      "dirPath": "/提示词/linux常用命令/",
-      "name": "文件操作",
-      "keyword": "文件操作",
+      "dirPath": "/Linux 命令/",
+      "name": "useradd 创建用户",
+      "keyword": "useradd",
+      "description": "创建用户",
       "data": {
-        "name": "文件操作"
+        "cmd": "useradd -m %{用户名}%",
+        "extensions": [],
+        "params": {
+          "用户名": {
+            "type": "string",
+            "required": true,
+            "description": "用户名参数",
+            "example": "",
+            "notes": ""
+          },
+          "组": {
+            "type": "string",
+            "required": true,
+            "description": "组参数",
+            "example": "",
+            "notes": ""
+          }
+        }
       }
     },
     {
-      "dirPath": "/提示词/linux常用命令/",
-      "name": "磁盘管理",
-      "keyword": "磁盘管理",
+      "dirPath": "/Linux 命令/",
+      "name": "sudo 以 root 权限执行",
+      "keyword": "sudo",
+      "description": "以 root 权限执行",
       "data": {
-        "name": "磁盘管理"
+        "cmd": "sudo %{命令}%",
+        "extensions": [],
+        "params": {
+          "命令": {
+            "type": "string",
+            "required": true,
+            "description": "命令参数",
+            "example": "",
+            "notes": ""
+          }
+        }
+      }
+    },
+    {
+      "dirPath": "/Linux 命令/",
+      "name": "id 查看用户信息",
+      "keyword": "id",
+      "description": "查看用户信息",
+      "data": {
+        "cmd": "id %{用户名}%",
+        "extensions": [],
+        "params": {
+          "用户名": {
+            "type": "string",
+            "required": true,
+            "description": "用户名参数",
+            "example": "",
+            "notes": ""
+          }
+        }
       }
     }
   ]
