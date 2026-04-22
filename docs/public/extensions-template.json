@@ -1,0 +1,189 @@
+{
+  "_说明": "这是一个完整的 extensions 扩展示例模板，用于展示如何在 commands.json 中添加扩展用法",
+  "_使用方式": "复制下面的 JSON 结构，修改 name、cmd、extensions 等字段，然后添加到 commands.json 的 data 数组中",
+  "_注意事项": [
+    "1. 每个命令对象必须有 dirPath、name、data 字段",
+    "2. data.cmd 是基础命令内容",
+    "3. data.extensions 是可选数组，包含多个扩展用法",
+    "4. 每个扩展用法对象必须有 name 和 cmd 字段",
+    "5. %{参数}% 格式的占位符会在复制时弹出输入框"
+  ],
+
+  "template_examples": [
+    {
+      "_名称": "基础模板（最简结构）",
+      "dirPath": "/分类名称/",
+      "name": "命令显示名称",
+      "keyword": "搜索关键词1 搜索关键词2",
+      "description": "命令的详细说明",
+      "data": {
+        "cmd": "基础命令内容"
+      }
+    },
+
+    {
+      "_名称": "带扩展示例 - 基础命令 + 多个扩展用法",
+      "dirPath": "/分类名称/",
+      "name": "命令显示名称",
+      "keyword": "关键词1 关键词2",
+      "description": "命令的详细说明",
+      "data": {
+        "cmd": "基础命令 %{参数1}%",
+        "extensions": [
+          {
+            "name": "扩展用法1名称",
+            "cmd": "扩展命令1 %{参数1}%"
+          },
+          {
+            "name": "扩展用法2名称",
+            "cmd": "扩展命令2 %{参数1}% %{参数2}%"
+          },
+          {
+            "name": "扩展用法3名称",
+            "cmd": "扩展命令3 无参数"
+          }
+        ]
+      }
+    },
+
+    {
+      "_名称": "Linux 命令扩展示例 - chmod",
+      "dirPath": "/Linux 命令/文件操作/",
+      "name": "chmod 修改文件权限",
+      "keyword": "chmod 权限 修改",
+      "description": "修改文件或目录的读写执行权限",
+      "data": {
+        "cmd": "chmod %{权限模式(如755)}% %{文件路径}%",
+        "extensions": [
+          {
+            "name": "递归修改目录权限",
+            "cmd": "chmod -R %{权限模式}% %{目录路径}%"
+          },
+          {
+            "name": "添加执行权限",
+            "cmd": "chmod +x %{文件}%"
+          },
+          {
+            "name": "移除写权限",
+            "cmd": "chmod -w %{文件}%"
+          },
+          {
+            "name": "设置为只读",
+            "cmd": "chmod 444 %{文件}%"
+          },
+          {
+            "name": "设置为可执行脚本",
+            "cmd": "chmod 755 %{脚本文件}%"
+          }
+        ]
+      }
+    },
+
+    {
+      "_名称": "Git 命令扩展示例 - git commit",
+      "dirPath": "/Git 命令/",
+      "name": "git commit 提交代码",
+      "keyword": "git commit 提交",
+      "description": "将暂存区的更改提交到本地仓库",
+      "data": {
+        "cmd": "git commit -m \"%{提交信息}%",
+        "extensions": [
+          {
+            "name": "提交并跳过暂存",
+            "cmd": "git commit -am \"%{提交信息}%"
+          },
+          {
+            "name": "修改上一次提交",
+            "cmd": "git commit --amend -m \"%{新的提交信息}%"
+          },
+          {
+            "name": "添加空提交",
+            "cmd": "git commit --allow-empty -m \"%{提交信息}%"
+          },
+          {
+            "name": "提交但跳过钩子",
+            "cmd": "git commit -m \"%{提交信息}% --no-verify"
+          }
+        ]
+      }
+    },
+
+    {
+      "_名称": "Docker 命令扩展示例",
+      "dirPath": "/Linux 命令/Docker/",
+      "name": "docker 容器管理",
+      "keyword": "docker 容器 管理",
+      "description": "Docker 容器的基本操作命令",
+      "data": {
+        "cmd": "docker run -d --name %{容器名称}% %{镜像名称}%",
+        "extensions": [
+          {
+            "name": "查看所有容器",
+            "cmd": "docker ps -a"
+          },
+          {
+            "name": "启动容器",
+            "cmd": "docker start %{容器名称或ID}%"
+          },
+          {
+            "name": "停止容器",
+            "cmd": "docker stop %{容器名称或ID}%"
+          },
+          {
+            "name": "删除容器",
+            "cmd": "docker rm %{容器名称或ID}%"
+          },
+          {
+            "name": "查看容器日志",
+            "cmd": "docker logs -f %{容器名称}%"
+          },
+          {
+            "name": "进入容器终端",
+            "cmd": "docker exec -it %{容器名称}% /bin/bash"
+          },
+          {
+            "name": "映射端口运行",
+            "cmd": "docker run -d -p %{宿主机端口}%:%{容器端口}% --name %{容器名称}% %{镜像}%"
+          }
+        ]
+      }
+    },
+
+    {
+      "_名称": "NPM 命令扩展示例",
+      "dirPath": "/Linux 命令/NPM/",
+      "name": "npm 包管理",
+      "keyword": "npm 包管理 安装",
+      "description": "Node.js 包管理器常用命令",
+      "data": {
+        "cmd": "npm install %{包名}%",
+        "extensions": [
+          {
+            "name": "安装开发依赖",
+            "cmd": "npm install %{包名}% --save-dev"
+          },
+          {
+            "name": "全局安装",
+            "cmd": "npm install -g %{包名}%"
+          },
+          {
+            "name": "卸载包",
+            "cmd": "npm uninstall %{包名}%"
+          },
+          {
+            "name": "更新包",
+            "cmd": "npm update %{包名}%"
+          },
+          {
+            "name": "查看所有安装的包",
+            "cmd": "npm list"
+          },
+          {
+            "name": "初始化新项目",
+            "cmd": "npm init -y"
+          }
+        ]
+      }
+    }
+  ]
+}
