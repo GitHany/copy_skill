@@ -254,10 +254,11 @@ ${colors.cyan}示例:${colors.reset}
       loadConfigFromFile(path.resolve(process.cwd(), args[1]))
       break
 
-    case '--export':
+    case '--export': {
       const exportPath = args[1] || 'layout.config.json'
       exportConfig(path.resolve(process.cwd(), exportPath))
       break
+    }
 
     case '--example':
       generateExample()

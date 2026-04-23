@@ -31,11 +31,17 @@ echo -e "${GREEN}✓ npm: $(npm --version)${NC}"
 
 # 安装依赖
 echo -e "\n${YELLOW}→ 安装依赖...${NC}"
-npm install
+if ! npm install; then
+    echo -e "${RED}✗ 依赖安装失败${NC}"
+    exit 1
+fi
 
 # 构建
 echo -e "\n${YELLOW}→ 构建生产版本...${NC}"
-npm run build
+if ! npm run build; then
+    echo -e "${RED}✗ 构建失败${NC}"
+    exit 1
+fi
 
 # 检查构建输出
 if [ ! -d "docs/.vitepress/dist" ]; then
@@ -43,6 +49,9 @@ if [ ! -d "docs/.vitepress/dist" ]; then
     exit 1
 fi
 
+# 显示构建产物大小
+echo -e "\n${BLUE}构建产物大小:${NC}"
+du -sh docs/.vitepress/dist 2>/dev/null || dir_size=$(du -sh docs/.vitepress/dist 2>/dev/null)
 echo -e "${GREEN}✓ 构建成功${NC}"
 
 # 部署选项

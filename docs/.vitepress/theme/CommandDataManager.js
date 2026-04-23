@@ -45,7 +45,6 @@ class CommandDataManager extends EventTarget {
         const parsed = JSON.parse(text);
         this.commands = Array.isArray(parsed?.data) ? parsed.data : (Array.isArray(parsed) ? parsed : []);
       } catch (parseError) {
-        console.error('CommandDataManager: JSON parse error', parseError);
         this.commands = [];
       }
 
@@ -59,7 +58,6 @@ class CommandDataManager extends EventTarget {
       this.emit('loading-progress', { percent: 100 });
       this.emit('loading-complete', { count: this.commands.length });
     } catch (error) {
-      console.error('CommandDataManager: Load error', error);
       this.clearCache();
       this.commands = [];
       this.emit('loading-complete', { count: 0, error: error.message });
@@ -134,7 +132,6 @@ class CommandDataManager extends EventTarget {
         }
       }
     } catch (e) {
-      console.warn('Cache load failed, clearing:', e);
       try { localStorage.removeItem(this.cacheKey); } catch {}
     }
     return null;
@@ -150,7 +147,7 @@ class CommandDataManager extends EventTarget {
       };
       localStorage.setItem(this.cacheKey, JSON.stringify(data));
     } catch (e) {
-      console.warn('Cache save failed:', e);
+      // 缓存保存失败，忽略
     }
   }
 
@@ -158,7 +155,7 @@ class CommandDataManager extends EventTarget {
     try {
       localStorage.removeItem(this.cacheKey);
     } catch (e) {
-      console.warn('Cache clear failed:', e);
+      // 缓存清除失败，忽略
     }
   }
 }
