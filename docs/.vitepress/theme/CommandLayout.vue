@@ -21,7 +21,7 @@
         </svg>
         <span>概览</span>
       </button>
-      <button class="nav-btn" @click="showFavoritesOnly = !showFavoritesOnly" :class="{ active: showFavoritesOnly }">
+      <button class="nav-btn" @click="toggleFavoritesMobile" :class="{ active: showFavoritesOnly }">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2">
           <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
         </svg>
@@ -46,6 +46,23 @@
 
     <!-- 侧边栏 -->
     <aside class="sidebar">
+      <!-- 加载进度条 -->
+      <div v-if="isLoading" class="loading-progress-bar">
+        <div class="progress-track">
+          <div class="progress-fill" :style="{ width: loadingProgress + '%' }"></div>
+        </div>
+        <div class="progress-text">{{ loadingProgress }}%</div>
+      </div>
+      
+      <!-- 拖拽调整宽度手柄 -->
+      <div 
+        v-show="!sidebarCollapsed"
+        class="sidebar-resize-handle" 
+        @mousedown="startResize"
+        @touchstart.prevent="startResize"
+        :class="{ 'resizing': isResizing }"
+      ></div>
+      
       <!-- Logo 区域 -->
       <div class="sidebar-header">
         <div class="logo-area">
@@ -59,7 +76,7 @@
             <span class="logo-subtitle">{{ commands.length }} 条命令</span>
           </div>
         </div>
-        <button class="collapse-btn" @click="isMobile ? (mobileSidebarOpen = false) : (sidebarCollapsed = !sidebarCollapsed)" :title="sidebarCollapsed ? '展开侧边栏' : '收起侧边栏'">
+        <button class="collapse-btn" @click="handleCollapseClick" :title="sidebarCollapsed ? '展开侧边栏' : '收起侧边栏'">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path v-if="!isMobile && !sidebarCollapsed" d="M15 18l-6-6 6-6"/>
             <path v-else d="M9 18l6-6-6-6"/>
@@ -81,13 +98,13 @@
             placeholder="搜索命令或关键词..."
             class="search-input"
             @focus="showSearchHistory = true"
-            @blur="setTimeout(() => showSearchHistory = false, 200)"
+            @blur="handleBlur"
             @keydown.enter="handleSearchEnter"
           />
           <button
             v-if="searchQuery"
             class="search-clear"
-            @click="searchQuery = ''"
+            @click="clearSearch"
             title="清除搜索"
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -169,32 +186,11 @@
               <line x1="12" y1="17" x2="12" y2="21"/>
             </svg>
           </button>
-          <button class="toolbar-btn" @click="exportData" title="导出配置">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
-              <polyline points="7 10 12 15 17 10"/>
-              <line x1="12" y1="15" x2="12" y2="3"/>
-            </svg>
-          </button>
-          <input 
-            type="file" 
-            accept=".json" 
-            ref="importFileInput" 
-            @change="handleImport" 
-            style="display:none"
-          />
-          <button class="toolbar-btn" @click="importFileInput?.click()" title="导入配置">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
-              <polyline points="17 8 12 3 7 8"/>
-              <line x1="12" y1="3" x2="12" y2="15"/>
-            </svg>
-          </button>
         </div>
       </div>
 
       <!-- 收藏分组 -->
-      <div class="favorites-section" v-if="favorites.length > 0 && !sidebarCollapsed" v-show="!showFavoritesOnly || true">
+      <div class="favorites-section" v-if="favoritesRaw.length > 0 && !sidebarCollapsed">
         <div class="favorites-header" @click="showFavorites = !showFavorites">
           <span class="folder-arrow" :class="{ expanded: showFavorites }">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -216,7 +212,7 @@
               @click="selectCommand(cmd)"
             >
               <span class="command-indicator"></span>
-              <span class="command-name">{{ cmd.name }}</span>
+              <span class="command-name" v-html="highlightText(cmd.name, searchQuery)"></span>
               <button class="unfavorite-btn" @click.stop="toggleFavorite(cmd)" title="取消收藏">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2">
                   <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
@@ -263,19 +259,18 @@
           <Transition name="folder-content">
             <div v-show="expandedFolders.has(folder.id)" class="folder-commands">
               <div
-                v-for="(cmd, idx) in folder.commands"
+                v-for="cmd in folder.commands"
                 :key="cmd.id"
                 class="command-item"
                 :class="{ active: selectedCommand?.id === cmd.id, 'keyboard-selected': keyboardSelectedId === cmd.id }"
-                :style="{ '--delay': `${idx * 30}ms` }"
                 @click="selectCommand(cmd)"
                 @mouseenter="showPreview(cmd, $event)"
                 @mouseleave="hidePreview"
               >
                 <span class="command-indicator"></span>
                 <div class="command-info">
-                  <span class="command-name">{{ cmd.name }}</span>
-                  <span v-if="cmd.description" class="command-desc">{{ cmd.description }}</span>
+                  <span class="command-name" v-html="highlightText(cmd.name, searchQuery)"></span>
+                  <span v-if="cmd.description" class="command-desc" v-html="highlightText(cmd.description, searchQuery)"></span>
                 </div>
               </div>
 
@@ -303,15 +298,14 @@
                 </div>
                 <div v-show="expandedFolders.has(child.id)" class="folder-commands child-commands">
                   <div
-                    v-for="(cmd, idx) in child.commands"
+                    v-for="cmd in child.commands"
                     :key="cmd.id"
                     class="command-item"
                     :class="{ active: selectedCommand?.id === cmd.id }"
                     @click="selectCommand(cmd)"
                   >
                     <span class="command-indicator"></span>
-                    <span class="command-name">{{ cmd.name }}</span>
-                    <!-- 命令描述 Tooltip -->
+                    <span class="command-name" v-html="highlightText(cmd.name, searchQuery)"></span>
                     <div v-if="cmd.description" class="command-tooltip">
                       <div class="tooltip-content">{{ cmd.description }}</div>
                     </div>
@@ -432,11 +426,11 @@
         </div>
       </div>
 
-      <div v-if="selectedCommand" class="command-detail">
+      <div v-if="selectedCommand" :key="selectedCommand.id" class="command-detail">
         <!-- 头部 -->
         <div class="detail-header">
           <div class="detail-breadcrumb">
-            <span class="breadcrumb-item">{{ selectedCommand.dirPath.replace(/^\/|\/$/g, '').split('/')[0] }}</span>
+            <span class="breadcrumb-item">{{ (selectedCommand.dirPath || '/未分类/').replace(/^\/|\/$/g, '').split('/')[0] }}</span>
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M9 18l6-6-6-6"/>
             </svg>
@@ -446,11 +440,11 @@
             <h2 class="detail-title">{{ selectedCommand.name }}</h2>
             <button
               class="favorite-btn"
-              :class="{ favorited: favorites.some(c => c.id === selectedCommand?.id) }"
+              :class="{ favorited: isSelectedCommandFavorited }"
               @click="toggleFavorite(selectedCommand)"
-              :title="favorites.some(c => c.id === selectedCommand?.id) ? '取消收藏' : '添加收藏'"
+              :title="isSelectedCommandFavorited ? '取消收藏' : '添加收藏'"
             >
-              <svg width="20" height="20" viewBox="0 0 24 24" :fill="favorites.some(c => c.id === selectedCommand?.id) ? 'currentColor' : 'none'" stroke="currentColor" stroke-width="2">
+              <svg width="20" height="20" viewBox="0 0 24 24" :fill="isSelectedCommandFavorited ? 'currentColor' : 'none'" stroke="currentColor" stroke-width="2">
                 <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
               </svg>
             </button>
@@ -486,7 +480,7 @@
           <div class="command-block main-cmd" :class="{ 'copied': isCopied && copiedIndex === -1 }">
             <div class="command-glow"></div>
             <div class="cmd-label">基础</div>
-            <pre class="command-code">{{ selectedCommand.data.cmd }}</pre>
+            <pre class="command-code">{{ selectedCommand.data?.cmd || '' }}</pre>
             <button @click="copyCommand(null, -1)" class="copy-btn" :class="{ copied: isCopied && copiedIndex === -1 }">
               <Transition name="copy-icon" mode="out-in">
                 <svg v-if="!(isCopied && copiedIndex === -1)" key="copy" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -512,7 +506,7 @@
             >
               <div class="command-glow"></div>
               <div class="cmd-label">{{ ext.name }}</div>
-              <pre class="command-code">{{ ext.cmd }}</pre>
+              <pre class="command-code">{{ ext.cmd || '' }}</pre>
               <button @click="copyCommand(null, idx)" class="copy-btn" :class="{ copied: isCopied && copiedIndex === idx }">
                 <Transition name="copy-icon" mode="out-in">
                   <svg v-if="!(isCopied && copiedIndex === idx)" key="copy" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -540,7 +534,7 @@
           </div>
           <div class="keywords">
             <span
-              v-for="kw in selectedCommand.keyword.split(' ')"
+              v-for="kw in (selectedCommand.keyword || '').split(' ')"
               :key="kw"
               class="keyword-tag"
               :class="{ active: searchQuery === kw }"
@@ -608,8 +602,8 @@
               @mouseenter="paletteSelectedIndex = idx"
             >
               <div class="palette-item-info">
-                <span class="palette-item-name">{{ cmd.name }}</span>
-                <span class="palette-item-path">{{ cmd.dirPath }}</span>
+                <span class="palette-item-name" v-html="highlightText(cmd.name, paletteQuery)"></span>
+                <span class="palette-item-path" v-html="highlightText(cmd.dirPath || '', paletteQuery)"></span>
               </div>
               <span class="palette-item-action">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -637,7 +631,7 @@
           <div class="preview-header">
             <span class="preview-name">{{ previewCommand.name }}</span>
           </div>
-          <pre class="preview-code">{{ previewCommand.data.cmd }}</pre>
+          <pre class="preview-code">{{ previewCommand.data?.cmd || '' }}</pre>
           <div class="preview-actions">
             <button class="preview-copy" @click="copyCommand(previewCommand); previewCommand = null">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -668,22 +662,104 @@
           <div class="placeholder-modal">
             <div class="modal-header">
               <h3>请输入参数</h3>
-              <button class="modal-close" @click="showPlaceholderModal = false">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <line x1="18" y1="6" x2="6" y2="18"/>
-                  <line x1="6" y1="6" x2="18" y2="18"/>
-                </svg>
-              </button>
+              <div class="header-actions">
+                <button 
+                  v-if="hasAnyExample" 
+                  class="btn-fill-all" 
+                  @click="fillAllExamples"
+                  title="一键填充所有示例值"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 20h9"/>
+                    <path d="M16.5 3.5a2.12 2.12 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                  </svg>
+                  一键填充
+                </button>
+                <button class="modal-close" @click="showPlaceholderModal = false">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"/>
+                    <line x1="6" y1="6" x2="18" y2="18"/>
+                  </svg>
+                </button>
+              </div>
             </div>
             <div class="modal-body">
-              <div v-for="(value, key) in placeholderValues" :key="key" class="placeholder-item">
-                <label>{{ key }}</label>
-                <input
-                  v-model="placeholderValues[key]"
-                  type="text"
-                  :placeholder="'请输入 ' + key"
-                  @keydown.enter="confirmPlaceholderCopy"
-                />
+              <div v-for="param in placeholderParams" :key="param.key" class="placeholder-item">
+                <!-- 标签行：参数名 + 描述 + 必填标记 -->
+                <div class="placeholder-label">
+                  <label>{{ param.key }}</label>
+                  <span v-if="param.description" class="param-label-desc">({{ param.description }})</span>
+                  <span v-if="param.required" class="required-mark">*</span>
+                </div>
+
+                <!-- 根据类型渲染不同控件 -->
+                <!-- string -> input text -->
+                <div v-if="param.type === 'string' || !param.type" class="input-wrapper">
+                  <input
+                    v-model="placeholderValues[param.key]"
+                    type="text"
+                    :placeholder="param.example || '请输入 ' + param.key"
+                    @keydown.enter="confirmPlaceholderCopy"
+                  />
+                  <button
+                    v-if="param.example"
+                    class="btn-example"
+                    @click="fillExample(param.key)"
+                    title="填入示例"
+                  >填入示例</button>
+                </div>
+
+                <!-- number -> input number -->
+                <div v-else-if="param.type === 'number'" class="input-wrapper">
+                  <input
+                    v-model.number="placeholderValues[param.key]"
+                    type="number"
+                    :placeholder="param.example || '请输入数值'"
+                    @keydown.enter="confirmPlaceholderCopy"
+                  />
+                  <button
+                    v-if="param.example"
+                    class="btn-example"
+                    @click="fillExample(param.key)"
+                    title="填入示例"
+                  >填入示例</button>
+                </div>
+
+                <!-- boolean -> switch -->
+                <div v-else-if="param.type === 'boolean'" class="switch-wrapper">
+                  <label class="switch">
+                    <input v-model="placeholderValues[param.key]" type="checkbox" />
+                    <span class="slider"></span>
+                  </label>
+                  <span class="switch-label">{{ placeholderValues[param.key] ? '是' : '否' }}</span>
+                </div>
+
+                <!-- array -> textarea -->
+                <div v-else-if="param.type === 'array'" class="input-wrapper">
+                  <textarea
+                    v-model="placeholderValues[param.key]"
+                    rows="3"
+                    :placeholder="param.example || '请输入值，逗号分隔'"
+                  ></textarea>
+                  <button
+                    v-if="param.example"
+                    class="btn-example"
+                    @click="fillExample(param.key)"
+                    title="填入示例"
+                  >填入示例</button>
+                </div>
+
+                <!-- description 说明 -->
+                
+                <!-- notes 警示提示 -->
+                <div v-if="param.notes" class="param-notes">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="12" y1="8" x2="12" y2="12"/>
+                    <line x1="12" y1="16" x2="12.01" y2="16"/>
+                  </svg>
+                  <span>{{ param.notes }}</span>
+                </div>
               </div>
             </div>
             <div class="modal-footer">
@@ -698,150 +774,268 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted, shallowRef } from 'vue'
+import { dataManager } from './CommandDataManager.js'
 
-const commands = ref([])
-const tree = ref([])
-const expandedFolders = ref(new Set())
-const selectedCommand = ref(null)
-const searchQuery = ref('')
-const isCopied = ref(false)
+// ==================== 状态定义 ====================
+// 核心数据 - 使用 shallowRef 优化大数据量性能
+const commands = shallowRef([]) // 所有命令列表
+const tree = shallowRef([]) // 树形结构的命令
+const expandedFolders = ref(new Set()) // 展开的文件夹ID集合
+const selectedCommand = ref(null) // 当前选中的命令
+
+// UI 状态
+const searchQuery = ref('') // 搜索关键词
+const isCopied = ref(false) // 复制成功状态
 const copiedIndex = ref(-1) // -1 = 主命令，其他 = extensions 索引
-const showToast = ref(false)
-const sidebarCollapsed = ref(false)
-const mobileSidebarOpen = ref(false)
-const isMobile = ref(false)
+const showToast = ref(false) // Toast 显示状态
+const sidebarCollapsed = ref(false) // 侧边栏折叠状态
+const mobileSidebarOpen = ref(false) // 移动端侧边栏打开状态
+const isMobile = ref(false) // 是否移动端
+const sidebarWidth = ref(320) // 侧边栏宽度
+const isResizing = ref(false) // 是否正在调整侧边栏宽度
 
-// 搜索历史
-// 主题管理
-const themeMode = ref('dark') // 'dark' | 'light' | 'auto'
+// ==================== 主题管理 ====================
+// 主题模式: 'dark' | 'light'
+const themeMode = ref('dark')
 
+// 加载主题设置
 const loadTheme = () => {
   try {
     const saved = localStorage.getItem('themeMode')
-    if (saved) {
-      themeMode.value = saved
-    }
+    if (saved) themeMode.value = saved
     applyTheme()
   } catch (e) {
-    console.error('Failed to load theme:', e)
+    console.error('加载主题失败:', e)
   }
 }
 
+// 保存主题设置
 const saveTheme = () => {
   try {
     localStorage.setItem('themeMode', themeMode.value)
   } catch (e) {
-    console.error('Failed to save theme:', e)
+    console.error('保存主题失败:', e)
   }
 }
 
+// 应用主题到 DOM
 const applyTheme = () => {
   try {
-    const root = document.documentElement
-    let theme = themeMode.value
-    if (theme === 'auto') {
-      theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-    }
-    root.setAttribute('data-theme', theme)
-    console.log('主题已切换为:', theme)
+    document.documentElement.setAttribute('data-theme', themeMode.value)
   } catch (e) {
-    console.error('主题切换失败:', e)
+    console.error('应用主题失败:', e)
   }
 }
 
+// 切换主题
 const toggleTheme = () => {
-  const modes = ['dark', 'light', 'auto']
+  const modes = ['dark', 'light']
   const currentIndex = modes.indexOf(themeMode.value)
   themeMode.value = modes[(currentIndex + 1) % modes.length]
   applyTheme()
   saveTheme()
 }
 
+// ==================== 搜索历史管理 ====================
 const searchHistory = ref([])
 const showSearchHistory = ref(false)
 
+// 加载搜索历史
 const loadSearchHistory = () => {
   try {
     const saved = localStorage.getItem('searchHistory')
-    if (saved) {
-      searchHistory.value = JSON.parse(saved)
-    }
+    if (saved) searchHistory.value = JSON.parse(saved)
   } catch (e) {
-    console.error('Failed to load search history:', e)
+    console.error('加载搜索历史失败:', e)
   }
 }
 
+// 保存搜索历史（防抖批量写入）
 const saveSearchHistory = () => {
-  try {
-    localStorage.setItem('searchHistory', JSON.stringify(searchHistory.value))
-  } catch (e) {
-    console.error('Failed to save search history:', e)
-  }
+  scheduleSave('searchHistory')
 }
 
+// 添加搜索记录
 const addToSearchHistory = (query) => {
-  if (!query || query.trim().length === 0) return
+  if (!query || !query.trim()) return
   const trimmed = query.trim()
-  // 移除已存在的相同项
-  searchHistory.value = searchHistory.value.filter(h => h !== trimmed)
-  // 添加到开头
-  searchHistory.value.unshift(trimmed)
-  // 只保留最近 10 条
-  searchHistory.value = searchHistory.value.slice(0, 10)
+  // 移除重复项并添加到开头
+  searchHistory.value = [trimmed, ...searchHistory.value.filter(h => h !== trimmed)].slice(0, 10)
   saveSearchHistory()
 }
 
+// 清除搜索历史
 const clearSearchHistory = () => {
   searchHistory.value = []
-  saveSearchHistory()
+  scheduleSave('searchHistory')
+}
+
+// 搜索输入框 ref
+const searchInput = ref(null)
+let blurTimer = null
+
+const handleBlur = () => {
+  if (blurTimer) clearTimeout(blurTimer)
+  blurTimer = setTimeout(() => {
+    showSearchHistory.value = false
+  }, 200)
+}
+
+// 清除搜索
+const clearSearch = () => {
+  searchQuery.value = ''
+}
+
+// 搜索回车处理
+const handleSearchEnter = () => {
+  if (searchQuery.value.trim()) {
+    addToSearchHistory(searchQuery.value)
+  }
+  showSearchHistory.value = false
+}
+
+// ========== localStorage 批量写入优化 ==========
+const pendingWrites = new Set()
+let saveTimer = null
+
+const scheduleSave = (key) => {
+  pendingWrites.add(key)
+  if (saveTimer) clearTimeout(saveTimer)
+  saveTimer = setTimeout(() => {
+    if (pendingWrites.has('favorites')) {
+      try { localStorage.setItem('favoriteCommands', JSON.stringify(favoritesRaw.value)) } catch (e) {}
+      pendingWrites.delete('favorites')
+    }
+    if (pendingWrites.has('searchHistory')) {
+      try { localStorage.setItem('searchHistory', JSON.stringify(searchHistory.value)) } catch (e) {}
+      pendingWrites.delete('searchHistory')
+    }
+    if (pendingWrites.has('recentCommands')) {
+      try { localStorage.setItem('recentCommands', JSON.stringify(recentCommands.value)) } catch (e) {}
+      pendingWrites.delete('recentCommands')
+    }
+    if (pendingWrites.has('layoutState')) {
+      try { localStorage.setItem('layoutState', JSON.stringify({ sidebarCollapsed: sidebarCollapsed.value, sidebarWidth: sidebarWidth.value, overviewCollapsed: overviewCollapsed.value, expandedFolders: Array.from(expandedFolders.value) })) } catch (e) {}
+      pendingWrites.delete('layoutState')
+    }
+  }, 300)
 }
 
 // 搜索防抖
 let searchDebounceTimer = null
+const debouncedSearchQuery = ref('')
 
-// 搜索时添加历史
 watch(searchQuery, (newQuery) => {
-  if (newQuery.length > 0) {
-    showSearchHistory.value = false
-    
-    // 清除之前的定时器
-    if (searchDebounceTimer) {
-      clearTimeout(searchDebounceTimer)
-    }
-    // 300ms 后执行搜索（已由 computed 自动处理）
+  showSearchHistory.value = false
+  
+  if (searchDebounceTimer) {
+    clearTimeout(searchDebounceTimer)
   }
+  
+  searchDebounceTimer = setTimeout(() => {
+    debouncedSearchQuery.value = newQuery
+  }, 150)
 })
 
 // 占位符输入
 const showPlaceholderModal = ref(false)
 const placeholderValues = ref({})
+// 占位符参数完整元数据 (type/required/description/example/notes)
+const placeholderParams = ref([])
 
-// 命令面板
+// ==================== 命令面板 ====================
 const showPalette = ref(false)
 const paletteQuery = ref('')
 const paletteSelectedIndex = ref(0)
 const paletteInput = ref(null)
 const recentCommands = ref([])
 
-// 快捷键帮助面板
+// ==================== 快捷键帮助面板 ====================
 const showShortcutsHelp = ref(false)
 
-// 收藏夹
-const favorites = ref([])
+// ==================== 收藏数据 ====================
+// 使用 Map 优化查找性能 O(1)
+const favorites = computed(() => {
+  const commandIds = new Set(commands.value.map(c => c.id))
+  return favoritesRaw.value.filter(f => commandIds.has(f.id))
+})
+
+const isSelectedCommandFavorited = computed(() => {
+  if (!selectedCommand.value) return false
+  return favorites.value.some(c => c.id === selectedCommand.value.id)
+})
+
+const favoritesRaw = ref([])
 const showFavorites = ref(true)
 const showFavoritesOnly = ref(false)
 
-// 模块标签
+// ==================== 模块标签 ====================
 const modules = ref([])
 const selectedModule = ref('all')
 const totalCommands = computed(() => commands.value.filter(cmd => cmd.data && cmd.data.cmd).length)
-
-// 模块概览折叠状态
 const overviewCollapsed = ref(false)
 
 const toggleOverview = () => {
   overviewCollapsed.value = !overviewCollapsed.value
+}
+
+const handleCollapseClick = () => {
+  if (isMobile.value) {
+    mobileSidebarOpen.value = false
+  } else {
+    sidebarCollapsed.value = !sidebarCollapsed.value
+    saveLayoutState()
+  }
+}
+
+const startResize = (e) => {
+  if (isMobile.value && !mobileSidebarOpen.value) return
+  isResizing.value = true
+  document.body.style.cursor = 'ew-resize'
+  document.body.style.userSelect = 'none'
+  
+  const clientX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX
+  
+  const handleMove = (moveEvent) => {
+    const currentX = moveEvent.type === 'touchmove' ? moveEvent.touches[0].clientX : moveEvent.clientX
+    const newWidth = currentX
+    const minWidth = 200
+    const maxWidth = isMobile.value ? Math.min(500, window.innerWidth * 0.85) : Math.min(500, window.innerWidth - 100)
+    
+    if (newWidth >= minWidth && newWidth <= maxWidth) {
+      sidebarWidth.value = newWidth
+      document.documentElement.style.setProperty('--sidebar-width', `${newWidth}px`)
+    }
+  }
+  
+  const handleMouseMove = (moveEvent) => handleMove(moveEvent)
+  const handleTouchMove = (moveEvent) => handleMove(moveEvent)
+  
+  const handleEnd = () => {
+    isResizing.value = false
+    document.body.style.cursor = ''
+    document.body.style.userSelect = ''
+    document.removeEventListener('mousemove', handleMouseMove)
+    document.removeEventListener('mouseup', handleEnd)
+    document.removeEventListener('touchmove', handleTouchMove)
+    document.removeEventListener('touchend', handleEnd)
+    saveLayoutState()
+  }
+  
+  document.addEventListener('mousemove', handleMouseMove)
+  document.addEventListener('mouseup', handleEnd)
+  document.addEventListener('touchmove', handleTouchMove, { passive: false })
+  document.addEventListener('touchend', handleEnd)
+}
+
+const toggleFavoritesMobile = () => {
+  showFavoritesOnly.value = !showFavoritesOnly.value
+  if (showFavoritesOnly.value && favorites.value.length > 0) {
+    selectedCommand.value = favorites.value[0]
+  } else if (!showFavoritesOnly.value && commands.value.length > 0) {
+    selectedCommand.value = null
+  }
 }
 
 // 分类标签系统
@@ -935,7 +1129,8 @@ const extractModules = () => {
   const moduleMap = {}
   commands.value.forEach(cmd => {
     if (!cmd.data || !cmd.data.cmd) return
-    const path = cmd.dirPath.replace(/^\/|\/$/g, '')
+    const dirPath = cmd.dirPath || '/未分类/'
+    const path = dirPath.replace(/^\/|\/$/g, '')
     if (!path) return
     const parts = path.split('/')
     const topModule = parts[0]
@@ -956,6 +1151,12 @@ const selectModule = (moduleId) => {
   // 切换模块时清除搜索
   if (searchQuery.value) {
     searchQuery.value = ''
+    debouncedSearchQuery.value = ''
+  }
+  // 取消可能正在等待的防抖计时器
+  if (searchDebounceTimer) {
+    clearTimeout(searchDebounceTimer)
+    searchDebounceTimer = null
   }
 }
 
@@ -964,21 +1165,37 @@ const previewCommand = ref(null)
 const previewPosition = ref({ x: 0, y: 0 })
 let previewTimeout = null
 
-// 键盘导航
+// 键盘导航 - 使用缓存优化
+const allFlatCommands = shallowRef([])
+const flatCommandsCache = new Map()
 const keyboardSelectedId = ref(null)
-const allFlatCommands = computed(() => {
+
+const updateFlatCommands = () => {
+  const treeKey = JSON.stringify(tree.value.map(n => n.id))
+  if (flatCommandsCache.has(treeKey)) {
+    allFlatCommands.value = flatCommandsCache.get(treeKey)
+    return
+  }
+  
   const flat = []
   const traverse = (nodes) => {
     nodes.forEach(node => {
       if (node.commands) {
-        node.commands.forEach(cmd => flat.push(cmd))
+        flat.push(...node.commands)
       }
       if (node.children) traverse(node.children)
     })
   }
   traverse(displayedTree.value)
-  return flat
-})
+  
+  // 限制缓存大小
+  if (flatCommandsCache.size > 10) {
+    const firstKey = flatCommandsCache.keys().next().value
+    flatCommandsCache.delete(firstKey)
+  }
+  flatCommandsCache.set(treeKey, flat)
+  allFlatCommands.value = flat
+}
 
 const checkMobile = () => {
   isMobile.value = window.innerWidth <= 768
@@ -987,23 +1204,55 @@ const checkMobile = () => {
   }
 }
 
+// ResizeObserver 引用
+let resizeObserver = null
+
 // 获取当前部署的基础路径
 const getBasePath = () => {
   return import.meta.env.BASE_URL || '/'
 }
 
+const loadingProgress = ref(0)
+const isLoading = ref(false)
+
 const loadCommands = async () => {
   try {
     const basePath = getBasePath()
-    const response = await fetch(`${basePath}commands.json`)
-    const data = await response.json()
-    commands.value = (data.data || []).map((item, index) => {
-      // Generate unique ID if missing
-      if (!item.id) {
-        item.id = crypto.randomUUID ? crypto.randomUUID() : `cmd-${Date.now()}-${index}`
-      }
-      return item
+    const dataUrl = `${basePath}commands.json`
+    
+    isLoading.value = true
+    
+    // 监听加载进度
+    dataManager.on('loading-progress', (data) => {
+      loadingProgress.value = data.percent
     })
+    
+    dataManager.on('loading-complete', (data) => {
+      console.log(`加载完成: ${data.count} 条命令`)
+      isLoading.value = false
+    })
+    
+    dataManager.on('loaded-from-cache', (data) => {
+      console.log(`从缓存加载: ${data.count} 条命令`)
+      isLoading.value = false
+    })
+    
+    // 初始化数据管理器
+    await dataManager.init(dataUrl)
+    
+    // 获取所有命令
+    const allCommands = dataManager.getAllCommands()
+    
+    // 深拷贝避免直接修改原始数据，确保 Vue 响应式正常工作
+    commands.value = allCommands.map((item, index) => {
+      const cmd = {
+        ...item,
+        id: item.id || (crypto.randomUUID ? crypto.randomUUID() : `cmd-${Date.now()}-${index}`),
+        data: item.data ? { ...item.data } : undefined
+      }
+      return cmd
+    })
+    
     buildTree()
     extractModules()
 
@@ -1012,6 +1261,7 @@ const loadCommands = async () => {
     }
   } catch (error) {
     console.error('加载命令数据失败:', error)
+    isLoading.value = false
   }
 }
 
@@ -1032,7 +1282,8 @@ const buildTree = () => {
     // Skip folders (items without cmd)
     if (!item.data || !item.data.cmd) return
 
-    const path = item.dirPath.replace(/^\/|\/$/g, '')
+    const dirPath = item.dirPath || '/未分类/'
+    const path = dirPath.replace(/^\/|\/$/g, '')
     if (!path) return
 
     const parts = path.split('/')
@@ -1072,54 +1323,68 @@ const buildTree = () => {
 }
 
 const displayedTree = computed(() => {
-  // 第一步：模块过滤
-  let baseTree = tree.value
-  if (selectedModule.value !== 'all') {
-    baseTree = tree.value.filter(node => {
-      // 顶层模块名匹配
+  // 提前返回：如果没有过滤条件，直接返回树
+  if (!debouncedSearchQuery.value && !showFavoritesOnly.value) {
+    if (selectedModule.value === 'all') {
+      return tree.value
+    }
+    return tree.value.filter(node => {
       return node.id === '/' + selectedModule.value || node.name === selectedModule.value
     })
   }
 
-  if (!searchQuery.value) {
-    return baseTree
+  let baseTree = tree.value
+  
+  if (selectedModule.value !== 'all') {
+    baseTree = tree.value.filter(node => {
+      return node.id === '/' + selectedModule.value || node.name === selectedModule.value
+    })
   }
 
-  // 支持模糊搜索：关键词可以用空格分隔多个词
-  const queries = searchQuery.value.toLowerCase().split(/\s+/).filter(q => q)
-  if (queries.length === 0) return baseTree
-
-  // 收集所有需要展开的文件夹 ID
+  const queries = debouncedSearchQuery.value.toLowerCase().split(/\s+/).filter(q => q)
   const foldersToExpand = new Set()
+  const favoritesSet = new Set(favoritesRaw.value.map(f => f.id))
+
+  // 构建搜索正则
+  const searchRegex = queries.length > 0 ? new RegExp(queries.map(q => q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|'), 'gi') : null
 
   const filterTree = (nodes) => {
     const result = []
     for (const node of nodes) {
-      // 过滤命令
-      const filteredCommands = node.commands.filter(cmd => {
-        const searchText = (cmd.name + ' ' + (cmd.keyword || '')).toLowerCase()
-        return queries.every(q => searchText.includes(q))
+      // 递归过滤子节点
+      const filteredChildren = node.children?.length > 0 ? filterTree(node.children) : []
+      
+      // 过滤当前节点下的命令
+      let filteredCommands = node.commands.filter(cmd => {
+        // 收藏过滤
+        if (showFavoritesOnly.value && !favoritesSet.has(cmd.id)) {
+          return false
+        }
+        
+        // 搜索过滤
+        if (searchRegex) {
+          const searchText = [
+            cmd.name || '',
+            cmd.keyword || '',
+            cmd.description || '',
+            cmd.data?.cmd || '',
+            cmd.data?.extensions?.map(e => e.name).join(' ') || ''
+          ].join(' ').toLowerCase()
+          return searchRegex.test(searchText)
+        }
+        
+        return true
       })
 
-      // 递归过滤子节点
-      const filteredChildren = filterTree(node.children || [])
-
+      // 如果有匹配的子节点或命令，添加到结果
       if (filteredCommands.length > 0 || filteredChildren.length > 0) {
-        // 有匹配结果，记录需要展开的文件夹
-        foldersToExpand.add(node.id)
+        // 展开包含匹配命令的文件夹
         if (filteredCommands.length > 0) {
-          // 收集命令的父文件夹路径
-          filteredCommands.forEach(cmd => {
-            const pathParts = cmd.dirPath.replace(/^\/|\/$/g, '').split('/')
-            let currentPath = ''
-            pathParts.forEach(part => {
-              currentPath += '/' + part
-              foldersToExpand.add(currentPath)
-            })
-          })
+          foldersToExpand.add(node.id)
         }
         result.push({
-          ...node,
+          id: node.id,
+          name: node.name,
           commands: filteredCommands,
           children: filteredChildren
         })
@@ -1129,13 +1394,24 @@ const displayedTree = computed(() => {
   }
 
   const filteredTree = filterTree(baseTree)
-
-  // 搜索时自动展开所有匹配的文件夹
+  
+  // 展开匹配的文件夹
   if (foldersToExpand.size > 0) {
-    expandedFolders.value = new Set([...expandedFolders.value, ...foldersToExpand])
+    foldersToExpand.forEach(id => expandedFolders.value.add(id))
   }
 
   return filteredTree
+})
+
+// 在 displayedTree 变化时更新缓存
+watch(displayedTree, updateFlatCommands, { deep: false })
+
+// 初始化时执行
+updateFlatCommands()
+
+// 搜索时自动展开匹配的文件夹（已移至 displayedTree computed 内部，避免重复触发）
+watch(searchQuery, () => {
+  // 功能已整合到 displayedTree computed 中
 })
 
 const toggleFolder = (folderId) => {
@@ -1154,17 +1430,61 @@ const selectCommand = (cmd) => {
   addToRecent(cmd)
 }
 
+// 搜索结果高亮（带缓存优化）
+const highlightCache = new Map()
+let highlightCacheCount = 0
+const escapeHtml = (str) => {
+  if (!str) return str
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
+
+const highlightText = (text, query) => {
+  if (!text) return text
+  // 如果没有搜索词，直接返回转义后的文本，避免 v-html 开销
+  if (!query) return escapeHtml(text)
+
+  const cacheKey = `${text}|${query}`
+  if (highlightCache.has(cacheKey)) {
+    return highlightCache.get(cacheKey)
+  }
+  const queries = query.toLowerCase().split(/\s+/).filter(q => q)
+  if (queries.length === 0) return escapeHtml(text)
+  // 先转义原文本中的 HTML 特殊字符
+  const escapedText = escapeHtml(text)
+  const regex = new RegExp(`(${queries.map(q => q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})`, 'gi')
+  const result = escapedText.replace(regex, '<mark class="highlight">$1</mark>')
+  // 限制缓存大小
+  if (highlightCache.size > 500) {
+    if (highlightCacheCount >= 100) {
+      highlightCache.clear()
+      highlightCacheCount = 0
+    }
+    highlightCacheCount++
+  }
+  highlightCache.set(cacheKey, result)
+  return result
+}
+
 // 提取命令中的占位符 %{...}%
-const extractPlaceholders = (cmdText) => {
+const extractPlaceholders = (cmdText, paramsDef = {}) => {
   const regex = /%\{([^}]+)\}%/g
-  const placeholders = []
+  const result = []
   let match
   while ((match = regex.exec(cmdText)) !== null) {
-    if (!placeholders.includes(match[1])) {
-      placeholders.push(match[1])
+    const key = match[1]
+    if (!result.find(p => p.key === key)) {
+      result.push({
+        key,
+        ...paramsDef[key]
+      })
     }
   }
-  return placeholders
+  return result
 }
 
 // 替换命令中的占位符
@@ -1174,26 +1494,47 @@ const replacePlaceholders = (cmdText, values) => {
   })
 }
 
+const pendingCopyIndex = ref(-1)
+
+// 将 params 数组转换为对象格式
+const normalizeParams = (params) => {
+  if (!params) return {}
+  // 如果已经是对象格式，直接返回
+  if (!Array.isArray(params)) return params
+  // 如果是数组格式，转换为对象
+  const paramsObj = {}
+  params.forEach(p => {
+    paramsObj[p.name || p.key] = {
+      type: p.type || 'string',
+      required: p.required !== undefined ? p.required : true,
+      description: p.description || '',
+      example: p.example || '',
+      notes: p.notes || ''
+    }
+  })
+  return paramsObj
+}
+
 const copyCommand = async (cmd = null, index = -1) => {
   const target = cmd || selectedCommand.value
   if (!target) return
 
-  let textToCopy
+  let textToCopy, paramsDef
   if (index === -1) {
-    // 复制主命令
-    textToCopy = target.data.cmd
+    textToCopy = target.data?.cmd || ''
+    paramsDef = normalizeParams(target.data?.params)
   } else {
-    // 复制扩展命令
-    textToCopy = target.data.extensions[index].cmd
+    textToCopy = target.data?.extensions?.[index]?.cmd || ''
+    paramsDef = normalizeParams(target.data?.extensions?.[index]?.params)
   }
 
-  // 检测是否有占位符
-  const placeholders = extractPlaceholders(textToCopy)
+  const placeholders = extractPlaceholders(textToCopy, paramsDef)
   if (placeholders.length > 0) {
-    // 打开弹窗让用户输入
+    pendingCopyIndex.value = index
+    placeholderParams.value = placeholders
     placeholderValues.value = {}
     placeholders.forEach(p => {
-      placeholderValues.value[p] = ''
+      placeholderValues.value[p.key] = ''
     })
     showPlaceholderModal.value = true
     return
@@ -1232,17 +1573,39 @@ const confirmPlaceholderCopy = async () => {
   if (!target) return
 
   let textToCopy
-  if (copiedIndex.value === -1) {
-    textToCopy = target.data.cmd
+  if (pendingCopyIndex.value === -1) {
+    textToCopy = target.data?.cmd || ''
   } else {
-    textToCopy = target.data.extensions[copiedIndex.value].cmd
+    textToCopy = target.data?.extensions?.[pendingCopyIndex.value]?.cmd || ''
   }
 
-  // 替换占位符
   const finalText = replacePlaceholders(textToCopy, placeholderValues.value)
   showPlaceholderModal.value = false
 
-  await doCopy(finalText, copiedIndex.value)
+  await doCopy(finalText, pendingCopyIndex.value)
+  pendingCopyIndex.value = -1
+}
+
+// 填入单个示例值
+const fillExample = (key) => {
+  const param = placeholderParams.value.find(p => p.key === key)
+  if (param?.example) {
+    placeholderValues.value[key] = param.example
+  }
+}
+
+// 计算属性：是否存在至少一个示例值
+const hasAnyExample = computed(() => {
+  return placeholderParams.value.some(p => p.example)
+})
+
+// 一键填充所有示例值
+const fillAllExamples = () => {
+  placeholderParams.value.forEach(param => {
+    if (param.example) {
+      placeholderValues.value[param.key] = param.example
+    }
+  })
 }
 
 const formatDate = (dateStr) => {
@@ -1269,7 +1632,11 @@ const paletteResults = computed(() => {
     // 无搜索时显示最近使用
     return recentCommands.value.slice(0, 8)
   }
-  // 支持多词模糊搜索
+  // 使用倒排索引加速搜索
+  if (dataManager.searchIndex) {
+    return dataManager.search(paletteQuery.value, { limit: 10 }).slice(0, 10)
+  }
+  // Fallback到传统搜索
   const queries = paletteQuery.value.toLowerCase().split(/\s+/).filter(q => q)
   return commands.value
     .filter(cmd => {
@@ -1319,9 +1686,7 @@ const addToRecent = (cmd) => {
   const recent = recentCommands.value.filter(c => c.id !== cmd.id)
   recent.unshift(cmd)
   recentCommands.value = recent.slice(0, 20) // 最多保存20条
-  try {
-    localStorage.setItem('recentCommands', JSON.stringify(recentCommands.value))
-  } catch (e) {}
+  scheduleSave('recentCommands')
 }
 
 // 加载最近使用
@@ -1339,7 +1704,7 @@ const loadFavorites = () => {
   try {
     const saved = localStorage.getItem('favoriteCommands')
     if (saved) {
-      favorites.value = JSON.parse(saved)
+      favoritesRaw.value = JSON.parse(saved)
     }
   } catch (e) {}
 }
@@ -1351,6 +1716,10 @@ const loadLayoutState = () => {
     if (saved) {
       const state = JSON.parse(saved)
       sidebarCollapsed.value = state.sidebarCollapsed || false
+      if (state.sidebarWidth) {
+        sidebarWidth.value = state.sidebarWidth
+        document.documentElement.style.setProperty('--sidebar-width', `${state.sidebarWidth}px`)
+      }
       if (state.expandedFolders?.length) {
         state.expandedFolders.forEach(id => expandedFolders.value.add(id))
       }
@@ -1358,117 +1727,23 @@ const loadLayoutState = () => {
   } catch (e) {}
 }
 
-// 保存布局状态
+// 保存布局状态（批量写入）
 const saveLayoutState = () => {
-  try {
-    localStorage.setItem('layoutState', JSON.stringify({
-      sidebarCollapsed: sidebarCollapsed.value,
-      expandedFolders: Array.from(expandedFolders.value)
-    }))
-  } catch (e) {}
+  scheduleSave('layoutState')
 }
 
-// 切换收藏
-const handleSearchEnter = () => {
-  if (searchQuery.value.trim()) {
-    addToSearchHistory(searchQuery.value)
-  }
-  showSearchHistory.value = false
-}
-
-// 数据导入导出
-const exportData = () => {
-  const data = {
-    version: '1.0',
-    exportDate: new Date().toISOString(),
-    favorites: favorites.value,
-    searchHistory: searchHistory.value,
-    layoutState: {
-      sidebarCollapsed: sidebarCollapsed.value,
-      overviewCollapsed: overviewCollapsed.value,
-      selectedModule: selectedModule.value,
-      selectedCategory: selectedCategory.value
-    },
-    themeMode: themeMode.value
-  }
-  
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
-  a.href = url
-  a.download = `copy-skill-backup-${new Date().toLocaleDateString().replace(/\//g, '-')}.json`
-  a.click()
-  URL.revokeObjectURL(url)
-}
-
-const importFileInput = ref(null)
-
-const handleImport = (event) => {
-  const file = event.target.files[0]
-  if (!file) return
-  
-  const reader = new FileReader()
-  reader.onload = (e) => {
-    try {
-      const data = JSON.parse(e.target.result)
-      
-      if (!data.version) {
-        alert('无效的备份文件')
-        return
-      }
-      
-      if (data.favorites) {
-        favorites.value = data.favorites
-        saveFavorites()
-      }
-      if (data.searchHistory) {
-        searchHistory.value = data.searchHistory
-        saveSearchHistory()
-      }
-      if (data.layoutState) {
-        if (data.layoutState.sidebarCollapsed !== undefined) {
-          sidebarCollapsed.value = data.layoutState.sidebarCollapsed
-        }
-        if (data.layoutState.overviewCollapsed !== undefined) {
-          overviewCollapsed.value = data.layoutState.overviewCollapsed
-        }
-        if (data.layoutState.selectedModule) {
-          selectedModule.value = data.layoutState.selectedModule
-        }
-        if (data.layoutState.selectedCategory) {
-          selectedCategory.value = data.layoutState.selectedCategory
-        }
-      }
-      if (data.themeMode) {
-        themeMode.value = data.themeMode
-        applyTheme()
-        saveTheme()
-      }
-      
-      saveLayoutState()
-      alert('导入成功！')
-    } catch (err) {
-      alert('导入失败：' + err.message)
-    }
-    
-    event.target.value = ''
-  }
-  reader.readAsText(file)
-}
-
+// ==================== 收藏管理 ====================
 const toggleFavorite = (cmd) => {
-  const idx = favorites.value.findIndex(c => c.id === cmd.id)
+  const idx = favoritesRaw.value.findIndex(c => c.id === cmd.id)
   if (idx >= 0) {
-    favorites.value.splice(idx, 1)
+    favoritesRaw.value.splice(idx, 1)
   } else {
-    favorites.value.unshift(cmd)
+    favoritesRaw.value.unshift(cmd)
   }
-  try {
-    localStorage.setItem('favoriteCommands', JSON.stringify(favorites.value))
-  } catch (e) {}
+  scheduleSave('favorites')
 }
 
-// 显示预览
+// 显示预览 (统一延迟为 200ms)
 const showPreview = (cmd, event) => {
   clearTimeout(previewTimeout)
   previewTimeout = setTimeout(() => {
@@ -1478,15 +1753,15 @@ const showPreview = (cmd, event) => {
       x: rect.right + 10,
       y: rect.top
     }
-  }, 300)
+  }, 200)
 }
 
-// 隐藏预览
+// 隐藏预览 (统一延迟为 200ms，与 showPreview 一致)
 const hidePreview = () => {
   clearTimeout(previewTimeout)
   previewTimeout = setTimeout(() => {
     previewCommand.value = null
-  }, 150)
+  }, 200)
 }
 
 // 展开全部
@@ -1551,6 +1826,10 @@ const keyboardSelectAndCopy = () => {
 }
 
 // 键盘快捷键
+let gTimeout = null // G键序列 timeout 引用
+let lastKeySequence = []
+const KEY_SEQUENCE_TIMEOUT = 1000 // G键序列超时时间
+
 const handleKeydown = (e) => {
   // 命令面板打开时只处理面板快捷键
   if (showPalette.value) return
@@ -1559,6 +1838,48 @@ const handleKeydown = (e) => {
   if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
     e.preventDefault()
     openPalette()
+    return
+  }
+
+  // Ctrl+C 复制选中命令（仅在有选中命令且不在输入框中时）
+  if ((e.metaKey || e.ctrlKey) && e.key === 'c') {
+    const activeEl = document.activeElement
+    const isInputFocused = activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA')
+    if (!isInputFocused && selectedCommand.value) {
+      e.preventDefault()
+      copyCommand(selectedCommand.value)
+      return
+    }
+  }
+
+  // G键序列检测（G+H, G+F等）
+  if (e.key === 'g' || e.key === 'G') {
+    if (gTimeout) clearTimeout(gTimeout)
+    lastKeySequence.push('g')
+    gTimeout = setTimeout(() => {
+      lastKeySequence = []
+      gTimeout = null
+    }, KEY_SEQUENCE_TIMEOUT)
+    return
+  }
+
+  // G+H 跳转到首页/概览
+  if (lastKeySequence.includes('g') && (e.key === 'h' || e.key === 'H')) {
+    e.preventDefault()
+    overviewCollapsed.value = false
+    selectedModule.value = 'all'
+    lastKeySequence = []
+    return
+  }
+
+  // G+F 跳转到收藏夹
+  if (lastKeySequence.includes('g') && (e.key === 'f' || e.key === 'F')) {
+    e.preventDefault()
+    showFavoritesOnly.value = true
+    if (favorites.value.length > 0) {
+      selectedCommand.value = favorites.value[0]
+    }
+    lastKeySequence = []
     return
   }
 
@@ -1595,8 +1916,8 @@ const handleKeydown = (e) => {
     }
   }
 
-  // F 切换收藏过滤
-  if (e.key === 'f' && !e.metaKey && !e.ctrlKey && !e.altKey) {
+  // F 切换收藏过滤（仅当不在G序列中时）
+  if (e.key === 'f' && !e.metaKey && !e.ctrlKey && !e.altKey && !lastKeySequence.includes('g')) {
     const activeEl = document.activeElement
     const isInputFocused = activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA')
     if (!isInputFocused) {
@@ -1679,7 +2000,60 @@ onMounted(() => {
   loadTheme()
   checkMobile()
   window.addEventListener('resize', checkMobile)
+  // 添加 ResizeObserver 监听容器大小变化
+  resizeObserver = new ResizeObserver(() => {
+    checkMobile()
+  })
+  resizeObserver.observe(document.documentElement)
+  // 添加 orientationchange 监听（处理移动端旋转）
+  window.addEventListener('orientationchange', () => {
+    setTimeout(checkMobile, 100)
+  })
   document.addEventListener('keydown', handleKeydown)
+
+  // 命令树滚动时自动折叠模块概览
+  const commandTreeEl = document.querySelector('.command-tree')
+  if (commandTreeEl) {
+    let scrollThreshold = 5
+    commandTreeEl.addEventListener('wheel', (e) => {
+      if (e.deltaY > 0 && !overviewCollapsed.value && scrollThreshold > 0) {
+        scrollThreshold--
+        setTimeout(() => { scrollThreshold = 5 }, 100)
+        if (scrollThreshold === 0) {
+          overviewCollapsed.value = true
+          saveLayoutState()
+        }
+      }
+    }, { passive: true })
+  }
+
+  // 移动端滑动手势支持
+  let touchStartX = 0
+  let touchStartY = 0
+  const handleTouchStart = (e) => {
+    touchStartX = e.touches[0].clientX
+    touchStartY = e.touches[0].clientY
+  }
+  const handleTouchMove = (e) => {
+    if (!touchStartX) return
+    const deltaX = e.touches[0].clientX - touchStartX
+    const deltaY = e.touches[0].clientY - touchStartY
+    // 水平滑动 > 50px 且幅度大于垂直滑动时触发
+    if (Math.abs(deltaX) > 50 && Math.abs(deltaX) > Math.abs(deltaY)) {
+      if (deltaX > 0 && sidebarCollapsed.value) {
+        // 向右滑 - 展开侧边栏
+        sidebarCollapsed.value = false
+        saveLayoutState()
+      } else if (deltaX < 0 && !sidebarCollapsed.value) {
+        // 向左滑 - 折叠侧边栏
+        sidebarCollapsed.value = true
+        saveLayoutState()
+      }
+      touchStartX = 0 // 重置防止重复触发
+    }
+  }
+  document.addEventListener('touchstart', handleTouchStart, { passive: true })
+  document.addEventListener('touchmove', handleTouchMove, { passive: true })
 
   // 注册 Service Worker（PWA 离线支持）
   if ('serviceWorker' in navigator) {
@@ -1690,7 +2064,15 @@ onMounted(() => {
 
 onUnmounted(() => {
   window.removeEventListener('resize', checkMobile)
+  window.removeEventListener('orientationchange', checkMobile)
   document.removeEventListener('keydown', handleKeydown)
+  document.removeEventListener('touchstart', handleTouchStart)
+  document.removeEventListener('touchmove', handleTouchMove)
+  // 移除 ResizeObserver
+  if (resizeObserver) {
+    resizeObserver.disconnect()
+    resizeObserver = null
+  }
 })
 </script>
 
@@ -1698,7 +2080,7 @@ onUnmounted(() => {
 /* Google Fonts - 思源黑体 + JetBrains Mono */
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
-/* CSS Variables */
+/* CSS Variables - 默认深色主题 */
 :root {
   --bg-primary: #0c0c0f;
   --bg-secondary: #141419;
@@ -1720,8 +2102,17 @@ onUnmounted(() => {
   --sidebar-width: 320px;
   --sidebar-collapsed-width: 56px;
 
-/* ==================== 亮色主题 ==================== */
-[data-theme="light"] {
+  --font-ui: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Microsoft YaHei', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'Source Code Pro', monospace;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
+  --shadow-glow: 0 0 20px var(--accent-glow);
+}
+
+/* 亮色主题 - 需要作为独立选择器，不能嵌套在 :root 里 */
+:root[data-theme="light"] {
   --bg-primary: #ffffff;
   --bg-secondary: #f5f5f5;
   --bg-tertiary: #e5e5e5;
@@ -1736,13 +2127,9 @@ onUnmounted(() => {
   --border-hover: #c0c0c0;
 }
 
-  --font-ui: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Microsoft YaHei', sans-serif;
-  --font-mono: 'JetBrains Mono', 'Fira Code', 'Source Code Pro', monospace;
-
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
-  --shadow-glow: 0 0 20px var(--accent-glow);
+/* 主题过渡动画 */
+:root, [data-theme="light"] {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 </style>
 
@@ -2134,6 +2521,47 @@ onUnmounted(() => {
   z-index: 1;
 }
 
+.sidebar-resize-handle {
+  position: absolute;
+  right: -4px;
+  top: 0;
+  bottom: 0;
+  width: 8px;
+  cursor: ew-resize;
+  z-index: 10;
+  background: transparent;
+  transition: background-color 150ms ease-out;
+}
+
+.sidebar-resize-handle:hover,
+.sidebar-resize-handle.resizing {
+  background: linear-gradient(90deg, transparent 0%, var(--accent-primary) 50%, transparent 100%);
+  opacity: 0.5;
+}
+
+.sidebar-resize-handle.resizing {
+  opacity: 1;
+}
+
+.sidebar-resize-handle::after {
+  content: '';
+  position: absolute;
+  right: 3px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 2px;
+  height: 40px;
+  background: var(--border-color);
+  border-radius: 1px;
+  opacity: 0;
+  transition: opacity 150ms ease-out, background-color 150ms ease-out;
+}
+
+.sidebar-resize-handle:hover::after {
+  opacity: 1;
+  background: var(--accent-primary);
+}
+
 .sidebar-collapsed .sidebar {
   width: var(--sidebar-collapsed-width);
   min-width: var(--sidebar-collapsed-width);
@@ -2478,6 +2906,7 @@ transform: translateY(-8px);
 
 .command-tree::-webkit-scrollbar {
   width: 6px;
+  scrollbar-width: thin;
 }
 
 .command-tree::-webkit-scrollbar-track {
@@ -2491,6 +2920,15 @@ transform: translateY(-8px);
 
 .command-tree::-webkit-scrollbar-thumb:hover {
   background: var(--border-hover);
+}
+
+/* 大数据量渲染优化 */
+.tree-folder {
+  contain: layout style paint;
+}
+
+.folder-commands {
+  contain: layout style;
 }
 
 .tree-empty {
@@ -3178,6 +3616,8 @@ transform: translateY(-8px);
 }
 
 .empty-graphic {
+  display: flex;
+  justify-content: center;
   margin-bottom: 24px;
   opacity: 0.3;
 }
@@ -3196,6 +3636,47 @@ transform: translateY(-8px);
 .empty-state p {
   font-size: 14px;
   margin: 0;
+}
+
+/* 加载进度条 */
+.loading-progress-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: var(--bg-secondary);
+  padding: 8px 16px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.progress-track {
+  height: 4px;
+  background: var(--bg-tertiary);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 4px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+.progress-text {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  text-align: center;
+}
+
+/* 搜索结果高亮 */
+.highlight {
+  background: rgba(245, 158, 11, 0.3);
+  border-radius: 2px;
+  padding: 0 2px;
 }
 
 /* Toast */
@@ -3259,6 +3740,36 @@ transform: translateY(-8px);
   border-bottom: 1px solid var(--border-color);
 }
 
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-fill-all {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: var(--accent-primary);
+  border: none;
+  border-radius: 6px;
+  color: #0c0c0f;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-fill-all:hover {
+  filter: brightness(1.1);
+  transform: scale(1.05);
+}
+
+.btn-fill-all:active {
+  transform: scale(0.95);
+}
+
 .modal-header h3 {
   margin: 0;
   font-size: 16px;
@@ -3316,6 +3827,191 @@ transform: translateY(-8px);
   outline: none;
   border-color: var(--accent-primary);
   box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.15);
+}
+
+/* ===== 增强版 placeholder-item ===== */
+.placeholder-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  transition: all 0.2s;
+}
+
+.placeholder-item:focus-within {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+}
+
+/* ===== 标签行 ===== */
+.placeholder-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.placeholder-label label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.required-mark {
+  color: #ef4444;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.param-label-desc {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 400;
+  margin-left: 4px;
+}
+
+/* ===== 输入框 + 按钮横向布局 ===== */
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.input-wrapper input,
+.input-wrapper textarea {
+  flex: 1;
+  padding: 10px 14px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.input-wrapper input:focus,
+.input-wrapper textarea:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.15);
+}
+
+.input-wrapper textarea {
+  resize: vertical;
+  min-height: 60px;
+}
+
+/* ===== 填入示例按钮 ===== */
+.btn-example {
+  padding: 8px 12px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--text-secondary);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.btn-example:hover {
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
+  color: #0c0c0f;
+}
+
+/* ===== Switch 开关 ===== */
+.switch-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.switch .slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 24px;
+  transition: 0.3s;
+}
+
+.switch .slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 2px;
+  bottom: 2px;
+  background: var(--text-muted);
+  border-radius: 50%;
+  transition: 0.3s;
+}
+
+.switch input:checked + .slider {
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
+}
+
+.switch input:checked + .slider:before {
+  transform: translateX(20px);
+  background: #0c0c0f;
+}
+
+.switch-label {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+/* ===== 描述文字 ===== */
+.param-description {
+  margin: 4px 0 0;
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+/* ===== 警示提示 ===== */
+.param-notes {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  margin-top: 6px;
+  padding: 8px 10px;
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: 6px;
+  font-size: 12px;
+  color: var(--accent-primary);
+  line-height: 1.4;
+}
+
+.param-notes svg {
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.param-notes span {
+  color: var(--text-secondary);
 }
 
 .modal-footer {
@@ -3737,10 +4433,27 @@ transform: translateY(-8px);
     z-index: 100;
     transform: translateX(-100%);
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    max-width: 85vw;
   }
 
   .mobile-sidebar-open .sidebar {
     transform: translateX(0);
+  }
+
+  .sidebar-resize-handle {
+    display: block;
+    right: 0;
+    width: 12px;
+    background: linear-gradient(90deg, transparent 0%, rgba(245, 158, 11, 0.1) 100%);
+  }
+
+  .sidebar-resize-handle::after {
+    opacity: 0.5;
+    right: 5px;
+  }
+
+  .sidebar-resize-handle:hover::after {
+    opacity: 1;
   }
 
   .command-detail {

@@ -41,3 +41,5 @@ coverage/
 
 # Python virtual environment
 .venv/
+.trae/
+docs/public/*.backup*
