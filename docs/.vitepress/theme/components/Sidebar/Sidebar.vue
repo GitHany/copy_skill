@@ -93,6 +93,7 @@
       @hover-command="(cmd, evt) => $emit('hover-command', cmd, evt)"
       @leave-command="$emit('leave-command')"
       @expand-sidebar="$emit('collapse', false)"
+      @copy-command="$emit('copy-command', $event)"
     />
   </aside>
 </template>
@@ -181,7 +182,8 @@ const emit = defineEmits([
   'update:searchQuery',
   'search-enter',
   'clear-search',
-  'clear-history'
+  'clear-history',
+  'copy-command'
 ])
 
 const searchBarRef = ref(null)

@@ -75,6 +75,7 @@
       @search-enter="handleSearchEnter"
       @clear-search="clearSearch"
       @clear-history="clearSearchHistory"
+      @copy-command="handleInlineCopy"
     />
 
     <!-- 主内容区 -->
@@ -134,7 +135,6 @@
     <CommandPreview
       :command="previewCommand"
       :position="previewPosition"
-      @copy="copyCommand"
     />
 
     <!-- 复制成功 toast -->
@@ -173,7 +173,68 @@ import Toast from './components/common/Toast.vue'
 const commands = shallowRef([]) // 所有命令列表
 const tree = shallowRef([]) // 树形结构的命令
 const expandedFolders = ref(new Set()) // 展开的文件夹ID集合
+
+// 搜索正则缓存
+const searchRegexCache = new Map()
+const getSearchRegex = (query) => {
+  if (!query) return null
+  if (searchRegexCache.has(query)) {
+    return searchRegexCache.get(query)
+  }
+  const queries = query.toLowerCase().split(/\s+/).filter(q => q)
+  if (queries.length === 0) return null
+  const regex = new RegExp(
+    queries.map(q => q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|'),
+    'gi'
+  )
+  searchRegexCache.set(query, regex)
+  // 限制缓存大小
+  if (searchRegexCache.size > 20) {
+    const firstKey = searchRegexCache.keys().next().value
+    searchRegexCache.delete(firstKey)
+  }
+  return regex
+}
 const selectedCommand = ref(null) // 当前选中的命令
+
+// ==================== 性能优化：预计算数据 ====================
+let _idCounter = 0 // 简单递增 ID 生成器
+const getNextId = () => {
+  _idCounter++
+  return `cmd-${_idCounter}`
+}
+
+// LRU 缓存类
+class LRUCache {
+  constructor(maxSize = 20) {
+    this.maxSize = maxSize
+    this.cache = new Map()
+  }
+
+  get(key) {
+    if (!this.cache.has(key)) return undefined
+    const value = this.cache.get(key)
+    // 移到末尾（最新使用）
+    this.cache.delete(key)
+    this.cache.set(key, value)
+    return value
+  }
+
+  set(key, value) {
+    if (this.cache.has(key)) {
+      this.cache.delete(key)
+    } else if (this.cache.size >= this.maxSize) {
+      // 删除最旧的（第一个）
+      const firstKey = this.cache.keys().next().value
+      this.cache.delete(firstKey)
+    }
+    this.cache.set(key, value)
+  }
+
+  clear() {
+    this.cache.clear()
+  }
+}
 
 // UI 状态
 const searchQuery = ref('') // 搜索关键词
@@ -318,7 +379,8 @@ const showFavoritesOnly = ref(false)
 // ==================== 模块标签 ====================
 const modules = ref([])
 const selectedModule = ref('all')
-const totalCommands = computed(() => commands.value.filter(cmd => cmd.data && cmd.data.cmd).length)
+// 优化：使用 ref 而不是 computed，在 buildTree 时直接计算
+const totalCommands = ref(0)
 const overviewCollapsed = ref(false)
 
 const toggleOverview = () => {
@@ -504,13 +566,14 @@ let previewTimeout = null
 
 // 键盘导航 - 使用缓存优化
 const allFlatCommands = shallowRef([])
-const flatCommandsCache = new Map()
+const flatCommandsCache = new LRUCache(20) // LRU 缓存，最多 20 条
 const keyboardSelectedId = ref(null)
 
 const updateFlatCommands = () => {
   const treeKey = JSON.stringify(tree.value.map(n => n.id))
-  if (flatCommandsCache.has(treeKey)) {
-    allFlatCommands.value = flatCommandsCache.get(treeKey)
+  const cached = flatCommandsCache.get(treeKey)
+  if (cached) {
+    allFlatCommands.value = cached
     return
   }
   
@@ -525,10 +588,6 @@ const updateFlatCommands = () => {
   }
   traverse(displayedTree.value)
   
-  if (flatCommandsCache.size > 10) {
-    const firstKey = flatCommandsCache.keys().next().value
-    flatCommandsCache.delete(firstKey)
-  }
   flatCommandsCache.set(treeKey, flat)
   allFlatCommands.value = flat
 }
@@ -572,10 +631,14 @@ const loadCommands = async () => {
     
     const allCommands = dataManager.getAllCommands()
     
+    // 重置 ID 生成器
+    _idCounter = 0
+    
     commands.value = allCommands.map((item, index) => {
       const cmd = {
         ...item,
-        id: item.id || (crypto.randomUUID ? crypto.randomUUID() : `cmd-${Date.now()}-${index}`),
+        // 优化：使用递增 ID 替代 crypto.randomUUID
+        id: item.id || getNextId(),
         data: item.data ? { ...item.data } : undefined
       }
       return cmd
@@ -646,6 +709,17 @@ const buildTree = () => {
   }
 
   tree.value = convertToArray(treeMap)
+  
+  // 优化：在 buildTree 时直接计算 totalCommands，避免重复遍历
+  let count = 0
+  const countCommands = (nodes) => {
+    for (const node of nodes) {
+      count += node.commands.length
+      if (node.children?.length) countCommands(node.children)
+    }
+  }
+  countCommands(tree.value)
+  totalCommands.value = count
 }
 
 const displayedTree = computed(() => {
@@ -671,8 +745,8 @@ const displayedTree = computed(() => {
   const foldersToExpand = new Set()
   const favoritesSet = new Set(favoritesRaw.value.map(f => f.id))
 
-  // 构建搜索正则
-  const searchRegex = queries.length > 0 ? new RegExp(queries.map(q => q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|'), 'gi') : null
+  // 使用缓存的搜索正则
+  const searchRegex = getSearchRegex(debouncedSearchQuery.value)
 
   const filterTree = (nodes) => {
     const result = []
@@ -911,6 +985,12 @@ const executePaletteSelection = () => {
     selectPaletteItem(cmd)
     copyCommand()
   }
+}
+
+// 悬浮复制按钮处理
+const handleInlineCopy = (cmd) => {
+  // 直接复制，不等待选中状态更新
+  copyCommand(cmd)
 }
 
 const addToRecent = (cmd) => {
@@ -1415,6 +1495,13 @@ onUnmounted(() => {
 
   .mobile-sidebar-open .sidebar {
     transform: translateX(0);
+    width: var(--sidebar-width) !important;
+    min-width: var(--sidebar-width) !important;
+  }
+
+  .mobile-sidebar-open .sidebar.collapsed {
+    width: var(--sidebar-width) !important;
+    min-width: var(--sidebar-width) !important;
   }
 
   .command-detail {

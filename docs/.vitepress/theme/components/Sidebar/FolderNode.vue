@@ -41,6 +41,16 @@
             <span class="command-name" v-html="highlightText(cmd.name, searchQuery)"></span>
             <span v-if="cmd.description" class="command-desc" v-html="highlightText(cmd.description, searchQuery)"></span>
           </div>
+          <button
+            class="inline-copy-btn"
+            title="复制命令"
+            @click.stop="$emit('copy', cmd)"
+          >
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+              <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+            </svg>
+          </button>
         </div>
 
         <!-- 子文件夹递归 -->
@@ -53,9 +63,6 @@
             :search-query="searchQuery"
             :expanded-folders="expandedFolders"
             @toggle="$emit('toggle', $event)"
-            @select="$emit('select', $event)"
-            @hover="(cmd, evt) => $emit('hover', cmd, evt)"
-            @leave="$emit('leave')"
           />
         </template>
       </div>
@@ -94,7 +101,7 @@ defineProps({
   }
 })
 
-defineEmits(['toggle', 'select', 'hover', 'leave'])
+defineEmits(['toggle', 'select', 'hover', 'leave', 'copy'])
 </script>
 
 <style scoped>
@@ -180,8 +187,7 @@ defineEmits(['toggle', 'select', 'hover', 'leave'])
   gap: 10px;
   transition: background-color 100ms ease-out;
   position: relative;
-  content-visibility: auto;
-  contain-intrinsic-size: 0 44px;
+  /* 移除 content-visibility，它可能导致渲染问题 */
 }
 
 .command-item:hover {
@@ -249,6 +255,43 @@ defineEmits(['toggle', 'select', 'hover', 'leave'])
 .command-item:hover .command-name,
 .command-item.active .command-name {
   color: var(--text-primary);
+}
+
+/* 悬浮复制按钮 */
+.inline-copy-btn {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%) scale(0.8);
+  width: 28px;
+  height: 28px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 150ms ease-out, transform 150ms ease-out, background-color 150ms ease-out, border-color 150ms ease-out, color 150ms ease-out;
+  pointer-events: none;
+}
+
+.command-item:hover .inline-copy-btn {
+  opacity: 1;
+  transform: translateY(-50%) scale(1);
+  pointer-events: auto;
+}
+
+.inline-copy-btn:hover {
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
+  color: #0c0c0f;
+}
+
+.inline-copy-btn:active {
+  transform: translateY(-50%) scale(0.9);
 }
 
 .folder-content-enter-active,

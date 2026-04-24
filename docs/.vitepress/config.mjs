@@ -30,8 +30,6 @@ export default defineConfig({
     ['link', { rel: 'preconnect', href: 'https://fonts.googleapis.com' }],
     ['link', { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: 'anonymous' }],
     ['link', { rel: 'dns-prefetch', href: 'https://fonts.googleapis.com' }],
-    // 预加载 commands.json - 关键数据文件
-    ['link', { rel: 'preload', href: '/copy_skill/commands.json', as: 'fetch', crossorigin: 'anonymous' }],
   ],
 
   themeConfig: {
