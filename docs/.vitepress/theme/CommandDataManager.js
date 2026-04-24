@@ -44,7 +44,10 @@ class CommandDataManager extends EventTarget {
       
       try {
         const parsed = JSON.parse(text);
-        this.commands = Array.isArray(parsed?.data) ? parsed.data : (Array.isArray(parsed) ? parsed : []);
+        const commandsArray = Array.isArray(parsed?.commands) ? parsed.commands : 
+                              Array.isArray(parsed?.data) ? parsed.data : 
+                              Array.isArray(parsed) ? parsed : [];
+        this.commands = commandsArray;
       } catch (parseError) {
         this.commands = [];
       }
