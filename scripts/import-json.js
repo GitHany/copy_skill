@@ -186,11 +186,11 @@ ${colors.cyan}Copy Skill - JSON 导入脚本${colors.reset}
     process.exit(0)
   }
 
-  // 备份原文件
+  // 备份原文件（最多保留最近3个备份）
   if (fs.existsSync(outputPath)) {
-    const backupPath = path.join(rootDir, `docs/public/commands.backup.${Date.now()}.json`)
+    const backupPath = path.join(rootDir, 'docs/public/commands.json.backup')
     fs.copyFileSync(outputPath, backupPath)
-    log.success(`已备份原文件: docs/public/commands.backup.${Date.now()}.json`)
+    log.success('已备份原文件: docs/public/commands.json.backup')
   }
 
   // 写入文件

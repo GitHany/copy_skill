@@ -1,4 +1,9 @@
 import { defineConfig } from 'vitepress'
+import { visualizer } from 'rollup-plugin-visualizer'
+
+// 环境变量
+const debug = process.env.VITE_DEBUG === 'true'
+const apiUrl = process.env.VITE_API_URL || ''
 
 export default defineConfig({
   title: 'Copy Skill',
@@ -7,6 +12,8 @@ export default defineConfig({
   base: '/copy_skill/',
 
   head: [
+    // Favicon
+    ['link', { rel: 'icon', href: '/copy_skill/favicon.ico' }],
     // PWA Meta
     ['link', { rel: 'manifest', href: '/copy_skill/manifest.json' }],
     ['meta', { name: 'theme-color', content: '#f59e0b' }],
@@ -19,7 +26,10 @@ export default defineConfig({
     ['meta', { property: 'og:title', content: 'Copy Skill - 命令参考文档' }],
     ['meta', { property: 'og:description', content: '高效的命令管理工具，支持一键复制和快速搜索' }],
     ['meta', { property: 'og:type', content: 'website' }],
-    // Favicon - use default VitePress favicon
+    // 预加载关键资源
+    ['link', { rel: 'preconnect', href: 'https://fonts.googleapis.com' }],
+    ['link', { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: 'anonymous' }],
+    ['link', { rel: 'dns-prefetch', href: 'https://fonts.googleapis.com' }],
   ],
 
   themeConfig: {
@@ -52,7 +62,36 @@ export default defineConfig({
   vite: {
     build: {
       cssCodeSplit: true,
-      minify: 'esbuild'
+      minify: 'esbuild',
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            if (id.includes('node_modules')) {
+              if (id.includes('prismjs')) return 'vendor-prism'
+              if (id.includes('vitepress')) return 'vendor-vitepress'
+              if (id.includes('vue')) return 'vendor-vue'
+            }
+          }
+        },
+        plugins: [visualizer({
+          filename: 'stats.html',
+          open: false,
+          gzipSize: true,
+        })]
+      }
+    },
+    optimizeDeps: {
+      exclude: []
+    },
+    server: {
+      fs: {
+        allow: ['..']
+      }
+    },
+    // Debug 模式
+    define: {
+      __DEBUG__: debug,
+      __API_URL__: JSON.stringify(apiUrl),
     }
   }
 })

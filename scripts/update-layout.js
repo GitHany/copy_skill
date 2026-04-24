@@ -33,7 +33,6 @@ const log = {
 
 // 布局配置文件路径
 const LAYOUT_CONFIG_PATH = path.join(rootDir, 'docs/.vitepress/layout.config.json')
-const VITEPRESS_CONFIG_PATH = path.join(rootDir, 'docs/.vitepress/config.mjs')
 
 // 默认布局配置
 const defaultConfig = {
@@ -129,7 +128,7 @@ function updateConfig(key, value) {
   let parsedValue = value
   if (value === 'true') parsedValue = true
   else if (value === 'false') parsedValue = false
-  else if (!isNaN(value) && value !== '') parsedValue = Number(value)
+  else if (!isNaN(value) && value !== '' && /^[0-9]+(\.[0-9]+)?$/.test(value)) parsedValue = Number(value)
 
   current[lastKey] = parsedValue
   saveConfig(config)
@@ -255,10 +254,11 @@ ${colors.cyan}示例:${colors.reset}
       loadConfigFromFile(path.resolve(process.cwd(), args[1]))
       break
 
-    case '--export':
+    case '--export': {
       const exportPath = args[1] || 'layout.config.json'
       exportConfig(path.resolve(process.cwd(), exportPath))
       break
+    }
 
     case '--example':
       generateExample()
