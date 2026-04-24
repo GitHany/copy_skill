@@ -8,6 +8,7 @@
       </div>
       <div class="logo-text">
         <span class="logo-title">Copy Skill</span>
+        <span class="logo-badge">AI生成，仅供参考</span>
         <span class="logo-subtitle">{{ commandCount }} 条命令</span>
       </div>
     </div>
@@ -86,6 +87,17 @@ defineEmits(['collapse'])
   font-size: 12px;
   color: var(--text-muted);
   font-family: var(--font-mono);
+}
+
+.logo-badge {
+  font-size: 10px;
+  color: var(--accent-primary);
+  background: var(--bg-tertiary);
+  border: 1px solid var(--accent-primary);
+  border-radius: 4px;
+  padding: 2px 6px;
+  width: fit-content;
+  margin-top: 4px;
 }
 
 .collapse-btn {
