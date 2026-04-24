@@ -1,4 +1,4 @@
-/* 重置 VitePress 默认样式 */
+/* 重置 VitePress 默认样式 - CSS变量统一在此定义 */
 :root {
   --vp-c-brand-1: #f59e0b;
   --vp-c-brand-2: #fbbf24;
@@ -6,46 +6,33 @@
   --vp-c-brand-soft: rgba(245, 158, 11, 0.1);
 }
 
-* {
+/* 合并全局重置 - 减少规则数量 */
+*, html, body {
   margin: 0;
   padding: 0;
+}
+
+*, html, body, #app, .ViteApp {
   box-sizing: border-box;
 }
 
-html, body {
-  margin: 0;
-  padding: 0;
+html, body, #app, .ViteApp {
   width: 100%;
   height: 100%;
   overflow: hidden;
   background: #0c0c0f;
 }
 
-#app {
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
+/* CSS Containment 优化 - 减少重绘重排 */
+.command-app,
+.sidebar,
+.content {
+  contain: layout style paint;
 }
 
-/* VitePress 容器 */
-.ViteApp {
-  width: 100%;
-  height: 100%;
-}
-
-/* 隐藏所有 VitePress 默认 UI */
-.VPNav,
-.VPSidebar,
-.VPContent,
-.VPFooter,
-.VPDoc,
-.VPHome,
-.VPArticle,
-.VPFooter,
-.VPNavBar,
-.VPNavBarTitle,
-.VPHomeHero,
-.VPHomeFeatures,
-.VPDocFooter {
+/* 隐藏所有 VitePress 默认 UI - 合并规则 */
+.VPNav, .VPSidebar, .VPContent, .VPFooter, .VPDoc,
+.VPHome, .VPArticle, .VPNavBar, .VPNavBarTitle,
+.VPHomeHero, .VPHomeFeatures, .VPDocFooter {
   display: none !important;
 }

@@ -1,4 +1,9 @@
 import { defineConfig } from 'vitepress'
+import { visualizer } from 'rollup-plugin-visualizer'
+
+// 环境变量
+const debug = process.env.VITE_DEBUG === 'true'
+const apiUrl = process.env.VITE_API_URL || ''
 
 export default defineConfig({
   title: 'Copy Skill',
@@ -60,13 +65,19 @@ export default defineConfig({
       minify: 'esbuild',
       rollupOptions: {
         output: {
-          manualChunks: (id) => {
+          manualChunks(id) {
             if (id.includes('node_modules')) {
               if (id.includes('prismjs')) return 'vendor-prism'
-              if (id.includes('node_modules')) return 'vendor'
+              if (id.includes('vitepress')) return 'vendor-vitepress'
+              if (id.includes('vue')) return 'vendor-vue'
             }
           }
-        }
+        },
+        plugins: [visualizer({
+          filename: 'stats.html',
+          open: false,
+          gzipSize: true,
+        })]
       }
     },
     optimizeDeps: {
@@ -76,6 +87,11 @@ export default defineConfig({
       fs: {
         allow: ['..']
       }
+    },
+    // Debug 模式
+    define: {
+      __DEBUG__: debug,
+      __API_URL__: JSON.stringify(apiUrl),
     }
   }
 })
