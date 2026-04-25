@@ -6,9 +6,9 @@
           <div class="modal-header">
             <h3>请输入参数</h3>
             <div class="header-actions">
-              <button 
-                v-if="hasAnyExample" 
-                class="btn-fill-all" 
+              <button
+                v-if="hasAnyExample"
+                class="btn-fill-all"
                 title="一键填充所有示例值"
                 @click="$emit('fill-all')"
               >
@@ -39,63 +39,63 @@
               <!-- string -> input text -->
               <div v-if="param.type === 'string' || !param.type" class="input-wrapper">
                 <input
-                  :value="values[param.key]"
+                  :value="localValues[param.key]"
                   type="text"
                   :placeholder="param.example ? `示例: ${param.example}` : `请输入 ${param.key}`"
-                  @input="$emit('update-value', param.key, $event.target.value)"
-                  @keydown.enter="$emit('confirm')"
+                  @input="handleInput(param.key, $event.target.value)"
+                  @keydown.enter="handleConfirm"
                 />
                 <button
                   v-if="param.example"
                   class="btn-example"
                   title="填入示例"
-                  @click="$emit('fill-example', param.key)"
+                  @click="handleFillExample(param.key)"
                 >填入示例</button>
               </div>
 
               <!-- number -> input number -->
               <div v-else-if="param.type === 'number'" class="input-wrapper">
                 <input
-                  :value="values[param.key]"
+                  :value="localValues[param.key]"
                   type="number"
                   :placeholder="param.example ? `示例: ${param.example}` : '请输入数值'"
-                  @input="$emit('update-value', param.key, $event.target.value)"
-                  @keydown.enter="$emit('confirm')"
+                  @input="handleInput(param.key, $event.target.value)"
+                  @keydown.enter="handleConfirm"
                 />
                 <button
                   v-if="param.example"
                   class="btn-example"
                   title="填入示例"
-                  @click="$emit('fill-example', param.key)"
+                  @click="handleFillExample(param.key)"
                 >填入示例</button>
               </div>
 
               <!-- boolean -> switch -->
               <div v-else-if="param.type === 'boolean'" class="switch-wrapper">
                 <label class="switch">
-                  <input 
-                    :checked="values[param.key]" 
+                  <input
+                    :checked="localValues[param.key]"
                     type="checkbox"
-                    @change="$emit('update-value', param.key, $event.target.checked)" 
+                    @change="handleInput(param.key, $event.target.checked)"
                   />
                   <span class="slider"></span>
                 </label>
-                <span class="switch-label">{{ values[param.key] ? '是' : '否' }}</span>
+                <span class="switch-label">{{ localValues[param.key] ? '是' : '否' }}</span>
               </div>
 
               <!-- array -> textarea -->
               <div v-else-if="param.type === 'array'" class="input-wrapper">
                 <textarea
-                  :value="values[param.key]"
+                  :value="localValues[param.key]"
                   rows="3"
                   :placeholder="param.example ? `示例: ${param.example}` : '请输入值，逗号分隔'"
-                  @input="$emit('update-value', param.key, $event.target.value)"
+                  @input="handleInput(param.key, $event.target.value)"
                 ></textarea>
                 <button
                   v-if="param.example"
                   class="btn-example"
                   title="填入示例"
-                  @click="$emit('fill-example', param.key)"
+                  @click="handleFillExample(param.key)"
                 >填入示例</button>
               </div>
 
@@ -109,10 +109,22 @@
                 <span>{{ param.notes }}</span>
               </div>
             </div>
+
+            <!-- 实时预览区域 -->
+            <div v-if="previewText" class="preview-section">
+              <div class="preview-label">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                  <circle cx="12" cy="12" r="3"/>
+                </svg>
+                预览
+              </div>
+              <pre class="preview-code">{{ previewText }}</pre>
+            </div>
           </div>
           <div class="modal-footer">
             <button class="btn-cancel" @click="$emit('close')">取消</button>
-            <button class="btn-confirm" @click="$emit('confirm')">复制</button>
+            <button class="btn-confirm" @click="handleConfirm">确认并复制</button>
           </div>
         </div>
       </div>
@@ -121,7 +133,7 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, ref, watch } from 'vue'
 
 const props = defineProps({
   show: {
@@ -135,19 +147,64 @@ const props = defineProps({
   values: {
     type: Object,
     default: () => ({})
+  },
+  commandText: {
+    type: String,
+    default: ''
   }
 })
 
 const emit = defineEmits([
-  'close', 
-  'confirm', 
-  'fill-all', 
-  'fill-example', 
-  'update-value'
+  'close',
+  'confirm',
+  'fill-all',
+  'fill-example',
+  'update'
 ])
+
+// 使用本地副本解决响应式同步问题
+const localValues = ref({})
+
+// 当弹窗打开或外部 values 变化时，同步到本地
+watch(() => props.show, (isShow) => {
+  if (isShow) {
+    localValues.value = { ...props.values }
+  }
+}, { immediate: true })
+
+watch(() => props.values, (newValues) => {
+  localValues.value = { ...newValues }
+}, { deep: true })
+
+const handleInput = (key, value) => {
+  localValues.value[key] = value
+  emit('update', key, value)
+}
+
+const handleFillExample = (key) => {
+  const param = props.params.find(p => p.key === key)
+  if (param?.example) {
+    localValues.value[key] = param.example
+    emit('fill-example', key)
+  }
+}
+
+const handleConfirm = () => {
+  // 将本地值传回父组件，确保复制使用的是用户输入的值
+  emit('confirm', localValues.value)
+}
 
 const hasAnyExample = computed(() => {
   return props.params.some(p => p.example)
+})
+
+// 实时预览：替换占位符后的命令文本
+const previewText = computed(() => {
+  if (!props.commandText) return ''
+  return props.commandText.replace(/%\{([^}]+)\}%/g, (match, key) => {
+    const val = localValues.value[key]
+    return val !== undefined && val !== '' ? val : match
+  })
 })
 </script>
 
@@ -451,6 +508,42 @@ const hasAnyExample = computed(() => {
 
 .btn-confirm:hover {
   filter: brightness(1.1);
+}
+
+/* 预览区域样式 */
+.preview-section {
+  margin-top: 8px;
+  padding: 14px;
+  background: var(--bg-primary);
+  border: 1px solid var(--accent-primary);
+  border-radius: 10px;
+}
+
+.preview-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent-primary);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.preview-code {
+  margin: 0;
+  padding: 12px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-primary);
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-wrap: break-word;
 }
 
 .modal-enter-active,

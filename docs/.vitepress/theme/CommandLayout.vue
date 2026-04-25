@@ -145,11 +145,12 @@
       :show="showPlaceholderModal"
       :params="placeholderParams"
       :values="placeholderValues"
+      :command-text="pendingCommandText"
       @close="showPlaceholderModal = false"
       @confirm="confirmPlaceholderCopy"
       @fill-all="fillAllExamples"
       @fill-example="fillExample"
-      @update:value="placeholderValues[$event] = arguments[1]"
+      @update="(key, value) => { placeholderValues.value[key] = value }"
     />
   </div>
 </template>
@@ -840,6 +841,7 @@ const replacePlaceholders = (cmdText, values) => {
 }
 
 const pendingCopyIndex = ref(-1)
+const pendingCommandText = ref('')
 
 // 将 params 数组转换为对象格式
 const normalizeParams = (params) => {
@@ -874,11 +876,14 @@ const copyCommand = async (cmd = null, index = -1) => {
   const placeholders = extractPlaceholders(textToCopy, paramsDef)
   if (placeholders.length > 0) {
     pendingCopyIndex.value = index
+    pendingCommandText.value = textToCopy
     placeholderParams.value = placeholders
-    placeholderValues.value = {}
+    // 使用 reactive 对象存储值
+    const initialValues = {}
     placeholders.forEach(p => {
-      placeholderValues.value[p.key] = ''
+      initialValues[p.key] = ''
     })
+    placeholderValues.value = initialValues
     showPlaceholderModal.value = true
     return
   }
@@ -908,37 +913,43 @@ const doCopy = async (textToCopy, index) => {
   } catch (error) {}
 }
 
-const confirmPlaceholderCopy = async () => {
+const confirmPlaceholderCopy = async (valuesFromModal = null) => {
   const target = selectedCommand.value
   if (!target) return
 
-  let textToCopy
-  if (pendingCopyIndex.value === -1) {
-    textToCopy = target.data?.cmd || ''
-  } else {
-    textToCopy = target.data?.extensions?.[pendingCopyIndex.value]?.cmd || ''
-  }
+  // 使用传入的值（来自弹窗的 localValues）或 fallback 到 placeholderValues
+  const valuesToUse = valuesFromModal || placeholderValues.value
 
-  const finalText = replacePlaceholders(textToCopy, placeholderValues.value)
+  // 使用 pendingCommandText 中保存的原始命令文本
+  const textToCopy = pendingCommandText.value
+
+  const finalText = replacePlaceholders(textToCopy, valuesToUse)
   showPlaceholderModal.value = false
 
   await doCopy(finalText, pendingCopyIndex.value)
   pendingCopyIndex.value = -1
+  pendingCommandText.value = ''
 }
 
 const fillExample = (key) => {
   const param = placeholderParams.value.find(p => p.key === key)
   if (param?.example) {
-    placeholderValues.value[key] = param.example
+    // 创建新对象触发响应式更新
+    placeholderValues.value = {
+      ...placeholderValues.value,
+      [key]: param.example
+    }
   }
 }
 
 const fillAllExamples = () => {
+  const newValues = { ...placeholderValues.value }
   placeholderParams.value.forEach(param => {
     if (param.example) {
-      placeholderValues.value[param.key] = param.example
+      newValues[param.key] = param.example
     }
   })
+  placeholderValues.value = newValues
 }
 
 // 命令面板搜索结果
